@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>위갤 리뷰 검색기</title>
+    <script>
+
+    function send() {
+        document.getElementById("contents").submit();
+    }
+    </script>
+</head>
+<body>
+    <form id="contents" name="contents" method="post" action="{% url 'parameter' %}">
+        {% csrf_token %}
+        AND<br>
+        <input name="aSearch1" type="text"><br>
+        <input name="aSearch2" type="text"><br>
+        <input name="aSearch3" type="text"><br><br>
+        OR<br>
+        <input name="oSearch1" type="text"><br>
+        <input name="oSearch2" type="text"><br>
+        <input name="oSearch3" type="text">
+        <br><br>
+        AGE <br><input name="age" type="text"><br>
+        <br>
+        <button type="button" onclick="send();">검색</button>
+        <input type='reset'>
+    </form>
+    
+</body>
+</html>
