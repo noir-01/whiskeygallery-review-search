@@ -15,9 +15,9 @@ from sqlUpload_review import *
 def crawlByPage(page,inputDate):
     # URL
     BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=whiskey&page="   #page값이 비어있다.
-    Domain_URL = "https://gall.dcinside.com" 
+    Domain_URL = "https://gall.dcinside.com"
 
-    # 헤더 설정 
+    # 헤더 설정
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0'},
 
     # html
@@ -28,18 +28,18 @@ def crawlByPage(page,inputDate):
     #공지사항 글 1~5번째
     announce = 0
 
-    for i in html_list: 
+    for i in html_list:
         announce += 1
         #공지사항 skip
-        if announce<3:
+        if announce<2:
             continue
-        
-    
+
+
         #글번호
         id = i.find('td', class_='gall_num').text
         #말머리
         subject = i.find('td', class_='gall_subject').text
-        
+
         if(subject!='리뷰'):
             continue
 
@@ -49,7 +49,7 @@ def crawlByPage(page,inputDate):
         #URL
         url = Domain_URL + i.find('a',href=True)['href']
 
-        # 날짜 추출 
+        # 날짜 추출
         date_tag = i.find('td', class_='gall_date')
         date_dict = date_tag.attrs
 
@@ -59,7 +59,7 @@ def crawlByPage(page,inputDate):
 
         else:
             postDate =  date_tag.text
-            pass    
+            pass 
 
         """
         # 조회 수 추출
@@ -109,8 +109,10 @@ def uploadBytime():
             return
         else:
             page+=1
+
 schedule.every().day.at("01:00").do(uploadBytime)
 
 while True:
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(3600)
+

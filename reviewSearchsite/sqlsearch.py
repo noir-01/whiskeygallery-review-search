@@ -2,13 +2,14 @@
 import pymysql
 import unicodedata
 import pandas as pd
+import json
 
 import sys
 sys.path.append('/home/ubuntu/whiskyReview')
 from dccrolling import mysql_auth
-
+"""
 #검색조건과 단어 개수에 따른 sql 실행문 작성
-def searchTitleInclude(searchState,age,wordList):
+def searchTitleInclude2(searchState,age,wordList):
     login = mysql_auth.Info
     dictList=[]
     dictList_app=dictList.append    #속도개선
@@ -74,9 +75,6 @@ def searchTitleInclude(searchState,age,wordList):
             age_df = result['title'].str.contains(age)
             result = result[age_df]
         return result
-        
-
-    
 
 #DataFrame을 전달받아 html파일 생성하는 함수
 def searchWord(df):
@@ -91,3 +89,61 @@ def searchWord(df):
     
     with open("main/templates/main/parameter.html", "w") as file:
         file.write(html)
+"""
+
+#sql 계속 접속을 막기 위해 local file 이용
+def searchTitleInclude(searchState,age,wordList):
+    #단어들 검색 결과를 합치기 위해 dictList를 이용함
+    dictList=[]
+    dictList_app = dictList.append
+    wordnum = len(wordList)
+
+    with open('/home/ubuntu/whiskyReview/review.json', 'r',encoding='utf8') as f:
+        json_data = json.load(f)
+
+    dataframe = pd.json_normalize(json_data)
+
+    #or 검색
+    if searchState=='or':
+        for word in wordList:
+            if age!='':  #age 입력값이 있을 경우
+                #pandas 검색기능 활용
+                word_df = dataframe['1'].str.contains(age) & dataframe['1'].str.contains(word)
+                dataframe = dataframe[word_df]
+                dictList_app(pd.DataFrame.from_dict(dataframe))
+
+            else:       #age 없을 경우
+                word_df = dataframe['1'].str.contains(word)
+                dataframe = dataframe[word_df]
+                dictList_app(pd.DataFrame.from_dict(dataframe))
+
+        #중복 제거 (or검색해서 나온 결과를 합친거라 결과가 겹칠 수 있음)
+        if wordnum==1:
+            result = dictList[0]
+        elif wordnum==2:
+            result = pd.concat([dictList[0],dictList[1]])
+        elif wordnum==3:
+            result = pd.concat([dictList[0],dictList[1],dictList[2]])
+
+        return result
+
+    #And 검색
+    else:
+        if wordnum==1:
+            word_df = dataframe['1'].str.contains(wordList[0])
+        elif wordnum==2:
+            word_df = dataframe['1'].str.contains(wordList[0]) & \
+                    dataframe['1'].str.contains(wordList[1])
+        elif wordnum==3:
+            word_df = dataframe['1'].str.contains(wordList[0]) & \
+                    dataframe['1'].str.contains(wordList[1])& \
+                    dataframe['1'].str.contains(wordList[2])
+
+        result = dataframe[word_df]
+        
+        #age 존재할시 dictList에서 age 검색
+        if age!='':
+            age_df = result['1'].str.contains(age)
+            result = result[age_df]
+        
+        return result

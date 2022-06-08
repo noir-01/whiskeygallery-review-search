@@ -2,3 +2,4 @@ __pycache__
 db.sqlite3
 mysql_auth.py
 settings.py
+review.json

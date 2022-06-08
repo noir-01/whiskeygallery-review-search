@@ -16,10 +16,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from main import views
+from django.conf.urls.static import static
 
+from pathlib import Path
+import os
 app_name = 'main'
 
-urlpatterns = [
-    path('result/', views.get_post, name='parameter'),
-    path('', views.post_view),
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIR = [
+    os.path.join(str(BASE_DIR.joinpath('static')),)
 ]
+
+urlpatterns = [
+    path('', views.post_view),
+    path('search/', views.search),
+    path('api/',views.api)
+]+ static(STATIC_URL, document_root=STATIC_ROOT)

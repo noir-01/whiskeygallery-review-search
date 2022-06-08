@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/home/ubuntu/whiskyReview/dccrolling/reviewUpload.py", line 116, in <module>
-    time.sleep(1)
-KeyboardInterrupt

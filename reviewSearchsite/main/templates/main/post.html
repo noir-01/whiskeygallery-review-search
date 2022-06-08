@@ -1,17 +1,29 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>위갤 리뷰 검색기</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="{% static 'style.css' %}" rel="stylesheet" type="text/css">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F86XHXLLWP"></script>
     <script>
-
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-F86XHXLLWP');
+    </script>
+    <title>위갤 리뷰 검색기</title>
+    
+    <script>
     function send() {
         document.getElementById("contents").submit();
     }
     </script>
 </head>
 <body>
-    <form id="contents" name="contents" method="post" action="{% url 'parameter' %}">
+<div class="content">
+    <form id="contents" name="contents" method="post" action="search/">
         {% csrf_token %}
         AND<br>
         <input name="aSearch1" type="text"><br>
@@ -22,11 +34,11 @@
         <input name="oSearch2" type="text"><br>
         <input name="oSearch3" type="text">
         <br><br>
-        AGE <br><input name="age" type="text"><br>
+        AGE <br><input name="age" type="text" onKeypress="javascript:if(event.keyCode==13) {send()}"><br>
         <br>
         <button type="button" onclick="send();">검색</button>
         <input type='reset'>
     </form>
-    
+</div>
 </body>
 </html>

@@ -1,0 +1,26 @@
+table, td, th {
+    border : 1px solid black;
+    border-collapse : collapse;
+}
+
+/*desktop*/
+@media (pointer:fine){
+    .hidden-des{
+        display:none;
+    }
+    .hidden-mob{
+        font-size: 17px;
+    }
+}
+
+
+/*mobile*/
+@media (pointer:coarse){
+    .hidden-mob{
+        display:none;
+    }
+    .hidden-des{
+        font-size: 40px;
+    }
+    
+}
