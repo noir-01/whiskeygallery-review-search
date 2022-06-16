@@ -108,12 +108,12 @@ def searchTitleInclude(searchState,age,wordList):
         for word in wordList:
             if age!='':  #age 입력값이 있을 경우
                 #pandas 검색기능 활용
-                word_df = dataframe['1'].str.contains(age) & dataframe['1'].str.contains(word)
+                word_df = dataframe['1'].str.contains(age,case=False) & dataframe['1'].str.contains(word,case=False)
                 dataframe = dataframe[word_df]
                 dictList_app(pd.DataFrame.from_dict(dataframe))
 
             else:       #age 없을 경우
-                word_df = dataframe['1'].str.contains(word)
+                word_df = dataframe['1'].str.contains(word,case=False)
                 dataframe = dataframe[word_df]
                 dictList_app(pd.DataFrame.from_dict(dataframe))
 
@@ -130,20 +130,20 @@ def searchTitleInclude(searchState,age,wordList):
     #And 검색
     else:
         if wordnum==1:
-            word_df = dataframe['1'].str.contains(wordList[0])
+            word_df = dataframe['1'].str.contains(wordList[0],case=False)
         elif wordnum==2:
-            word_df = dataframe['1'].str.contains(wordList[0]) & \
-                    dataframe['1'].str.contains(wordList[1])
+            word_df = dataframe['1'].str.contains(wordList[0],case=False) & \
+                    dataframe['1'].str.contains(wordList[1],case=False)
         elif wordnum==3:
-            word_df = dataframe['1'].str.contains(wordList[0]) & \
-                    dataframe['1'].str.contains(wordList[1])& \
-                    dataframe['1'].str.contains(wordList[2])
+            word_df = dataframe['1'].str.contains(wordList[0],case=False) & \
+                    dataframe['1'].str.contains(wordList[1],case=False)& \
+                    dataframe['1'].str.contains(wordList[2],case=False)
 
         result = dataframe[word_df]
         
         #age 존재할시 dictList에서 age 검색
         if age!='':
-            age_df = result['1'].str.contains(age)
+            age_df = result['1'].str.contains(age,case=False)
             result = result[age_df]
         
         return result
