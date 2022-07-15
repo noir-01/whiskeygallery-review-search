@@ -98,7 +98,7 @@ def searchTitleInclude(searchState,age,wordList):
     dictList_app = dictList.append
     wordnum = len(wordList)
 
-    with open('/home/ubuntu/whiskyReview/review.json', 'r',encoding='utf8') as f:
+    with open('/home/ubuntu/whiskyReview/dccrolling/review.json', 'r',encoding='utf8') as f:
         json_data = json.load(f)
 
     dataframe = pd.json_normalize(json_data)
@@ -140,10 +140,8 @@ def searchTitleInclude(searchState,age,wordList):
                     dataframe['1'].str.contains(wordList[2],case=False)
 
         result = dataframe[word_df]
-        
         #age 존재할시 dictList에서 age 검색
         if age!='':
             age_df = result['1'].str.contains(age,case=False)
             result = result[age_df]
-        
         return result

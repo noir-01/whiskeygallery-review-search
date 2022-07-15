@@ -27,18 +27,6 @@ def sqlUpload(id,title,url,recom,reply,postDate):
     sql = """REPLACE INTO ReviewTab(id,title,url,recom,reply,postDate) 
              VALUES(%s,%s,%s,%s,%s,%s)
         """
-    
     cursor.execute(sql,(id,title,url,recom,reply,postDate))
-    #새 리뷰를 포함해서 json으로 저장
-    sql = """select * from ReviewTab"""
-    cursor.execute(sql)
-    rows = cursor.fetchall()
-    
-    data = pd.DataFrame.from_dict(rows)
-    datajson = data.to_json(orient='records',force_ascii=False)
-
-    with open("review.json", "w",encoding='utf8') as file:
-        file.write(datajson)
-
     conn.commit()
     conn.close()

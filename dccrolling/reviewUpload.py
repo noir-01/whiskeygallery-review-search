@@ -2,19 +2,23 @@
 
 import requests
 from urllib import request
-from bs4 import BeautifulSoup 
+from bs4 import BeautifulSoup
 from datetime import datetime,timedelta
 import schedule
 import time
+import pymysql
 
 from sqlUpload_review import *
+
+login = mysql_auth.Info
 
 #if 날짜 조건 안맞으면 page 값 +=1 해서 리턴
 #inputDate = 'yyyy-mm-dd'
 
-def crawlByPage(page,inputDate):
+def crawlByPage(page,inputID):
     # URL
-    BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=whiskey&page="   #page값이 비어있다.
+    #BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=whiskey&page="   #page값이 비어있다.
+    BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=whiskey&sort_type=N&search_head=20&page="
     Domain_URL = "https://gall.dcinside.com"
 
     # 헤더 설정
@@ -25,7 +29,7 @@ def crawlByPage(page,inputDate):
     soup = BeautifulSoup(response.content, 'html.parser')
     html_list = soup.find('tbody').find_all('tr')
 
-    #공지사항 글 1~5번째
+    #공지사항 스킵
     announce = 0
 
     for i in html_list:
@@ -36,7 +40,7 @@ def crawlByPage(page,inputDate):
 
 
         #글번호
-        id = i.find('td', class_='gall_num').text
+        id = int(i.find('td', class_='gall_num').text)
         #말머리
         subject = i.find('td', class_='gall_subject').text
 
@@ -59,7 +63,7 @@ def crawlByPage(page,inputDate):
 
         else:
             postDate =  date_tag.text
-            pass 
+            pass
 
         """
         # 조회 수 추출
@@ -88,7 +92,7 @@ def crawlByPage(page,inputDate):
         sqlUpload(id,title,url,recom,reply,postDate)
 
         #return = 0 or other
-        if postDate == inputDate:
+        if id == inputID:
             return 0    #0 return으로 반복문 탈출
         else:
             continue
@@ -97,22 +101,47 @@ def crawlByPage(page,inputDate):
 page = 1
 
 #schedule을 사용해 매일 01시에 리뷰 업로드.
-def uploadBytime():
+#findLastID함수: 현재 mysql상에서 가장 최근 글의 id를 return 함 => 그 글 전까지 리뷰 업로드 하면 됨.
+def findLastID():
     page = 1
-    now = datetime.now() + timedelta(hours=9)
-    today = now.date()
-    yesterday = today - timedelta(days=1)
+    conn = pymysql.connect(
+        host=login['host'],
+        user=login['user'],
+        password=login['password'],
+        db=login['db'],
+        charset=login['charset']
+    )
+    cursor = conn.cursor()
+    sql = "select max(id) from ReviewTab"
+    cursor.execute(sql)
+    lastID = cursor.fetchall()[0][0]
+    return lastID
 
+"""
+while True:
+    state = crawlByPage(page,295306)
+    if(state==0):
+        break
+    else:
+        page+=1
+"""
+def uploadByTime():
+    page = 1
+    lastID = findLastID()
     while True:
-        state = crawlByPage(page,yesterday)
+        state = crawlByPage(page,lastID)
         if(state==0):
             return
         else:
             page+=1
 
-schedule.every().day.at("01:00").do(uploadBytime)
+#schedule 대신 cronetab 사용
+uploadByTime()
+
+"""
+schedule.every().day.at("01:00").do(uploadByTime)
 
 while True:
     schedule.run_pending()
     time.sleep(3600)
-
+"""
