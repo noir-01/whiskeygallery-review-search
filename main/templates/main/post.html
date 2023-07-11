@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="{% static 'style.css' %}" rel="stylesheet" type="text/css">
+
+    <title>위갤 리뷰 검색기</title>
+    
+    <script type="text/javascript">
+        var linkFrom = document.location.href;
+        //현재 링크에 따라서 페이지 이름 변경
+        // if(linkFrom=="http://localhost/") document.write("위갤 리뷰 검색기");
+        // else if(linkFrom=="http://localhost/other/") document.write("기타 리뷰 검색기");
+        // //아무것도 검색하지 않았을 때 다시 메인 페이지로 되돌리기
+        // else location.href = "http://localhost/";
+        
+        function send(form) {
+            form.action = "search/"
+            form.submit();
+
+            window.onload = function() {
+            for (var i = 0; i < document.forms.length; i++) {
+                var oForm = document.forms[i];
+                oForm.onsubmit = function() {
+                    for (var j = 0; j < this.elements.length; j++) {
+                        var element = this.elements[j];
+                        if (element.type === "text" && element.value === "")
+                            element.disabled = true;
+                        }
+                    };
+                }
+            };
+            document.getElementById("contents").submit();
+        }
+    </script>
+
+</head>
+<body>
+    <div class="content">
+    <form id="contents" name="contents" method="get" >
+        AND<br>
+        <input name="aSearch1" type="text"><br>
+        <input name="aSearch2" type="text"><br>
+        <input name="aSearch3" type="text"><br><br>
+        OR<br>
+        <input name="oSearch1" type="text"><br>
+        <input name="oSearch2" type="text"><br>
+        <input name="oSearch3" type="text">
+        <br><br>
+        AGE <br><input name="age" type="text" onKeypress="javascript:if(event.keyCode==13) {send()}"><br>
+        <br>
+        <button type="button" onclick="send(this.form);">검색</button><br>
+        <input type='reset'><br><br>
+        <input type="button" id="move" onclick="movePage();"/><br>
+
+        <script>
+            var linkFrom = document.location.href;
+            // if(linkFrom=="http://localhost/"){
+            //     document.title = "위갤 리뷰 검색기";
+            //     document.getElementById("move").value = "기타 리뷰 검색기로 이동";
+            // }else{
+            //     document.title = "기타 리뷰 검색기";
+            //     document.getElementById("move").value = "위갤 리뷰 검색기로 이동";
+            // }
+
+            // function movePage(){
+            // if(linkFrom=="http://localhost/"){
+            //     location.href  = "http://localhost/other/";
+            // }
+            // else {location.href = "http://localhost/";}
+            // }
+         </script>
+    </form>
+</div>
+
+</body>
+</html>

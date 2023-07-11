@@ -1,0 +1,28 @@
+table, td, th {
+    border : 1px solid black;
+    border-collapse : collapse;
+}
+
+/*데스크탑 환경*/
+@media (pointer:fine){
+    .hidden-des{
+        display:none;
+    }
+    .hidden-mob{
+        font-size: 17px;
+    }
+}
+
+
+/*모바일 환경*/
+@media (pointer:coarse){
+    .hidden-mob{
+        display:none;
+    }
+    .hidden-des{
+        font-size: 40px;
+    }
+    
+}
+
+

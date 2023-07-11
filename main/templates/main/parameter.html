@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>검색 결과</title>
+    <link href="{% static 'style2.css' %}" rel="stylesheet" type="text/css">
+</head>
+
+{% if result%}
+<table border="1" class="stocktable" id="table1">
+  <thead class="hidden-mob">
+    <tr style="text-align: right;">
+      <th colspan="3">제목</th>
+        <th>추천</th>
+        <th>댓글</th>
+        <th >작성일</th>
+    </tr>
+  </thead>
+  {% for i in result %}
+    <tbody class="hidden-mob">
+      <tr>
+        <td colspan="3"><a href="{{i.2}}" target=_blank><div>{{i.1}}</div></a></td>
+        <td>{{i.3}}</td>
+        <td>{{i.4}}</td>
+        <td>{{i.5}}</td>
+      </tr>
+    </tbody>
+    <tbody class="hidden-des">
+      <tr>
+        <td colspan="3"><a href="{{i.2}}" target=_blank><div>{{i.1}}</div></a></td>
+      </tr>
+      <tr>
+        <td width="140">추천 {{i.3}}</td>
+        <td width="140">댓글 {{i.4}}</td>
+        <td>작성일 {{i.5}}</td>
+      </tr>
+    </tbody>
+  {% endfor %}
+  {% else %}
+  <div style="font-size: 25pt;">조건에 맞는 검색결과가 없습니다.</div>
+</table>
+</html>
+{% endif %}

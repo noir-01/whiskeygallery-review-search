@@ -1,0 +1,16 @@
+__pycache__
+dccrolling/__pycache__
+main/__pycache__
+
+db.sqlite3
+
+dccrolling/database/
+dccrolling/cronlog.log
+dccrolling/mysql_auth.py
+dccrolling/reviewUpload.sh
+dccrolling/reviewUpload.sh.save
+
+main/migrations/
+staticfiles/
+whiskey/settings.py
+
