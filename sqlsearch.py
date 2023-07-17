@@ -4,8 +4,8 @@ import pandas as pd
 import json
 
 import sys
-sys.path.append('/home/blanc/ReviewSearchVenv/src/whiskey')
-from dccrolling import mysql_auth
+#sys.path.append('/home/blanc/ReviewSearchVenv/src/whiskey')
+#from dccrolling import mysql_auth
 
 #검색 로직 수정
 def searchTitleInclude(andWord,orWord,age,isOther):

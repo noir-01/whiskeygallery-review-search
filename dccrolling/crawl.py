@@ -2,7 +2,7 @@
 
 import requests
 from urllib import request
-from bs4 import BeautifulSoup 
+from bs4 import BeautifulSoup
 from datetime import datetime,timedelta
 import time
 import pymysql
@@ -26,18 +26,16 @@ def crawlByPage(inputID,liquor,category):
 
     # 헤더 설정
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0'},
-    
+
     page = 1
-    
     while True:
         # html
         response = requests.get(BASE_URL+str(page), headers=headers[0])
         soup = BeautifulSoup(response.content, 'html.parser')
         html_list = soup.find('tbody').find_all('tr')
 
-
+        time.sleep(0.001)
         for i in html_list:
-
             #글번호
             id = int(i.find('td', class_='gall_num').text)
             #말머리
@@ -71,7 +69,6 @@ def crawlByPage(inputID,liquor,category):
             recom = recommend_tag.text
 
             # 댓글 수 추출
-            
 
             try:
                 reply_tag = i.span.string.text
@@ -82,7 +79,7 @@ def crawlByPage(inputID,liquor,category):
                     reply = 0
                 #작성자가 [blabla]일 경우 0으로 바꿈
                 reply=int(reply)
-            
+
             except:
                 reply = 0
 
@@ -93,7 +90,7 @@ def crawlByPage(inputID,liquor,category):
 
             if id == inputID:
                 return page    #return으로 반복문 탈출
-            
+
             #숫자가 크다 = 나중 날짜를 의미
             # if(postDate<=inputID and subject != "공지"):
             #     return page
@@ -123,15 +120,19 @@ def findLastID(category):
 #category = other, brandy, beer, whiskey
 lastID = findLastID("whiskey")
 crawlByPage(lastID,"whiskey","whiskey")
+time.sleep(0.001)
 
 lastID = findLastID("other")
 crawlByPage(lastID,"whiskey","other")
+time.sleep(0.001)
 
 lastID = findLastID("beer")
 crawlByPage(lastID,"beer","beer")
+time.sleep(0.001)
 
 lastID = findLastID("brandy")
 crawlByPage(lastID,"brandy","brandy")
+time.sleep(0.001)
 
 #crawlByPage("2022-12-04","whiskey","whiskey")
 
