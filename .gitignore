@@ -5,6 +5,7 @@ main/__pycache__
 db.sqlite3
 
 dccrolling/cronlog.log
+dccrolling/database/
 dccrolling/mysql_auth.py
 dccrolling/reviewUpload.sh
 dccrolling/reviewUpload.sh.save
