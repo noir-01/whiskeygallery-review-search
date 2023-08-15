@@ -79,7 +79,7 @@ const SearchBox = () => {
 
   const getData = async (): Promise<searchType[]> => {
     const value = await fetch(
-      `http://localhost:8000/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=`
+      `https://whiskeyreview.ddns.net/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=`
     );
     return value.json();
   };
