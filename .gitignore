@@ -14,3 +14,4 @@ main/migrations/
 staticfiles/
 whiskey/settings.py
 
+frontend/node_modules/
