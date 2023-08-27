@@ -1,6 +1,7 @@
 import { useState, KeyboardEvent } from "react";
 import {
   Box,
+  Button,
   Divider,
   Grid,
   IconButton,
@@ -50,6 +51,9 @@ const SearchBox = () => {
   const [searchOptionO3, setSearchOptionO3] = useState("");
   const [onSearch, setOnSearch] = useState(false);
 
+  const [isOtherSearch, setIsOtherSearch] = useState(false);
+  const [age, setAge] = useState(0);
+
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -82,7 +86,11 @@ const SearchBox = () => {
     //   `https://localhost:8000/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=`
     // );
     const value = await fetch(
-      `https://whiskeyreview.ddns.net:444/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=`
+      `https://whiskeyreview.ddns.net:444${
+        isOtherSearch ? "/other" : ""
+      }/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=${
+        age !== 0 ? `${age}` : ""
+      }`
     );
     return value.json();
   };
@@ -108,7 +116,7 @@ const SearchBox = () => {
         variant="h5"
         sx={{ fontWeight: 700, my: 2, color: "#755139" }}
       >
-        리뷰 검색하기
+        {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
       </Typography>
       {!focusPostTitle && (
         <>
@@ -120,7 +128,7 @@ const SearchBox = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                pl: 1,
+                px: 1,
                 width: { xs: "90vw", sm: "auto" },
               }}
             >
@@ -169,103 +177,158 @@ const SearchBox = () => {
               </Box>
               <Box
                 sx={{
-                  display: "flex",
-                  width: "100%",
-                  my: isOpenSearchTools ? 1 : 0,
-                  height: isOpenSearchTools ? "32px" : 0,
+                  height: isOpenSearchTools ? "175px" : 0,
                   overflow: "hidden",
                   transition: ".5s",
-                  gap: 1,
                 }}
               >
                 <Box
                   sx={{
-                    backgroundColor: "#755139",
                     display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "white",
-                    fontWeight: 700,
-                    borderRadius: 2,
-                    width: "48px",
-                    p: 0.5,
+                    width: "100%",
+                    my: 1,
+                    gap: 1,
                   }}
                 >
-                  AND
+                  <Box
+                    sx={{
+                      backgroundColor: "#755139",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "white",
+                      fontWeight: 700,
+                      borderRadius: 2,
+                      width: "48px",
+                      p: 0.5,
+                    }}
+                  >
+                    AND
+                  </Box>
+                  <InputBase
+                    type="search"
+                    placeholder="option1"
+                    sx={{
+                      flexBasis: "30%",
+                    }}
+                    value={searchOptionA1}
+                    onChange={(e) => setSearchOptionA1(e.target.value)}
+                  />
+                  <InputBase
+                    type="search"
+                    placeholder="option2"
+                    sx={{ flexBasis: "30%" }}
+                    value={searchOptionA2}
+                    onChange={(e) => setSearchOptionA2(e.target.value)}
+                  />
+                  <InputBase
+                    type="search"
+                    placeholder="option3"
+                    sx={{ flexBasis: "30%" }}
+                    value={searchOptionA3}
+                    onChange={(e) => setSearchOptionA3(e.target.value)}
+                  />
                 </Box>
-                <InputBase
-                  type="search"
-                  placeholder="option1"
-                  sx={{
-                    flexBasis: "30%",
-                  }}
-                  value={searchOptionA1}
-                  onChange={(e) => setSearchOptionA1(e.target.value)}
-                />
-                <InputBase
-                  type="search"
-                  placeholder="option2"
-                  sx={{ flexBasis: "30%" }}
-                  value={searchOptionA2}
-                  onChange={(e) => setSearchOptionA2(e.target.value)}
-                />
-                <InputBase
-                  type="search"
-                  placeholder="option3"
-                  sx={{ flexBasis: "30%" }}
-                  value={searchOptionA3}
-                  onChange={(e) => setSearchOptionA3(e.target.value)}
-                />
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  width: "100%",
-                  my: isOpenSearchTools ? 1 : 0,
-                  height: isOpenSearchTools ? "32px" : 0,
-                  overflow: "hidden",
-                  transition: ".5s",
-                  gap: 1,
-                }}
-              >
                 <Box
                   sx={{
-                    backgroundColor: "#755139",
                     display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "white",
-                    fontWeight: 700,
-                    borderRadius: 2,
-                    p: 0.5,
-                    width: "48px",
+                    width: "100%",
+                    my: 1,
+                    gap: 1,
                   }}
                 >
-                  OR
+                  <Box
+                    sx={{
+                      backgroundColor: "#755139",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "white",
+                      fontWeight: 700,
+                      borderRadius: 2,
+                      p: 0.5,
+                      width: "48px",
+                    }}
+                  >
+                    OR
+                  </Box>
+                  <InputBase
+                    type="search"
+                    placeholder="option1"
+                    sx={{
+                      flexBasis: "30%",
+                    }}
+                    value={searchOptionO1}
+                    onChange={(e) => setSearchOptionO1(e.target.value)}
+                  />
+                  <InputBase
+                    type="search"
+                    placeholder="option2"
+                    sx={{ flexBasis: "30%" }}
+                    value={searchOptionO2}
+                    onChange={(e) => setSearchOptionO2(e.target.value)}
+                  />
+                  <InputBase
+                    type="search"
+                    placeholder="option3"
+                    sx={{ flexBasis: "30%" }}
+                    value={searchOptionO3}
+                    onChange={(e) => setSearchOptionO3(e.target.value)}
+                  />
                 </Box>
-                <InputBase
-                  type="search"
-                  placeholder="option1"
+                <Box
                   sx={{
-                    flexBasis: "30%",
+                    display: "flex",
+                    width: "100%",
+                    my: 1,
+                    gap: 1,
                   }}
-                  value={searchOptionO1}
-                  onChange={(e) => setSearchOptionO1(e.target.value)}
-                />
-                <InputBase
-                  type="search"
-                  placeholder="option2"
-                  sx={{ flexBasis: "30%" }}
-                  value={searchOptionO2}
-                  onChange={(e) => setSearchOptionO2(e.target.value)}
-                />
-                <InputBase
-                  type="search"
-                  placeholder="option3"
-                  sx={{ flexBasis: "30%" }}
-                  value={searchOptionO3}
-                  onChange={(e) => setSearchOptionO3(e.target.value)}
-                />
+                >
+                  <Box
+                    sx={{
+                      backgroundColor: "#755139",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "white",
+                      fontWeight: 700,
+                      borderRadius: 2,
+                      p: 0.5,
+                      width: "48px",
+                    }}
+                  >
+                    Age
+                  </Box>
+                  <InputBase
+                    type="number"
+                    placeholder="age"
+                    sx={{
+                      flexBasis: "95%",
+                    }}
+                    value={age}
+                    onChange={(e) =>
+                      setAge(e.target.value as unknown as number)
+                    }
+                  />
+                </Box>
+                <Box sx={{ width: "100%", mb: 1 }}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "100%",
+                      bgcolor: "#755139",
+                      ":active": { bgcolor: "#755139" },
+                      ":hover": { bgcolor: "#755139" },
+                    }}
+                    onClick={() => {
+                      setIsOtherSearch(!isOtherSearch);
+                    }}
+                  >
+                    {isOtherSearch
+                      ? "리뷰 검색으로 바꾸기"
+                      : "기타 리뷰 검색으로 바꾸기"}
+                  </Button>
+                </Box>
               </Box>
             </Paper>
           </Box>
