@@ -11,8 +11,8 @@ import requests
 import datetime
 
 # Create your views here.
-def post_view(request):
-    return render(request, 'main/post.html')
+# def post_view(request):
+#     return render(request, 'main/post.html')
 
 @csrf_exempt
 def search(request):
