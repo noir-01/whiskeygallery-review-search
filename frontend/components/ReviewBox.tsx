@@ -122,7 +122,7 @@ const ReviewBox = () => {
               sx={{ ml: 1, flex: 1 }}
             />
           </Paper>
-          <Stepper activeStep={activeStep} sx={{ mb: 2 }}>
+          <Stepper activeStep={activeStep}>
             {steps.map((label, index) => {
               const stepProps: { completed?: boolean } = {};
               if (isStepSkipped(index)) {
@@ -147,6 +147,39 @@ const ReviewBox = () => {
               );
             })}
           </Stepper>
+
+          <Box sx={{ display: "flex", flexDirection: "row", my: 2, gap: 1 }}>
+            <Button
+              size="small"
+              color="inherit"
+              variant="contained"
+              disabled={activeStep === 0}
+              onClick={handleBack}
+              sx={{ color: "#755139", fontWeight: 700, flex: 1 }}
+            >
+              Back
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={handleNext}
+              sx={{
+                flex: 1,
+                color: "white",
+                bgcolor: "#755139",
+                fontWeight: 700,
+                ":active": {
+                  bgcolor: "#755139",
+                },
+                ":hover": {
+                  bgcolor: "#755139",
+                },
+              }}
+            >
+              {activeStep === steps.length - 1 ? "Finish" : "Next"}
+            </Button>
+          </Box>
+
           {activeStep === 0 && (
             <ReviewStepper
               step={0}
@@ -168,24 +201,6 @@ const ReviewBox = () => {
               review={thridStepReview}
             />
           )}
-
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 1, mb: 5 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ mr: 1, color: "#755139", fontWeight: 700 }}
-            >
-              Back
-            </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
-            <Button
-              onClick={handleNext}
-              sx={{ mr: 1, color: "#755139", fontWeight: 700 }}
-            >
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
-          </Box>
         </Box>
       )}
     </Box>
