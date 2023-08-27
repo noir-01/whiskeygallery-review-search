@@ -33,8 +33,8 @@ STATICFILES_DIR = [
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
-    path('', views.post_view),
-    path('other/', views.post_view),
+    #path('', views.post_view),
+    #path('other/', views.post_view),
     path('other/search/', views.search),
     path('search/', views.search),
 
