@@ -22,10 +22,8 @@ staticfiles/
 whiskey/settings.py
 
 
-frontend/node_modules
-frontend/.next
-frontend/build
-frontend/.DS_Store
+frontend/node_modules/
+frontend/.next/
 frontend/*.pem
 
 # debug
