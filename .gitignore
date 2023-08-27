@@ -21,4 +21,17 @@ main/migrations/
 staticfiles/
 whiskey/settings.py
 
+
 frontend/node_modules/
+frontend/.next/
+frontend/*.pem
+
+# debug
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+frontend/.vercel
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
