@@ -117,7 +117,7 @@ const ReviewStepper = ({
             pb: 1,
           }}
         >
-          <Grid item xs={6}>
+          <Grid item xs={6.5}>
             <Paper sx={{ height: "100%", py: 0.5 }}>
               <Typography sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}>
                 Diagram
@@ -140,7 +140,7 @@ const ReviewStepper = ({
             </Paper>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={6.5}>
             <Paper
               sx={{
                 py: 0.5,
@@ -175,7 +175,7 @@ const ReviewStepper = ({
             </Paper>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={6.5}>
             <Paper sx={{ px: 2, height: "100%", display: "flex" }}>
               <InputBase
                 type="number"
@@ -192,7 +192,7 @@ const ReviewStepper = ({
               />
             </Paper>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6.5}>
             <Paper
               sx={{
                 display: "flex",
