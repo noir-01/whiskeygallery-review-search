@@ -6,16 +6,10 @@ db.sqlite3
 
 dccrolling/cronlog.log
 
-dccrolling/database/review_beer.json
-dccrolling/database/review_brandy.json
-dccrolling/database/review_other.json
-dccrolling/database/review_other_total.json
-dccrolling/database/review_whiskey.json
-
+dccrolling/database/
 
 dccrolling/mysql_auth.py
 dccrolling/reviewUpload.sh
-dccrolling/reviewUpload.sh.save
 
 main/migrations/
 staticfiles/
