@@ -1,25 +1,20 @@
 import { useState } from "react";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
+import { enqueueSnackbar } from "notistack";
 import {
   Box,
   Button,
   Divider,
   InputBase,
   Paper,
-  StepIcon,
+  Step,
+  StepLabel,
+  Stepper,
   Typography,
 } from "@mui/material";
 
-import ReviewStepper from "./organisms/ReviewStepper";
-import Result from "./result";
-
-interface ReviewType {
-  elementList: { name: string; value: number }[];
-  comment: string;
-  score: string;
-}
+import ResultStep from "@/components/organisms/ResultStep";
+import ReviewStepper from "@/components/organisms/ReviewStepper";
+import type { ReviewType } from "@/types/review";
 
 const ReviewBox = () => {
   const steps = ["Nose", "Palate", "Finish"];
@@ -37,12 +32,19 @@ const ReviewBox = () => {
   const [thridStepReview, setThridStepReview] =
     useState<ReviewType>(initReview);
 
-  const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-  };
+  const isStepSkipped = (step: number) => skipped.has(step);
 
   const handleNext = () => {
     let newSkipped = skipped;
+
+    if (!whiskey) {
+      enqueueSnackbar("위스키 이름을 입력하세요.", {
+        variant: "error",
+        autoHideDuration: 2000,
+      });
+      return;
+    }
+
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
@@ -61,6 +63,13 @@ const ReviewBox = () => {
     setFirstStepReview(initReview);
     setSecondStepReview(initReview);
     setThridStepReview(initReview);
+    setWhiskey("");
+    setAbv("");
+    setWbCode("");
+    enqueueSnackbar("리셋되었습니다.", {
+      variant: "info",
+      autoHideDuration: 2000,
+    });
   };
 
   const handleUpdateReview = (step: number, review: ReviewType) => {
@@ -79,7 +88,7 @@ const ReviewBox = () => {
         리뷰 작성하기
       </Typography>
       {activeStep === 3 ? (
-        <Result
+        <ResultStep
           handleReset={handleReset}
           handleBack={handleBack}
           firstStepReview={firstStepReview}
@@ -133,7 +142,7 @@ const ReviewBox = () => {
                   key={label}
                   {...stepProps}
                   sx={{
-                    circle: { color: "#755139" },
+                    circle: { color: "#755139", opacity: 0.3 },
                     path: { color: "#755139" },
                   }}
                 >
