@@ -86,7 +86,7 @@ const ReviewStepper = ({
 
   return (
     <Box>
-      {!open && (
+      {!open && nameList.length > 0 && (
         <Grid
           container
           spacing={1}
@@ -110,13 +110,11 @@ const ReviewStepper = ({
                   justifyContent: "center",
                 }}
               >
-                {nameList.length > 0 && (
-                  <ElementChart
-                    id={`${step}`}
-                    nameList={nameList}
-                    valueList={valueList}
-                  />
-                )}
+                <ElementChart
+                  id={`${step}`}
+                  nameList={nameList}
+                  valueList={valueList}
+                />
               </Box>
             </Paper>
           </Grid>
@@ -229,12 +227,18 @@ const ReviewStepper = ({
             </IconButton>
           </Box>
           <Divider sx={{ m: 0 }} />
-          <List
+          <Box
             sx={{
               width: "100%",
               bgcolor: "background.paper",
               borderRadius: 1,
-              height: open ? { xs: "60vh", sm: "70vh" } : "30vh",
+              height: open
+                ? { xs: "60vh", sm: "70vh" }
+                : nameList.length > 0
+                ? nameList.length >= 3
+                  ? "15vh"
+                  : "25vh"
+                : "50vh",
               transition: "height 0.5s",
               overflow: "auto",
             }}
@@ -248,7 +252,7 @@ const ReviewStepper = ({
                 nameList={nameList}
               />
             ))}
-          </List>
+          </Box>
         </Paper>
       </Box>
 
@@ -257,17 +261,17 @@ const ReviewStepper = ({
           <Paper
             component="form"
             sx={{
-              height: "82px",
               p: "2px 4px",
               display: "flex",
               alignItems: "center",
+
               "&::-webkit-scrollbar": {
                 width: "12px",
                 backgroundColor: "lightgray",
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "gray", // 스크롤바 색상
-                borderRadius: "20px", // 스크롤바 모양
+                backgroundColor: "gray",
+                borderRadius: "20px",
               },
             }}
           >

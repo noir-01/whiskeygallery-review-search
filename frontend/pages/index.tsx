@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Fab, Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Fab, Grid, useMediaQuery, useTheme } from "@mui/material";
 import {
   BorderColor as BorderColorIcon,
   Search as SearchIcon,
@@ -48,23 +48,44 @@ export default function Home() {
 
       {isMobile && (
         <Fab
+          size="small"
+          variant="extended"
           onClick={() => setIsSearchBox(!isSearchBox)}
           sx={{
             position: "fixed",
-            bottom: "30px",
+            top: "16px",
+            right: "20px",
             backgroundColor: "#F2EDD7",
             ":hover": { backgroundColor: "#F2EDD7" },
           }}
         >
-          {isSearchBox ? (
-            <BorderColorIcon
-              sx={{ display: "block", fontSize: "20px", color: "#755139" }}
-            />
-          ) : (
-            <SearchIcon
-              sx={{ display: "block", fontSize: "28px", color: "#755139" }}
-            />
-          )}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 0.5,
+              fontSize: "12px",
+              fontWeight: 700,
+              alignItems: "center",
+              color: "#755139",
+              svg: {
+                display: "block",
+                fontSize: "16px",
+                color: "#755139",
+              },
+            }}
+          >
+            {isSearchBox ? (
+              <>
+                <BorderColorIcon />
+                리뷰 작성하기
+              </>
+            ) : (
+              <>
+                <SearchIcon />
+                리뷰 검색하기
+              </>
+            )}
+          </Box>
         </Fab>
       )}
     </Grid>
