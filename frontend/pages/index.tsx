@@ -5,8 +5,8 @@ import { Fab, Grid, useMediaQuery, useTheme } from "@mui/material";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import SearchIcon from "@mui/icons-material/Search";
 
-import ReviewBox from "@/components/ReviewBox";
-import SearchBox from "@/components/SearchBox";
+import ReviewBox from "@/components/organisms/ReviewBox";
+import SearchBox from "@/components/organisms/SearchBox";
 
 export default function Home() {
   const theme = useTheme();

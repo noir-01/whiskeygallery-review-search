@@ -8,12 +8,11 @@ import {
   Divider,
   InputBase,
   Paper,
-  StepIcon,
   Typography,
 } from "@mui/material";
 
-import ReviewStepper from "./organisms/ReviewStepper";
-import Result from "./result";
+import ReviewStepper from "./ReviewStepper";
+import Result from "./Result";
 
 interface ReviewType {
   elementList: { name: string; value: number }[];

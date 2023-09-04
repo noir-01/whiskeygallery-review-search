@@ -6,8 +6,9 @@ import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
 import DownloadIcon from "@mui/icons-material/Download";
 import LocalBarIcon from "@mui/icons-material/LocalBar";
-import ElementChart from "./molecules/ElementChart";
+import ElementChart from "../molecules/ElementChart";
 import html2canvas from "html2canvas";
+import { Fragment } from "react";
 
 interface ReviewType {
   elementList: { name: string; value: number }[];
@@ -15,7 +16,7 @@ interface ReviewType {
   score: string;
 }
 
-export default function Result({
+const Result = ({
   handleReset,
   handleBack,
   firstStepReview,
@@ -33,7 +34,7 @@ export default function Result({
   whiskey: string;
   abv: string;
   wbCode: string;
-}) {
+}) => {
   const getNameList = (review: ReviewType) => {
     return review.elementList.map((element) => element.name);
   };
@@ -60,6 +61,15 @@ export default function Result({
     link.href = canvas.toDataURL("image/png");
     link.download = `${todayDate()}_${whiskey}.png`;
     link.click();
+  };
+
+  const changeFormattedText = (multiLineText: string) => {
+    return multiLineText.split("\n").map((line, index) => (
+      <Fragment key={index}>
+        {line}
+        {index !== multiLineText.length - 1 && <br />}{" "}
+      </Fragment>
+    ));
   };
 
   return (
@@ -151,7 +161,7 @@ export default function Result({
                 </Typography>
               </Box>
               <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                {firstStepReview.comment}
+                {changeFormattedText(firstStepReview.comment)}
               </Box>
             </Paper>
           </Grid>
@@ -187,7 +197,7 @@ export default function Result({
                 </Typography>
               </Box>
               <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                {secondStepReview.comment}
+                {changeFormattedText(secondStepReview.comment)}
               </Box>
             </Paper>
           </Grid>
@@ -223,7 +233,7 @@ export default function Result({
                 </Typography>
               </Box>
               <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                {thridStepReview.comment}
+                {changeFormattedText(thridStepReview.comment)}
               </Box>
             </Paper>
           </Grid>
@@ -262,4 +272,6 @@ export default function Result({
       </Box>
     </Box>
   );
-}
+};
+
+export default Result;
