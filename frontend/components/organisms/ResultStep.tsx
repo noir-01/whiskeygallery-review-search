@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import html2canvas from "html2canvas";
 import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@mui/icons-material";
 
 import ElementChart from "@/components/molecules/ElementChart";
+import ResetCheckDialog from "@/components/molecules/ResetCheckDialog";
 import type { ResultStepProps, ReviewType } from "@/types/review";
 
 const ResultStep = ({
@@ -23,6 +24,8 @@ const ResultStep = ({
   handleBack,
   handleReset,
 }: ResultStepProps) => {
+  const [isOpenResetCheckDialog, setIsOpenResetCheckDialog] = useState(false);
+
   const getNameList = (review: ReviewType) => {
     return review.elementList.map((element) => element.name);
   };
@@ -68,7 +71,7 @@ const ResultStep = ({
     {
       label: "Reset",
       icon: <RestartAltRoundedIcon />,
-      onClick: handleReset,
+      onClick: () => setIsOpenResetCheckDialog(true),
     },
     {
       label: "Download",
@@ -268,6 +271,13 @@ const ResultStep = ({
             {label}
           </Button>
         ))}
+        {isOpenResetCheckDialog && (
+          <ResetCheckDialog
+            open={isOpenResetCheckDialog}
+            onClose={() => setIsOpenResetCheckDialog(false)}
+            onClick={handleReset}
+          />
+        )}
       </Box>
     </Box>
   );
