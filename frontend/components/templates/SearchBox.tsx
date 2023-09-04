@@ -1,4 +1,5 @@
 import { useState, KeyboardEvent } from "react";
+import { useSnackbar } from "notistack";
 import {
   Box,
   Button,
@@ -23,6 +24,8 @@ import DropDownOption from "@/components/atoms/DropDownOption";
 import type { SearchType, SortOptionType } from "@/types/search";
 
 const SearchBox = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -47,6 +50,13 @@ const SearchBox = () => {
 
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
+      if (searchQuery.trim() === "") {
+        enqueueSnackbar("검색어를 입력하세요.", {
+          variant: "error",
+          autoHideDuration: 2000,
+        });
+        return;
+      }
       e.preventDefault();
       const target = e.target as HTMLInputElement;
       target.blur();
@@ -56,6 +66,22 @@ const SearchBox = () => {
       setDisplayedPost(20);
       refetch();
     }
+  };
+
+  const onClickSearchIcon = () => {
+    if (searchQuery.trim() === "") {
+      enqueueSnackbar("검색어를 입력하세요.", {
+        variant: "error",
+        autoHideDuration: 2000,
+      });
+      return;
+    }
+    setSearchQuery(searchInput);
+    setSearchOptionA1(searchInput);
+    setDisplayedPost(20);
+    setHasMoreData(true);
+    refetch();
+    setIsOpenSearchTools(false);
   };
 
   const convertMilliToDay = (date: number) => {
@@ -68,9 +94,6 @@ const SearchBox = () => {
   };
 
   const getData = async (): Promise<SearchType[]> => {
-    // const value = await fetch(
-    //   `https://localhost:8000/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=`
-    // );
     const value = await fetch(
       `https://whiskeyreview.ddns.net:444${
         isOtherSearch ? "/other" : ""
@@ -151,14 +174,7 @@ const SearchBox = () => {
                   type="button"
                   sx={{ p: "8px" }}
                   aria-label="search"
-                  onClick={() => {
-                    setSearchQuery(searchInput);
-                    setSearchOptionA1(searchInput);
-                    setDisplayedPost(20);
-                    setHasMoreData(true);
-                    refetch();
-                    setIsOpenSearchTools(false);
-                  }}
+                  onClick={onClickSearchIcon}
                 >
                   <SearchIcon />
                 </IconButton>
