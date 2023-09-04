@@ -34,16 +34,21 @@ const ReviewBox = () => {
 
   const isStepSkipped = (step: number) => skipped.has(step);
 
-  const handleNext = () => {
-    let newSkipped = skipped;
-
+  const isWhiskeyEmpty = () => {
     if (!whiskey) {
       enqueueSnackbar("위스키 이름을 입력하세요.", {
         variant: "error",
         autoHideDuration: 2000,
       });
-      return;
+      return true;
     }
+    return false;
+  };
+
+  const handleNext = () => {
+    let newSkipped = skipped;
+
+    if (isWhiskeyEmpty()) return;
 
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
@@ -67,7 +72,7 @@ const ReviewBox = () => {
     setAbv("");
     setWbCode("");
     enqueueSnackbar("리셋되었습니다.", {
-      variant: "info",
+      variant: "success",
       autoHideDuration: 2000,
     });
   };
@@ -106,7 +111,7 @@ const ReviewBox = () => {
               p: "0 4px",
               display: "flex",
               alignItems: "center",
-              my: 2,
+              my: 1.5,
               flex: 1,
             }}
           >
@@ -131,24 +136,30 @@ const ReviewBox = () => {
               sx={{ ml: 1, flex: 1 }}
             />
           </Paper>
-          <Stepper activeStep={activeStep}>
+
+          <Stepper activeStep={activeStep} sx={{ mb: 1.5 }}>
             {steps.map((label, index) => {
               const stepProps: { completed?: boolean } = {};
-              if (isStepSkipped(index)) {
-                stepProps.completed = false;
-              }
+              if (isStepSkipped(index)) stepProps.completed = false;
+
               return (
-                <Step
-                  key={label}
-                  {...stepProps}
-                  sx={{
-                    circle: { color: "#755139", opacity: 0.3 },
-                    path: { color: "#755139" },
-                  }}
-                >
+                <Step key={label} {...stepProps}>
                   <StepLabel
-                    onClick={(_) => setActiveStep(index)}
-                    sx={{ cursor: "pointer" }}
+                    onClick={(_) => {
+                      if (isWhiskeyEmpty()) return;
+                      setActiveStep(index);
+                    }}
+                    sx={{
+                      cursor: "pointer",
+                      circle: {
+                        color: "#755139",
+                        opacity: activeStep === index ? 1 : 0.4,
+                      },
+                      path: {
+                        color: "#755139",
+                        opacity: activeStep === index ? 1 : 0.4,
+                      },
+                    }}
                   >
                     {label}
                   </StepLabel>
@@ -157,7 +168,7 @@ const ReviewBox = () => {
             })}
           </Stepper>
 
-          <Box sx={{ display: "flex", flexDirection: "row", my: 2, gap: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "row", mb: 1.5, gap: 1 }}>
             <Button
               size="small"
               color="inherit"
