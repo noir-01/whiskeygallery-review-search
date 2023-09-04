@@ -1,25 +1,19 @@
 import { useEffect, useMemo } from "react";
 import {
-  RadarController,
   BarController,
-  RadialLinearScale,
-  LinearScale,
-  LineElement,
   BarElement,
-  PointElement,
-  Chart,
   CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  RadarController,
+  RadialLinearScale,
 } from "chart.js";
 
-const ElementChart = ({
-  id,
-  nameList,
-  valueList,
-}: {
-  id: string;
-  nameList: string[];
-  valueList: number[];
-}) => {
+import type { ElementChartProps } from "@/types/review";
+
+const ElementChart = ({ id, nameList, valueList }: ElementChartProps) => {
   const isBarType = useMemo(() => {
     return nameList.length < 3;
   }, [nameList.length]);
@@ -35,6 +29,7 @@ const ElementChart = ({
       PointElement,
       CategoryScale
     );
+
     var myChart = new Chart(id, {
       type: isBarType ? "bar" : "radar",
       data: {
@@ -69,8 +64,10 @@ const ElementChart = ({
         },
       },
     });
+
     return () => myChart.destroy();
   }, [id, isBarType, nameList, valueList]);
+
   return <canvas id={id}></canvas>;
 };
 export default ElementChart;

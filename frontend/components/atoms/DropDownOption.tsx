@@ -6,9 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 
-type DropDownOptionProps = SelectProps & {
-  optionList: { value: string; content: string }[];
-};
+import type { DropDownOptionProps } from "@/types/review";
 
 const DropDownOption = ({
   optionList,

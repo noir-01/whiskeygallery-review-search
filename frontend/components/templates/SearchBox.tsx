@@ -18,8 +18,9 @@ import {
 } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 
-import CustomLoading from "../atoms/CustomLoading";
-import DropDownOption from "../atoms/DropDownOption";
+import CustomLoading from "@/components/atoms/CustomLoading";
+import DropDownOption from "@/components/atoms/DropDownOption";
+import type { SearchType, SortOptionType } from "@/types/search";
 
 const SearchBox = () => {
   const [searchInput, setSearchInput] = useState("");

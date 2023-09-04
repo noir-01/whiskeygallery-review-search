@@ -12,12 +12,7 @@ const CustomLoading = ({ isLoading }: { isLoading: boolean }) => (
       },
     }}
   >
-    <CircularProgress
-      variant="indeterminate"
-      //   sx={{ animationDuration: "800ms" }}
-      size={40}
-      thickness={4}
-    />
+    <CircularProgress variant="indeterminate" size={40} thickness={4} />
   </Dialog>
 );
 

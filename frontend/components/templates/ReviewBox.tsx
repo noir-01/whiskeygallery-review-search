@@ -1,18 +1,18 @@
 import { useState } from "react";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
 import {
   Box,
   Button,
   Divider,
   InputBase,
   Paper,
+  Step,
+  StepLabel,
+  Stepper,
   Typography,
 } from "@mui/material";
 
-import ReviewStepper from "./ReviewStepper";
-import Result from "./Result";
+import ResultStep from "../organisms/ResultStep";
+import ReviewStepper from "../organisms/ReviewStepper";
 
 interface ReviewType {
   elementList: { name: string; value: number }[];
@@ -78,7 +78,7 @@ const ReviewBox = () => {
         리뷰 작성하기
       </Typography>
       {activeStep === 3 ? (
-        <Result
+        <ResultStep
           handleReset={handleReset}
           handleBack={handleBack}
           firstStepReview={firstStepReview}
@@ -132,7 +132,7 @@ const ReviewBox = () => {
                   key={label}
                   {...stepProps}
                   sx={{
-                    circle: { color: "#755139" },
+                    circle: { color: "#755139", opacity: 0.7 },
                     path: { color: "#755139" },
                   }}
                 >
