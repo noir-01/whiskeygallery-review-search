@@ -1,40 +1,28 @@
-import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
-
-import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
-import LiquorIcon from "@mui/icons-material/Liquor";
-import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
-import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
-import DownloadIcon from "@mui/icons-material/Download";
-import LocalBarIcon from "@mui/icons-material/LocalBar";
-import ElementChart from "../molecules/ElementChart";
-import html2canvas from "html2canvas";
 import { Fragment } from "react";
+import html2canvas from "html2canvas";
+import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
+import {
+  Download as DownloadIcon,
+  KeyboardReturnRounded as KeyboardReturnRoundedIcon,
+  Liquor as LiquorIcon,
+  LocalBar as LocalBarIcon,
+  RestartAltRounded as RestartAltRoundedIcon,
+  TaskAltRounded as TaskAltRoundedIcon,
+} from "@mui/icons-material";
 
-interface ReviewType {
-  elementList: { name: string; value: number }[];
-  comment: string;
-  score: string;
-}
+import ElementChart from "@/components/molecules/ElementChart";
+import type { ResultStepProps, ReviewType } from "@/types/review";
 
-const Result = ({
-  handleReset,
-  handleBack,
+const ResultStep = ({
+  abv,
   firstStepReview,
   secondStepReview,
   thridStepReview,
-  whiskey,
-  abv,
   wbCode,
-}: {
-  handleReset: () => void;
-  handleBack: () => void;
-  firstStepReview: ReviewType;
-  secondStepReview: ReviewType;
-  thridStepReview: ReviewType;
-  whiskey: string;
-  abv: string;
-  wbCode: string;
-}) => {
+  whiskey,
+  handleBack,
+  handleReset,
+}: ResultStepProps) => {
   const getNameList = (review: ReviewType) => {
     return review.elementList.map((element) => element.name);
   };
@@ -63,14 +51,31 @@ const Result = ({
     link.click();
   };
 
-  const changeFormattedText = (multiLineText: string) => {
-    return multiLineText.split("\n").map((line, index) => (
+  const changeFormattedText = (multiLineText: string) =>
+    multiLineText.split("\n").map((line, index) => (
       <Fragment key={index}>
         {line}
         {index !== multiLineText.length - 1 && <br />}{" "}
       </Fragment>
     ));
-  };
+
+  const buttonList = [
+    {
+      label: "Back",
+      icon: <KeyboardReturnRoundedIcon />,
+      onClick: handleBack,
+    },
+    {
+      label: "Reset",
+      icon: <RestartAltRoundedIcon />,
+      onClick: handleReset,
+    },
+    {
+      label: "Download",
+      icon: <DownloadIcon />,
+      onClick: handleClickDownload,
+    },
+  ];
 
   return (
     <Box sx={{ mb: 14 }}>
@@ -248,30 +253,24 @@ const Result = ({
           mb: 5,
         }}
       >
-        <Button
-          onClick={handleBack}
-          sx={{ color: "#755139", fontWeight: 700, textTransform: "none" }}
-        >
-          <KeyboardReturnRoundedIcon sx={{ mr: 0.5 }} />
-          Back
-        </Button>
-        <Button
-          onClick={handleReset}
-          sx={{ color: "#755139", fontWeight: 700, textTransform: "none" }}
-        >
-          <RestartAltRoundedIcon sx={{ mr: 0.5 }} />
-          Reset
-        </Button>
-        <Button
-          onClick={handleClickDownload}
-          sx={{ color: "#755139", fontWeight: 700, textTransform: "none" }}
-        >
-          <DownloadIcon sx={{ mr: 0.5 }} />
-          Download
-        </Button>
+        {buttonList.map(({ label, icon, onClick }) => (
+          <Button
+            key={label}
+            onClick={onClick}
+            sx={{
+              color: "#755139",
+              fontWeight: 700,
+              textTransform: "none",
+              svg: { mr: 0.5 },
+            }}
+          >
+            {icon}
+            {label}
+          </Button>
+        ))}
       </Box>
     </Box>
   );
 };
 
-export default Result;
+export default ResultStep;
