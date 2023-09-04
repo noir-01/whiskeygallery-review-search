@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  ArrowDropUp as ArrowDropUpIcon,
   HighlightOff as HighlightOffIcon,
   LibraryAdd as LibraryAddIcon,
   Search as SearchIcon,
@@ -50,6 +51,9 @@ const SearchBox = () => {
 
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
+      setSearchQuery(searchInput);
+      setSearchOptionA1(searchInput);
+
       if (searchQuery.trim() === "") {
         enqueueSnackbar("검색어를 입력하세요.", {
           variant: "error",
@@ -60,8 +64,6 @@ const SearchBox = () => {
       e.preventDefault();
       const target = e.target as HTMLInputElement;
       target.blur();
-      setSearchQuery(searchInput);
-      setSearchOptionA1(searchInput);
       setHasMoreData(false);
       setDisplayedPost(20);
       refetch();
@@ -69,6 +71,9 @@ const SearchBox = () => {
   };
 
   const onClickSearchIcon = () => {
+    setSearchQuery(searchInput);
+    setSearchOptionA1(searchInput);
+
     if (searchQuery.trim() === "") {
       enqueueSnackbar("검색어를 입력하세요.", {
         variant: "error",
@@ -76,8 +81,6 @@ const SearchBox = () => {
       });
       return;
     }
-    setSearchQuery(searchInput);
-    setSearchOptionA1(searchInput);
     setDisplayedPost(20);
     setHasMoreData(true);
     refetch();
@@ -147,7 +150,7 @@ const SearchBox = () => {
                   disabled={isOpenSearchTools}
                   type="search"
                   placeholder="리뷰를 검색하세요."
-                  sx={{ flex: 1 }}
+                  sx={{ flex: 1, opacity: isOpenSearchTools ? 0 : 1 }}
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyPress={enterKeyEventOnSearch}
@@ -160,15 +163,14 @@ const SearchBox = () => {
                     if (!isOpenSearchTools) setSearchOptionA1(searchInput);
                     else {
                       setSearchInput(searchOptionA1);
-                      setSearchOptionA2("");
-                      setSearchOptionA3("");
-                      setSearchOptionO1("");
-                      setSearchOptionO2("");
-                      setSearchOptionO3("");
                     }
                   }}
                 >
-                  <TuneIcon />
+                  {isOpenSearchTools ? (
+                    <ArrowDropUpIcon fontSize="medium" />
+                  ) : (
+                    <TuneIcon />
+                  )}
                 </IconButton>
                 <IconButton
                   type="button"
@@ -212,9 +214,7 @@ const SearchBox = () => {
                   <InputBase
                     type="search"
                     placeholder="option1"
-                    sx={{
-                      flexBasis: "30%",
-                    }}
+                    sx={{ flexBasis: "30%" }}
                     value={searchOptionA1}
                     onChange={(e) => setSearchOptionA1(e.target.value)}
                   />

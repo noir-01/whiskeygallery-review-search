@@ -17,9 +17,7 @@ const ElementPartBox = ({
       mb: "8px",
     }}
   >
-    <Typography
-      sx={{ fontSize: { xs: "12px", sm: "16px" }, fontWeight: 700, pl: 1 }}
-    >
+    <Typography sx={{ fontSize: "12px", fontWeight: 700, pl: 1 }}>
       {title}
     </Typography>
     <List

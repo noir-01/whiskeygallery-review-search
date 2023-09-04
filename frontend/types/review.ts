@@ -48,3 +48,9 @@ export interface ReviewStepperProps {
   review: ReviewType;
   handleUpdateReview: (step: number, review: ReviewType) => void;
 }
+
+export interface ResetCheckDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onClick: () => void;
+}

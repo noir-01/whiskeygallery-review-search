@@ -1,6 +1,6 @@
 const getElementList = [
   {
-    title: "이탄(피트",
+    title: "이탄(피트)",
     values: [
       "요오드",
       "병원 소독약",
