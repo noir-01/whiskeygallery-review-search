@@ -9,50 +9,40 @@ import {
   ListItemButton,
   Paper,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import TuneIcon from "@mui/icons-material/Tune";
-
+import {
+  HighlightOff as HighlightOffIcon,
+  LibraryAdd as LibraryAddIcon,
+  Search as SearchIcon,
+  Tune as TuneIcon,
+} from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 
-interface searchType {
-  id: number;
-  recommend: number;
-  reply: number;
-  time: number;
-  title: string;
-  url: string;
-}
+import CustomLoading from "./atoms/CustomLoading";
+import DropDownOption from "./atoms/DropDownOption";
 
 const SearchBox = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResult, setSearchResult] = useState<searchType[]>([]);
 
   const [focusPostId, setFocusPostId] = useState(0);
   const [focusPostTitle, setFocusPostTitle] = useState("");
   const [focusPostLink, setFocusPostLink] = useState("");
+
   const [displayedPost, setDisplayedPost] = useState(20);
   const [hasMoreData, setHasMoreData] = useState(true);
 
-  const [isOpenSearchTools, setIsSearchTools] = useState(false);
+  const [isOpenSearchTools, setIsOpenSearchTools] = useState(true);
   const [searchOptionA1, setSearchOptionA1] = useState("");
   const [searchOptionA2, setSearchOptionA2] = useState("");
   const [searchOptionA3, setSearchOptionA3] = useState("");
   const [searchOptionO1, setSearchOptionO1] = useState("");
   const [searchOptionO2, setSearchOptionO2] = useState("");
   const [searchOptionO3, setSearchOptionO3] = useState("");
-  const [onSearch, setOnSearch] = useState(false);
 
   const [isOtherSearch, setIsOtherSearch] = useState(false);
-  const [age, setAge] = useState(0);
+  const [age, setAge] = useState("");
+  const [sortOption, setSortOption] = useState<SortOptionType>("최신순");
 
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
@@ -61,51 +51,46 @@ const SearchBox = () => {
       target.blur();
       setSearchQuery(searchInput);
       setSearchOptionA1(searchInput);
-      setOnSearch(true);
-      setHasMoreData(true);
+      setHasMoreData(false);
       setDisplayedPost(20);
+      refetch();
     }
   };
 
   const convertMilliToDay = (date: number) => {
     const dateData = new Date(date);
-    if (isMobile)
-      return `${dateData.getFullYear().toString().slice(-2)}-${(
-        dateData.getMonth() + 1
-      )
-        .toString()
-        .padStart(2, "0")}-${dateData.getDate().toString().padStart(2, "0")}`;
-    else
-      return `${dateData.getFullYear()}-${(dateData.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}-${dateData.getDate().toString().padStart(2, "0")}`;
+    return `${dateData.getFullYear().toString().slice(-2)}-${(
+      dateData.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}-${dateData.getDate().toString().padStart(2, "0")}`;
   };
 
-  const getData = async (): Promise<searchType[]> => {
+  const getData = async (): Promise<SearchType[]> => {
     // const value = await fetch(
     //   `https://localhost:8000/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=`
     // );
     const value = await fetch(
       `https://whiskeyreview.ddns.net:444${
         isOtherSearch ? "/other" : ""
-      }/search/?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=${
-        age !== 0 ? `${age}` : ""
-      }`
+      }/search/\
+?aSearch1=${searchOptionA1}\&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}\
+&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}\
+&age=${age}`
     );
     return value.json();
   };
 
-  const { data, isFetching, refetch } = useQuery(
+  const { data, isFetching, isInitialLoading, refetch } = useQuery(
     ["search", searchQuery],
     async () => await getData(),
     {
-      enabled: onSearch,
+      enabled: searchQuery !== "",
       keepPreviousData: true,
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 60,
       onSuccess: (data) => {
-        if (data.length <= 20) setHasMoreData(false);
-        setSearchResult(data);
+        if (data.length > 20) setHasMoreData(true);
       },
     }
   );
@@ -118,6 +103,7 @@ const SearchBox = () => {
       >
         {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
       </Typography>
+      <CustomLoading isLoading={isFetching || isInitialLoading} />
       {!focusPostTitle && (
         <>
           <Box sx={{ mb: 2 }}>
@@ -146,7 +132,7 @@ const SearchBox = () => {
                   type="button"
                   sx={{ p: "8px" }}
                   onClick={() => {
-                    setIsSearchTools(!isOpenSearchTools);
+                    setIsOpenSearchTools(!isOpenSearchTools);
                     if (!isOpenSearchTools) setSearchOptionA1(searchInput);
                     else {
                       setSearchInput(searchOptionA1);
@@ -166,10 +152,11 @@ const SearchBox = () => {
                   aria-label="search"
                   onClick={() => {
                     setSearchQuery(searchInput);
-                    setOnSearch(true);
+                    setSearchOptionA1(searchInput);
                     setDisplayedPost(20);
                     setHasMoreData(true);
                     refetch();
+                    setIsOpenSearchTools(false);
                   }}
                 >
                   <SearchIcon />
@@ -300,15 +287,20 @@ const SearchBox = () => {
                     Age
                   </Box>
                   <InputBase
-                    type="number"
                     placeholder="age"
                     sx={{
                       flexBasis: "95%",
                     }}
                     value={age}
-                    onChange={(e) =>
-                      setAge(e.target.value as unknown as number)
-                    }
+                    onChange={(e) => {
+                      const regex = /\D/gi;
+                      const slicedValue = e.target.value.replaceAll(regex, "");
+                      if (slicedValue === "") setAge("");
+                      else {
+                        const numValue = Number(slicedValue) ?? 0;
+                        setAge(numValue < 0 ? "0" : `${numValue}`);
+                      }
+                    }}
                   />
                 </Box>
                 <Box sx={{ width: "100%", mb: 1 }}>
@@ -332,26 +324,31 @@ const SearchBox = () => {
               </Box>
             </Paper>
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {/* <Box
-                sx={{
-                  backgroundColor: "#755139",
-                  color: "white",
-                  borderRadius: 4,
-                  fontSize: "12px",
-                  px: 1,
-
-                }}
-              >
-                추천순
-              </Box> */}
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 700, textAlign: "end" }}
+          {data ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mx: { xs: 0.5, sm: 2 },
+              }}
             >
-              {data?.length ? ` 검색 결과 [${data?.length}개]` : ""}
-            </Typography>
-          </Box>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                {`검색 결과 [총 ${data?.length}개]`}
+              </Typography>
+              <DropDownOption
+                value={sortOption}
+                onChange={(e) =>
+                  setSortOption(e.target.value as SortOptionType)
+                }
+                optionList={[
+                  { value: "최신순", content: "최신순" },
+                  { value: "추천순", content: "추천순" },
+                  { value: "댓글순", content: "댓글순" },
+                ]}
+              />
+            </Box>
+          ) : null}
         </>
       )}
       {focusPostTitle && (
@@ -408,12 +405,12 @@ const SearchBox = () => {
           <iframe src={focusPostLink} width="100%" height="100%" />
         </Paper>
       )}
-      <Box>
+      {data ? (
         <Box
           sx={{
             backgroundColor: "white",
             borderRadius: 1.5,
-            width: { xs: "90vw", md: "42vw" },
+            width: { xs: "90vw", sm: "95vw", md: "42vw" },
             height: focusPostTitle
               ? { xs: "17vh", md: "20vh" }
               : { xs: "65vh", md: "78vh" },
@@ -461,10 +458,28 @@ const SearchBox = () => {
             }}
           >
             {data?.length !== 0 &&
-              searchResult
-                // ?.sort((a, b) => (a.recommend > b.recommend ? -1 : 1))
+              data
+                ?.sort((a, b) => {
+                  let A, B;
+                  switch (sortOption) {
+                    case "최신순":
+                      A = a.time;
+                      B = b.time;
+                      break;
+                    case "댓글순":
+                      A = a.reply;
+                      B = b.reply;
+                      break;
+                    case "추천순":
+                      A = a.recommend;
+                      B = b.recommend;
+                      break;
+                  }
+
+                  return A > B ? -1 : 1;
+                })
                 ?.slice(0, displayedPost)
-                .map((item: searchType) => (
+                .map((item: SearchType) => (
                   <Box key={item.id}>
                     <ListItemButton
                       title={item.title}
@@ -509,7 +524,11 @@ const SearchBox = () => {
                             {item.recommend}
                           </Typography>
                         </Grid>
-                        <Grid item xs={2} sx={{ whiteSpace: "nowrap" }}>
+                        <Grid
+                          item
+                          xs={2}
+                          sx={{ whiteSpace: "nowrap", textAlign: "center" }}
+                        >
                           <Typography variant="subtitle2">
                             {convertMilliToDay(item.time)}
                           </Typography>
@@ -544,7 +563,7 @@ const SearchBox = () => {
             {data && data.length === 0 && <Box>검색결과가 없습니다.</Box>}
           </Box>
         </Box>
-      </Box>
+      ) : null}
     </Box>
   );
 };
