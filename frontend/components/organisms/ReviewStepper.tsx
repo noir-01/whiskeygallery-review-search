@@ -1,47 +1,41 @@
 import { useMemo, useState } from "react";
 import {
   Box,
-  InputBase,
-  Paper,
-  Typography,
-  IconButton,
   Divider,
   Grid,
+  IconButton,
+  InputBase,
+  List,
+  Paper,
+  Typography,
 } from "@mui/material";
-import List from "@mui/material/List";
-import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
-import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import {
+  PlaylistAdd as PlaylistAddIcon,
+  UnfoldLess as UnfoldLessIcon,
+  UnfoldMore as UnfoldMoreIcon,
+} from "@mui/icons-material";
 
-import getDataList from "@/data/getDataList";
-import ReviewSlider from "../atoms/ReviewSlider";
-import DropDownList from "../molecules/DropDownList";
-import ElementChart from "../molecules/ElementChart";
-
-interface ReviewType {
-  elementList: { name: string; value: number }[];
-  comment: string;
-  score: string;
-}
+import ReviewSlider from "@/components/atoms/ReviewSlider";
+import ElementChart from "@/components/molecules/ElementChart";
+import ElementPartBox from "@/components/molecules/ElementPartBox";
+import getElementList from "@/data/getElementList";
+import type { ElemenetType, ReviewStepperProps } from "@/types/review";
 
 const ReviewStepper = ({
   step,
   review,
   handleUpdateReview,
-}: {
-  step: number;
-  review: ReviewType;
-  handleUpdateReview: (step: number, review: ReviewType) => void;
-}) => {
+}: ReviewStepperProps) => {
   const [open, setOpen] = useState(false);
-  const [elementList, setElementList] = useState<
-    { name: string; value: number }[]
-  >(review.elementList);
+  const [elementList, setElementList] = useState<ElemenetType[]>(
+    review.elementList
+  );
   const [comment, setComment] = useState<string>(review.comment);
   const [score, setScore] = useState<string>(review.score);
-  const [addElement, setAddElement] = useState<{ name: string; value: number }>(
-    { name: "", value: 3 }
-  );
+  const [addElement, setAddElement] = useState<ElemenetType>({
+    name: "",
+    value: 3,
+  });
 
   const nameList = useMemo(
     () => elementList.map((element) => element.name),
@@ -52,32 +46,23 @@ const ReviewStepper = ({
     [elementList]
   );
 
-  const {
-    getElList1,
-    getElList2,
-    getElList3,
-    getElList4,
-    getElList5,
-    getElList6,
-  } = getDataList();
-
   const handleDeleteElement = (value: string) => {
     const newList = elementList.filter((element) => element.name !== value);
     setElementList(newList);
   };
 
-  const handleClickElement = (name: string, value: number) => {
-    if (!nameList.includes(name) && elementList.length < 8) {
-      const newList = [...elementList, { name: name, value: value }];
+  const handleClickElement = (selectElement: ElemenetType) => {
+    if (!nameList.includes(selectElement.name) && elementList.length < 8) {
+      const newList = [...elementList, selectElement];
       setElementList(newList);
       handleUpdateReview(step, {
         ...review,
         elementList: newList,
       });
     }
-    if (nameList.includes(name)) {
+    if (nameList.includes(selectElement.name)) {
       const newList = elementList.filter((element) => {
-        return element.name !== name;
+        return element.name !== selectElement.name;
       });
       setElementList(newList);
       handleUpdateReview(step, {
@@ -97,10 +82,6 @@ const ReviewStepper = ({
       ...review,
       elementList: newList,
     });
-  };
-
-  const handleOpenElements = () => {
-    setOpen(!open);
   };
 
   return (
@@ -211,7 +192,7 @@ const ReviewStepper = ({
               <IconButton
                 onClick={() => {
                   if (addElement.name !== "") {
-                    handleClickElement(addElement.name, addElement.value);
+                    handleClickElement(addElement);
                     setAddElement({ name: "", value: 3 });
                   }
                 }}
@@ -237,7 +218,7 @@ const ReviewStepper = ({
               Element List
             </Typography>
             <IconButton
-              onClick={handleOpenElements}
+              onClick={() => setOpen(!open)}
               sx={{ width: "32px", height: "32px" }}
             >
               {open ? (
@@ -258,48 +239,15 @@ const ReviewStepper = ({
               overflow: "auto",
             }}
           >
-            <DropDownList
-              open={open}
-              title={"이탄(피트)"}
-              list={getElList1}
-              addElement={handleClickElement}
-              selectedList={elementList}
-            />
-            <DropDownList
-              open={open}
-              title={"과일"}
-              list={getElList2}
-              addElement={handleClickElement}
-              selectedList={elementList}
-            />
-            <DropDownList
-              open={open}
-              title={"유제품"}
-              list={getElList3}
-              addElement={handleClickElement}
-              selectedList={elementList}
-            />
-            <DropDownList
-              open={open}
-              title={"식물"}
-              list={getElList4}
-              addElement={handleClickElement}
-              selectedList={elementList}
-            />
-            <DropDownList
-              open={open}
-              title={"향신료"}
-              list={getElList5}
-              addElement={handleClickElement}
-              selectedList={elementList}
-            />
-            <DropDownList
-              open={open}
-              title={"기타"}
-              list={getElList6}
-              addElement={handleClickElement}
-              selectedList={elementList}
-            />
+            {getElementList.map(({ title, values }) => (
+              <ElementPartBox
+                key={title}
+                title={title}
+                list={values}
+                addElement={handleClickElement}
+                nameList={nameList}
+              />
+            ))}
           </List>
         </Paper>
       </Box>
