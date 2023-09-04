@@ -37,7 +37,7 @@ const SearchBox = () => {
   const [displayedPost, setDisplayedPost] = useState(20);
   const [hasMoreData, setHasMoreData] = useState(true);
 
-  const [isOpenSearchTools, setIsOpenSearchTools] = useState(true);
+  const [isOpenSearchTools, setIsOpenSearchTools] = useState(false);
   const [searchOptionA1, setSearchOptionA1] = useState("");
   const [searchOptionA2, setSearchOptionA2] = useState("");
   const [searchOptionA3, setSearchOptionA3] = useState("");
@@ -49,17 +49,33 @@ const SearchBox = () => {
   const [age, setAge] = useState("");
   const [sortOption, setSortOption] = useState<SortOptionType>("최신순");
 
+  const noticeRequiredInput = () => {
+    enqueueSnackbar("검색어를 입력하세요.", {
+      variant: "error",
+      autoHideDuration: 2000,
+    });
+  };
+
+  const checkIsEmptyInput = () =>
+    searchOptionA1 === "" &&
+    searchOptionA2 === "" &&
+    searchOptionA3 === "" &&
+    searchOptionO1 === "" &&
+    searchOptionO2 === "" &&
+    searchOptionO3 === "";
+
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
-      setSearchQuery(searchInput);
-      setSearchOptionA1(searchInput);
-
-      if (searchQuery.trim() === "") {
-        enqueueSnackbar("검색어를 입력하세요.", {
-          variant: "error",
-          autoHideDuration: 2000,
-        });
+      if (isOpenSearchTools && checkIsEmptyInput()) {
+        noticeRequiredInput();
         return;
+      } else {
+        if (searchInput.trim() === "") {
+          noticeRequiredInput();
+          return;
+        }
+        setSearchQuery(searchInput);
+        setSearchOptionA1(searchInput);
       }
       e.preventDefault();
       const target = e.target as HTMLInputElement;
@@ -71,20 +87,22 @@ const SearchBox = () => {
   };
 
   const onClickSearchIcon = () => {
-    setSearchQuery(searchInput);
-    setSearchOptionA1(searchInput);
-
-    if (searchQuery.trim() === "") {
-      enqueueSnackbar("검색어를 입력하세요.", {
-        variant: "error",
-        autoHideDuration: 2000,
-      });
-      return;
+    if (isOpenSearchTools) {
+      if (checkIsEmptyInput()) {
+        noticeRequiredInput();
+        return;
+      }
+    } else {
+      if (searchInput.trim() === "") {
+        noticeRequiredInput();
+        return;
+      }
+      setSearchQuery(searchInput);
+      setSearchOptionA1(searchInput);
     }
     setDisplayedPost(20);
-    setHasMoreData(true);
+    setHasMoreData(false);
     refetch();
-    setIsOpenSearchTools(false);
   };
 
   const convertMilliToDay = (date: number) => {
@@ -101,7 +119,7 @@ const SearchBox = () => {
       `https://whiskeyreview.ddns.net:444${
         isOtherSearch ? "/other" : ""
       }/search/\
-?aSearch1=${searchOptionA1}\&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}\
+?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}\
 &oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}\
 &age=${age}`
     );
@@ -119,14 +137,32 @@ const SearchBox = () => {
       onSuccess: (data) => {
         if (data.length > 20) setHasMoreData(true);
       },
+      onError: (err) => {
+        enqueueSnackbar(
+          `에러가 발생했습니다. 다시 시도해주세요. (error:${err})`,
+          { variant: "error", autoHideDuration: 2000 }
+        );
+      },
     }
   );
 
   return (
-    <Box sx={{ backgroundColor: "#F2EDD7", color: "black" }}>
+    <Box
+      sx={{
+        backgroundColor: "#F2EDD7",
+        color: "black",
+        mt: data ? 0 : isOpenSearchTools ? "30vh" : "40vh",
+        transition: ".5s",
+      }}
+    >
       <Typography
         variant="h5"
-        sx={{ fontWeight: 700, my: 2, color: "#755139" }}
+        sx={{
+          fontWeight: 700,
+          my: 2,
+          color: "#755139",
+          textAlign: data ? "left" : "center",
+        }}
       >
         {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
       </Typography>
@@ -137,12 +173,13 @@ const SearchBox = () => {
             <Paper
               component="form"
               sx={{
-                p: "0 4px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 px: 1,
                 width: { xs: "90vw", sm: "auto" },
+                position: "relative",
+                overflow: "hidden",
               }}
             >
               <Box sx={{ width: "100%", display: "flex" }}>
@@ -150,20 +187,30 @@ const SearchBox = () => {
                   disabled={isOpenSearchTools}
                   type="search"
                   placeholder="리뷰를 검색하세요."
-                  sx={{ flex: 1, opacity: isOpenSearchTools ? 0 : 1 }}
+                  sx={{
+                    flex: 1,
+                    opacity: isOpenSearchTools ? 0 : 1,
+                    height: isOpenSearchTools ? 0 : "40px",
+                    transition: ".5s",
+                    "input::-webkit-search-cancel-button": { display: "none" },
+                  }}
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyPress={enterKeyEventOnSearch}
                 />
                 <IconButton
                   type="button"
-                  sx={{ p: "8px" }}
+                  sx={{
+                    p: "8px",
+                    position: "absolute",
+                    top: isOpenSearchTools ? "-4px" : 0,
+                    right: isOpenSearchTools ? "-4px" : "40px",
+                    transition: ".5s",
+                  }}
                   onClick={() => {
                     setIsOpenSearchTools(!isOpenSearchTools);
                     if (!isOpenSearchTools) setSearchOptionA1(searchInput);
-                    else {
-                      setSearchInput(searchOptionA1);
-                    }
+                    else setSearchInput(searchOptionA1);
                   }}
                 >
                   {isOpenSearchTools ? (
@@ -172,14 +219,45 @@ const SearchBox = () => {
                     <TuneIcon />
                   )}
                 </IconButton>
-                <IconButton
-                  type="button"
-                  sx={{ p: "8px" }}
+                <Button
+                  size="small"
                   aria-label="search"
                   onClick={onClickSearchIcon}
+                  sx={{
+                    position: "absolute",
+                    top: isOpenSearchTools ? "132px" : "4px",
+                    right: isOpenSearchTools ? "8px" : "4px",
+                    minWidth: 0,
+                    bgcolor: isOpenSearchTools ? "#755139" : "transparent",
+                    color: isOpenSearchTools ? "white" : "gray",
+                    transition: ".7s",
+                    px: isOpenSearchTools ? 11 : 1,
+                    height: isOpenSearchTools ? "36px" : "32px",
+
+                    ":active": {
+                      bgcolor: isOpenSearchTools ? "#755139" : "transparent",
+                    },
+                    ":hover": {
+                      bgcolor: isOpenSearchTools ? "#755139" : "transparent",
+                    },
+                  }}
                 >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      transition: ".7s",
+                      overflow: "hidden",
+                      width: isOpenSearchTools ? "108px" : 0,
+                      whiteSpace: "nowrap",
+                      fontWeight: 700,
+                      color: "white",
+                      px: isOpenSearchTools ? 1 : 0,
+                    }}
+                  >
+                    상세 검색하기
+                  </Typography>
                   <SearchIcon />
-                </IconButton>
+                </Button>
               </Box>
               <Box
                 sx={{
@@ -193,7 +271,7 @@ const SearchBox = () => {
                     display: "flex",
                     width: "100%",
                     my: 1,
-                    gap: 1,
+                    gap: 0.5,
                   }}
                 >
                   <Box
@@ -205,8 +283,9 @@ const SearchBox = () => {
                       color: "white",
                       fontWeight: 700,
                       borderRadius: 2,
-                      width: "48px",
+                      width: "44px",
                       p: 0.5,
+                      mr: 0.5,
                     }}
                   >
                     AND
@@ -214,21 +293,21 @@ const SearchBox = () => {
                   <InputBase
                     type="search"
                     placeholder="option1"
-                    sx={{ flexBasis: "30%" }}
+                    sx={{ flexBasis: "25%" }}
                     value={searchOptionA1}
                     onChange={(e) => setSearchOptionA1(e.target.value)}
                   />
                   <InputBase
                     type="search"
                     placeholder="option2"
-                    sx={{ flexBasis: "30%" }}
+                    sx={{ flexBasis: "25%" }}
                     value={searchOptionA2}
                     onChange={(e) => setSearchOptionA2(e.target.value)}
                   />
                   <InputBase
                     type="search"
                     placeholder="option3"
-                    sx={{ flexBasis: "30%" }}
+                    sx={{ flexBasis: "25%" }}
                     value={searchOptionA3}
                     onChange={(e) => setSearchOptionA3(e.target.value)}
                   />
@@ -238,7 +317,7 @@ const SearchBox = () => {
                     display: "flex",
                     width: "100%",
                     my: 1,
-                    gap: 1,
+                    gap: 0.5,
                   }}
                 >
                   <Box
@@ -251,7 +330,8 @@ const SearchBox = () => {
                       fontWeight: 700,
                       borderRadius: 2,
                       p: 0.5,
-                      width: "48px",
+                      width: "44px",
+                      mr: 0.5,
                     }}
                   >
                     OR
@@ -260,7 +340,7 @@ const SearchBox = () => {
                     type="search"
                     placeholder="option1"
                     sx={{
-                      flexBasis: "30%",
+                      flexBasis: "25%",
                     }}
                     value={searchOptionO1}
                     onChange={(e) => setSearchOptionO1(e.target.value)}
@@ -268,14 +348,14 @@ const SearchBox = () => {
                   <InputBase
                     type="search"
                     placeholder="option2"
-                    sx={{ flexBasis: "30%" }}
+                    sx={{ flexBasis: "25%" }}
                     value={searchOptionO2}
                     onChange={(e) => setSearchOptionO2(e.target.value)}
                   />
                   <InputBase
                     type="search"
                     placeholder="option3"
-                    sx={{ flexBasis: "30%" }}
+                    sx={{ flexBasis: "25%" }}
                     value={searchOptionO3}
                     onChange={(e) => setSearchOptionO3(e.target.value)}
                   />
@@ -298,16 +378,13 @@ const SearchBox = () => {
                       fontWeight: 700,
                       borderRadius: 2,
                       p: 0.5,
-                      width: "48px",
+                      width: "44px",
                     }}
                   >
                     Age
                   </Box>
                   <InputBase
                     placeholder="age"
-                    sx={{
-                      flexBasis: "95%",
-                    }}
                     value={age}
                     onChange={(e) => {
                       const regex = /\D/gi;
@@ -318,24 +395,19 @@ const SearchBox = () => {
                         setAge(numValue < 0 ? "0" : `${numValue}`);
                       }
                     }}
+                    sx={{ flexBasis: "35%" }}
                   />
-                </Box>
-                <Box sx={{ width: "100%", mb: 1 }}>
                   <Button
                     variant="contained"
                     sx={{
-                      width: "100%",
+                      flex: 1,
                       bgcolor: "#755139",
                       ":active": { bgcolor: "#755139" },
                       ":hover": { bgcolor: "#755139" },
                     }}
-                    onClick={() => {
-                      setIsOtherSearch(!isOtherSearch);
-                    }}
+                    onClick={() => setIsOtherSearch(!isOtherSearch)}
                   >
-                    {isOtherSearch
-                      ? "리뷰 검색으로 바꾸기"
-                      : "기타 리뷰 검색으로 바꾸기"}
+                    {isOtherSearch ? "리뷰 검색기" : "기타 리뷰 검색기"}
                   </Button>
                 </Box>
               </Box>
@@ -422,6 +494,7 @@ const SearchBox = () => {
           <iframe src={focusPostLink} width="100%" height="100%" />
         </Paper>
       )}
+
       {data ? (
         <Box
           sx={{
@@ -429,7 +502,9 @@ const SearchBox = () => {
             borderRadius: 1.5,
             width: { xs: "90vw", sm: "95vw", md: "42vw" },
             height: focusPostTitle
-              ? { xs: "17vh", md: "20vh" }
+              ? { xs: "20vh", md: "20vh" }
+              : isOpenSearchTools
+              ? { xs: "50vh", md: "55vh" }
               : { xs: "65vh", md: "78vh" },
           }}
         >
@@ -437,7 +512,7 @@ const SearchBox = () => {
             container
             id="list label"
             sx={{
-              display: "flex",
+              display: focusPostTitle ? "none" : "flex",
               fontSize: "15px",
               fontWeight: 700,
               width: "100%",
@@ -459,18 +534,20 @@ const SearchBox = () => {
           <Box
             sx={{
               height: focusPostTitle
-                ? { xs: "13vh", md: "16vh" }
+                ? { xs: "18vh", md: "20vh" }
+                : isOpenSearchTools
+                ? { xs: "42vh", md: "48vh" }
                 : { xs: "60vh", md: "73vh" },
               overflow: "auto",
-              position: "relative",
-              p: "6px 6px 10px 12px",
+              p: "6px 6px 10px 6px",
+
               "&::-webkit-scrollbar": {
                 width: "6px",
                 backgroundColor: "lightgray",
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "gray", // 스크롤바 색상
-                borderRadius: "20px", // 스크롤바 모양
+                backgroundColor: "gray",
+                borderRadius: "20px",
               },
             }}
           >
