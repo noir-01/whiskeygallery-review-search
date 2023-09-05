@@ -1,4 +1,5 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import {
   Box,
@@ -26,6 +27,7 @@ import type { SearchType, SortOptionType } from "@/types/search";
 
 const SearchBox = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,16 +40,16 @@ const SearchBox = () => {
   const [hasMoreData, setHasMoreData] = useState(true);
 
   const [isOpenSearchTools, setIsOpenSearchTools] = useState(false);
-  const [searchOptionA1, setSearchOptionA1] = useState("");
-  const [searchOptionA2, setSearchOptionA2] = useState("");
-  const [searchOptionA3, setSearchOptionA3] = useState("");
-  const [searchOptionO1, setSearchOptionO1] = useState("");
-  const [searchOptionO2, setSearchOptionO2] = useState("");
-  const [searchOptionO3, setSearchOptionO3] = useState("");
-
   const [isOtherSearch, setIsOtherSearch] = useState(false);
   const [age, setAge] = useState("");
   const [sortOption, setSortOption] = useState<SortOptionType>("최신순");
+
+  const searchOptionA1 = useRef("");
+  const searchOptionA2 = useRef("");
+  const searchOptionA3 = useRef("");
+  const searchOptionO1 = useRef("");
+  const searchOptionO2 = useRef("");
+  const searchOptionO3 = useRef("");
 
   const noticeRequiredInput = () => {
     enqueueSnackbar("검색어를 입력하세요.", {
@@ -57,25 +59,27 @@ const SearchBox = () => {
   };
 
   const checkIsEmptyInput = () =>
-    searchOptionA1 === "" &&
-    searchOptionA2 === "" &&
-    searchOptionA3 === "" &&
-    searchOptionO1 === "" &&
-    searchOptionO2 === "" &&
-    searchOptionO3 === "";
+    searchOptionA1.current === "" &&
+    searchOptionA2.current === "" &&
+    searchOptionA3.current === "" &&
+    searchOptionO1.current === "" &&
+    searchOptionO2.current === "" &&
+    searchOptionO3.current === "";
 
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
-      if (isOpenSearchTools && checkIsEmptyInput()) {
-        noticeRequiredInput();
-        return;
+      if (isOpenSearchTools) {
+        if (checkIsEmptyInput()) {
+          noticeRequiredInput();
+          return;
+        }
       } else {
         if (searchInput.trim() === "") {
           noticeRequiredInput();
           return;
         }
         setSearchQuery(searchInput);
-        setSearchOptionA1(searchInput);
+        searchOptionA1.current = searchInput;
       }
       e.preventDefault();
       const target = e.target as HTMLInputElement;
@@ -98,7 +102,7 @@ const SearchBox = () => {
         return;
       }
       setSearchQuery(searchInput);
-      setSearchOptionA1(searchInput);
+      searchOptionA1.current = searchInput;
     }
     setDisplayedPost(20);
     setHasMoreData(false);
@@ -118,10 +122,13 @@ const SearchBox = () => {
     const value = await fetch(
       `https://whiskeyreview.ddns.net:444${
         isOtherSearch ? "/other" : ""
-      }/search/\
-?aSearch1=${searchOptionA1}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}\
-&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}\
-&age=${age}`
+      }/search/?aSearch1=${searchOptionA1.current}&aSearch2=${
+        searchOptionA2.current
+      }&aSearch3=${searchOptionA3.current}&oSearch1=${
+        searchOptionO1.current
+      }&oSearch2=${searchOptionO2.current}&oSearch3=${
+        searchOptionO3.current
+      }&age=${age}`
     );
     return value.json();
   };
@@ -146,12 +153,25 @@ const SearchBox = () => {
     }
   );
 
+  useEffect(() => {
+    if (!router.query?.iframe) {
+      setFocusPostTitle("");
+      setFocusPostLink("");
+      setFocusPostId(0);
+    }
+  }, [router.query]);
+
   return (
     <Box
       sx={{
         backgroundColor: "#F2EDD7",
-        color: "black",
-        mt: data ? 0 : isOpenSearchTools ? "30vh" : "40vh",
+        mt:
+          isFetching || isInitialLoading || data
+            ? 0
+            : isOpenSearchTools
+            ? "30vh"
+            : "40vh",
+        mb: data ? 0 : isOpenSearchTools ? "30vh" : "50vh",
         transition: ".5s",
       }}
     >
@@ -209,8 +229,9 @@ const SearchBox = () => {
                   }}
                   onClick={() => {
                     setIsOpenSearchTools(!isOpenSearchTools);
-                    if (!isOpenSearchTools) setSearchOptionA1(searchInput);
-                    else setSearchInput(searchOptionA1);
+                    if (!isOpenSearchTools)
+                      searchOptionA1.current = searchInput;
+                    else setSearchInput(searchOptionA1.current);
                   }}
                 >
                   {isOpenSearchTools ? (
@@ -226,13 +247,14 @@ const SearchBox = () => {
                   sx={{
                     position: "absolute",
                     top: isOpenSearchTools ? "132px" : "4px",
-                    right: isOpenSearchTools ? "8px" : "4px",
+                    right: isOpenSearchTools ? "8px" : "12px",
                     minWidth: 0,
                     bgcolor: isOpenSearchTools ? "#755139" : "transparent",
                     color: isOpenSearchTools ? "white" : "gray",
                     transition: ".7s",
                     px: isOpenSearchTools ? 11 : 1,
                     height: isOpenSearchTools ? "36px" : "32px",
+                    width: isOpenSearchTools ? "97%" : 0,
 
                     ":active": {
                       bgcolor: isOpenSearchTools ? "#755139" : "transparent",
@@ -247,7 +269,6 @@ const SearchBox = () => {
                     sx={{
                       transition: ".7s",
                       overflow: "hidden",
-                      width: isOpenSearchTools ? "108px" : 0,
                       whiteSpace: "nowrap",
                       fontWeight: 700,
                       color: "white",
@@ -294,22 +315,25 @@ const SearchBox = () => {
                     type="search"
                     placeholder="option1"
                     sx={{ flexBasis: "25%" }}
-                    value={searchOptionA1}
-                    onChange={(e) => setSearchOptionA1(e.target.value)}
+                    defaultValue={searchOptionA1.current}
+                    onChange={(e) => (searchOptionA1.current = e.target.value)}
+                    onKeyPress={enterKeyEventOnSearch}
                   />
                   <InputBase
                     type="search"
                     placeholder="option2"
                     sx={{ flexBasis: "25%" }}
-                    value={searchOptionA2}
-                    onChange={(e) => setSearchOptionA2(e.target.value)}
+                    defaultValue={searchOptionA2.current}
+                    onChange={(e) => (searchOptionA2.current = e.target.value)}
+                    onKeyPress={enterKeyEventOnSearch}
                   />
                   <InputBase
                     type="search"
                     placeholder="option3"
                     sx={{ flexBasis: "25%" }}
-                    value={searchOptionA3}
-                    onChange={(e) => setSearchOptionA3(e.target.value)}
+                    defaultValue={searchOptionA3.current}
+                    onChange={(e) => (searchOptionA3.current = e.target.value)}
+                    onKeyPress={enterKeyEventOnSearch}
                   />
                 </Box>
                 <Box
@@ -342,22 +366,25 @@ const SearchBox = () => {
                     sx={{
                       flexBasis: "25%",
                     }}
-                    value={searchOptionO1}
-                    onChange={(e) => setSearchOptionO1(e.target.value)}
+                    defaultValue={searchOptionO1.current}
+                    onChange={(e) => (searchOptionO1.current = e.target.value)}
+                    onKeyPress={enterKeyEventOnSearch}
                   />
                   <InputBase
                     type="search"
                     placeholder="option2"
                     sx={{ flexBasis: "25%" }}
-                    value={searchOptionO2}
-                    onChange={(e) => setSearchOptionO2(e.target.value)}
+                    defaultValue={searchOptionO2.current}
+                    onChange={(e) => (searchOptionO2.current = e.target.value)}
+                    onKeyPress={enterKeyEventOnSearch}
                   />
                   <InputBase
                     type="search"
                     placeholder="option3"
                     sx={{ flexBasis: "25%" }}
-                    value={searchOptionO3}
-                    onChange={(e) => setSearchOptionO3(e.target.value)}
+                    defaultValue={searchOptionO3.current}
+                    onChange={(e) => (searchOptionO3.current = e.target.value)}
+                    onKeyPress={enterKeyEventOnSearch}
                   />
                 </Box>
                 <Box
@@ -386,6 +413,7 @@ const SearchBox = () => {
                   <InputBase
                     placeholder="age"
                     value={age}
+                    onKeyPress={enterKeyEventOnSearch}
                     onChange={(e) => {
                       const regex = /\D/gi;
                       const slicedValue = e.target.value.replaceAll(regex, "");
@@ -485,6 +513,7 @@ const SearchBox = () => {
                   setFocusPostTitle("");
                   setFocusPostLink("");
                   setFocusPostId(0);
+                  router.push(`/`);
                 }}
               >
                 <HighlightOffIcon />
@@ -591,6 +620,8 @@ const SearchBox = () => {
                         setFocusPostTitle(item.title);
                         setFocusPostLink(item.url);
                         setFocusPostId(item.id);
+                        router.push(`/`);
+                        router.push(`/?iframe=${item.id}`);
                       }}
                     >
                       <Grid container>
