@@ -1,4 +1,5 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
+import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import {
   Box,
@@ -26,6 +27,7 @@ import type { SearchType, SortOptionType } from "@/types/search";
 
 const SearchBox = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -146,12 +148,25 @@ const SearchBox = () => {
     }
   );
 
+  useEffect(() => {
+    if (!router.query?.iframe) {
+      setFocusPostTitle("");
+      setFocusPostLink("");
+      setFocusPostId(0);
+    }
+  }, [router.query]);
+
   return (
     <Box
       sx={{
         backgroundColor: "#F2EDD7",
-        color: "black",
-        mt: data ? 0 : isOpenSearchTools ? "30vh" : "40vh",
+        mt:
+          isFetching || isInitialLoading || data
+            ? 0
+            : isOpenSearchTools
+            ? "30vh"
+            : "40vh",
+        mb: data ? 0 : isOpenSearchTools ? "30vh" : "50vh",
         transition: ".5s",
       }}
     >
@@ -226,13 +241,14 @@ const SearchBox = () => {
                   sx={{
                     position: "absolute",
                     top: isOpenSearchTools ? "132px" : "4px",
-                    right: isOpenSearchTools ? "8px" : "4px",
+                    right: isOpenSearchTools ? "8px" : "12px",
                     minWidth: 0,
                     bgcolor: isOpenSearchTools ? "#755139" : "transparent",
                     color: isOpenSearchTools ? "white" : "gray",
                     transition: ".7s",
                     px: isOpenSearchTools ? 11 : 1,
                     height: isOpenSearchTools ? "36px" : "32px",
+                    width: isOpenSearchTools ? "97%" : 0,
 
                     ":active": {
                       bgcolor: isOpenSearchTools ? "#755139" : "transparent",
@@ -247,7 +263,6 @@ const SearchBox = () => {
                     sx={{
                       transition: ".7s",
                       overflow: "hidden",
-                      width: isOpenSearchTools ? "108px" : 0,
                       whiteSpace: "nowrap",
                       fontWeight: 700,
                       color: "white",
@@ -485,6 +500,7 @@ const SearchBox = () => {
                   setFocusPostTitle("");
                   setFocusPostLink("");
                   setFocusPostId(0);
+                  router.push(`/`);
                 }}
               >
                 <HighlightOffIcon />
@@ -591,6 +607,8 @@ const SearchBox = () => {
                         setFocusPostTitle(item.title);
                         setFocusPostLink(item.url);
                         setFocusPostId(item.id);
+                        router.push(`/`);
+                        router.push(`/?iframe=${item.id}`);
                       }}
                     >
                       <Grid container>
