@@ -27,37 +27,6 @@ const App = (props: AppProps) => {
         <title>{meta.title}</title>
         <meta name="title" content={meta.title} key="title" />
         <meta name="description" content={meta.description} key="description" />
-        <meta name="theme-color" content="#755139" key="themeColor" />
-        <link rel="canonical" href={meta.url} />
-
-        <meta property="og:title" content={meta.title} key="og_title" />
-        <meta
-          property="og:description"
-          content={meta.description}
-          key="og_description"
-        />
-        <meta property="og:site_name" content={meta.title} key="og_site_name" />
-        <meta property="og:url" content={meta.url} key="og_url" />
-
-        <meta name="twitter:title" content={meta.title} key="twt_title" />
-        <meta
-          name="twitter:description"
-          content={meta.description}
-          key="twt_description"
-        />
-        <meta name="twitter:url" content={meta.url} key="twt_url" />
-
-        <meta
-          name="apple-mobile-web-app-title"
-          content={meta.title}
-          key="apple_mobile_title"
-        />
-
-        <meta
-          name="application-name"
-          content={meta.title}
-          key="application_name"
-        />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="referrer" content="no-referrer-when-downgrade" />

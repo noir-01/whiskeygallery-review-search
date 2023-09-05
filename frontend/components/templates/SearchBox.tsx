@@ -229,9 +229,7 @@ const SearchBox = () => {
                   }}
                   onClick={() => {
                     setIsOpenSearchTools(!isOpenSearchTools);
-                    if (!isOpenSearchTools)
-                      searchOptionA1.current = searchInput;
-                    else setSearchInput(searchOptionA1.current);
+                    setSearchInput(searchOptionA1.current);
                   }}
                 >
                   {isOpenSearchTools ? (
@@ -251,7 +249,7 @@ const SearchBox = () => {
                     minWidth: 0,
                     bgcolor: isOpenSearchTools ? "#755139" : "transparent",
                     color: isOpenSearchTools ? "white" : "gray",
-                    transition: ".7s",
+                    transition: ".5s",
                     px: isOpenSearchTools ? 11 : 1,
                     height: isOpenSearchTools ? "36px" : "32px",
                     width: isOpenSearchTools ? "97%" : 0,
@@ -267,7 +265,7 @@ const SearchBox = () => {
                   <Typography
                     variant="body1"
                     sx={{
-                      transition: ".7s",
+                      transition: ".5s",
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       fontWeight: 700,
