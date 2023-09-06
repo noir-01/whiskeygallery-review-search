@@ -16,7 +16,7 @@ def searchTitleInclude(andWord,orWord,age,isOther):
         with open(path + '/review_whiskey.json', 'r',encoding='utf8') as f:
             json_data = json.load(f)
     else:
-        with open(path + 'review_other_total.json', 'r',encoding='utf8') as f:
+        with open(path + '/review_other_total.json', 'r',encoding='utf8') as f:
             json_data = json.load(f)
 
     dataframe = pd.json_normalize(json_data)
