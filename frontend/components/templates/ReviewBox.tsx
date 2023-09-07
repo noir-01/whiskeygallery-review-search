@@ -115,7 +115,7 @@ const ReviewBox = () => {
                 if (e.target.value !== "")
                   updateWhiskey(
                     "abv",
-                    Number(Number(e.target.value).toFixed(2)).toString()
+                    Number(Number(e.target.value).toFixed(3)).toString()
                   );
               }}
               onChange={(e) => {
