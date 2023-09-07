@@ -147,7 +147,9 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
             }}
           >
             <Box sx={{ flex: 1 }}>{whiskey.name}</Box>
-            <Box sx={{ flex: 1 }}>{`${whiskey.abv}%`}</Box>
+            <Box sx={{ flex: 1 }}>{`${whiskey.abv}${
+              whiskey.abv !== "" ? "%" : ""
+            }`}</Box>
             <Box sx={{ flex: 1 }}>{whiskey.wbCode}</Box>
             {rating() !== 0 && <Box sx={{ flex: 1 }}>{rating()}</Box>}
           </Box>
