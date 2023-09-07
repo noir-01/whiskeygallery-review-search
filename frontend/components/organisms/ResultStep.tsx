@@ -136,7 +136,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
             <Box sx={{ flex: 1 }}>Whiskey</Box>
             <Box sx={{ flex: 1 }}>ABV</Box>
             <Box sx={{ flex: 1 }}>WB code</Box>
-            <Box sx={{ flex: 1 }}>Rating</Box>
+            {rating() !== 0 && <Box sx={{ flex: 1 }}>Rating</Box>}
           </Box>
           <Divider />
           <Box
@@ -147,9 +147,9 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
             }}
           >
             <Box sx={{ flex: 1 }}>{whiskey.name}</Box>
-            <Box sx={{ flex: 1 }}>{whiskey.abv}</Box>
+            <Box sx={{ flex: 1 }}>{`${whiskey.abv}%`}</Box>
             <Box sx={{ flex: 1 }}>{whiskey.wbCode}</Box>
-            <Box sx={{ flex: 1 }}>{rating()}</Box>
+            {rating() !== 0 && <Box sx={{ flex: 1 }}>{rating()}</Box>}
           </Box>
         </Paper>
 
