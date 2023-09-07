@@ -10,7 +10,7 @@ const App = (props: AppProps) => {
   const queryClient = new QueryClient();
   const meta = {
     description: "위스키 리뷰 검색 & 작성 사이트",
-    title: "Whiskey Gallery",
+    title: "위스키 리뷰 검색/작성기",
     url: "https://whiskeyreview.ddns.net",
     // image:"",
   };
