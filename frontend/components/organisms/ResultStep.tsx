@@ -13,35 +13,22 @@ import {
 
 import ElementChart from "@/components/molecules/ElementChart";
 import ResetCheckDialog from "@/components/molecules/ResetCheckDialog";
-import type { ResultStepProps, ReviewType } from "@/types/review";
+import { useReviewStore } from "@/store/MemoReview";
+import { useWhiskeyStore } from "@/store/MemoWhiskey";
+import type { ElementType, ResultStepProps } from "@/types/review";
+import formattedTodayDate from "@/utils/formattedTodayDate";
 
-const ResultStep = ({
-  abv,
-  firstStepReview,
-  secondStepReview,
-  thridStepReview,
-  wbCode,
-  whiskey,
-  handleBack,
-  handleReset,
-}: ResultStepProps) => {
+const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
+  const { reviewList } = useReviewStore();
+  const { whiskey } = useWhiskeyStore();
+
   const [isOpenResetCheckDialog, setIsOpenResetCheckDialog] = useState(false);
 
-  const getNameList = (review: ReviewType) => {
-    return review.elementList.map((element) => element.name);
-  };
-  const getValueList = (review: ReviewType) => {
-    return review.elementList.map((element) => element.value);
-  };
+  const getNameList = (elementList: ElementType[]) =>
+    elementList.map((element) => element.name);
 
-  const todayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
+  const getValueList = (elementList: ElementType[]) =>
+    elementList.map((element) => element.value);
 
   const handleClickDownload = async () => {
     const element = document.getElementById("your-component-id");
@@ -51,7 +38,7 @@ const ResultStep = ({
 
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = `${todayDate()}_${whiskey}.png`;
+    link.download = `${formattedTodayDate()}_${whiskey.name}.png`;
     link.click();
   };
 
@@ -62,6 +49,25 @@ const ResultStep = ({
         {index !== multiLineText.length - 1 && <br />}{" "}
       </Fragment>
     ));
+
+  const rating = () => {
+    const firstScore = Number(reviewList[0].score);
+    const secondScore = Number(reviewList[1].score);
+    const thirdScore = Number(reviewList[2].score);
+
+    let zeroCount = 0;
+    if (firstScore === 0) zeroCount++;
+    if (secondScore === 0) zeroCount++;
+    if (thirdScore === 0) zeroCount++;
+
+    if (zeroCount !== 3)
+      return (
+        (firstScore + secondScore + thirdScore) /
+        (3 - zeroCount)
+      ).toFixed(1);
+
+    return 0;
+  };
 
   const buttonList = [
     {
@@ -81,27 +87,8 @@ const ResultStep = ({
     },
   ];
 
-  const rating = () => {
-    const firstScore = Number(firstStepReview.score);
-    const secondScore = Number(secondStepReview.score);
-    const thirdScore = Number(thridStepReview.score);
-
-    let zeroCount = 0;
-    if (firstScore === 0) zeroCount++;
-    if (secondScore === 0) zeroCount++;
-    if (thirdScore === 0) zeroCount++;
-
-    if (zeroCount !== 3)
-      return (
-        (firstScore + secondScore + thirdScore) /
-        (3 - zeroCount)
-      ).toFixed(1);
-
-    return 0;
-  };
-
   return (
-    <Box sx={{ mb: 14 }}>
+    <Box>
       <Box
         id="your-component-id"
         sx={{
@@ -133,9 +120,10 @@ const ResultStep = ({
             }}
           >
             <DateRangeIcon sx={{ width: "20px" }} />
-            {todayDate()}
+            {formattedTodayDate()}
           </Box>
         </Box>
+
         <Paper sx={{ p: 1, mb: 1 }}>
           <Box
             sx={{
@@ -158,126 +146,62 @@ const ResultStep = ({
               fontWeight: "600",
             }}
           >
-            <Box sx={{ flex: 1 }}>{whiskey}</Box>
-            <Box sx={{ flex: 1 }}>{abv}</Box>
-            <Box sx={{ flex: 1 }}>{wbCode}</Box>
+            <Box sx={{ flex: 1 }}>{whiskey.name}</Box>
+            <Box sx={{ flex: 1 }}>{whiskey.abv}</Box>
+            <Box sx={{ flex: 1 }}>{whiskey.wbCode}</Box>
             <Box sx={{ flex: 1 }}>{rating()}</Box>
           </Box>
         </Paper>
+
         <Grid
           container
           rowSpacing={1}
           sx={{ justifyContent: "space-between", mb: 1 }}
         >
-          <Grid item xs={5.8} sm={4}>
-            <Paper sx={{ py: 1, height: "100%" }}>
-              <ElementChart
-                id="1"
-                nameList={getNameList(firstStepReview)}
-                valueList={getValueList(firstStepReview)}
-              />
-            </Paper>
-          </Grid>
-          <Grid item xs={6} sm={7.8}>
-            <Paper sx={{ p: 1, height: "100%" }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                  Nose
-                </Typography>
-                <Typography
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    fontWeight: 700,
-                  }}
-                >
-                  <TaskAltRoundedIcon
-                    color="action"
-                    sx={{ fontSize: "16px" }}
+          {[0, 1, 2].map((step: number) => (
+            <Fragment key={step}>
+              <Grid item xs={5.8} sm={4}>
+                <Paper sx={{ py: 1, height: "100%" }}>
+                  <ElementChart
+                    id={`${step}`}
+                    nameList={getNameList(reviewList[step].elementList)}
+                    valueList={getValueList(reviewList[step].elementList)}
                   />
-                  {firstStepReview.score}
-                </Typography>
-              </Box>
-              <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                {changeFormattedText(firstStepReview.comment)}
-              </Box>
-            </Paper>
-          </Grid>
-
-          <Grid item xs={5.8} sm={4}>
-            <Paper sx={{ py: 1, height: "100%" }}>
-              <ElementChart
-                id="2"
-                nameList={getNameList(secondStepReview)}
-                valueList={getValueList(secondStepReview)}
-              />
-            </Paper>
-          </Grid>
-          <Grid item xs={6} sm={7.8}>
-            <Paper sx={{ p: 1, height: "100%" }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                  Palate
-                </Typography>
-                <Typography
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    fontWeight: 700,
-                  }}
-                >
-                  <TaskAltRoundedIcon
-                    color="action"
-                    sx={{ fontSize: "16px" }}
-                  />
-                  {secondStepReview.score}
-                </Typography>
-              </Box>
-              <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                {changeFormattedText(secondStepReview.comment)}
-              </Box>
-            </Paper>
-          </Grid>
-
-          <Grid item xs={5.8} sm={4}>
-            <Paper sx={{ py: 1, height: "100%" }}>
-              <ElementChart
-                id="3"
-                nameList={getNameList(thridStepReview)}
-                valueList={getValueList(thridStepReview)}
-              />
-            </Paper>
-          </Grid>
-          <Grid item xs={6} sm={7.8}>
-            <Paper sx={{ p: 1, height: "100%" }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                  Finish
-                </Typography>
-                <Typography
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    fontWeight: 700,
-                  }}
-                >
-                  <TaskAltRoundedIcon
-                    color="action"
-                    sx={{ fontSize: "16px" }}
-                  />
-                  {thridStepReview.score}
-                </Typography>
-              </Box>
-              <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                {changeFormattedText(thridStepReview.comment)}
-              </Box>
-            </Paper>
-          </Grid>
+                </Paper>
+              </Grid>
+              <Grid item xs={6} sm={7.8}>
+                <Paper sx={{ p: 1, height: "100%" }}>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
+                      {["Nose", "Palate", "Finish"][step]}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.5,
+                        fontWeight: 700,
+                      }}
+                    >
+                      <TaskAltRoundedIcon
+                        color="action"
+                        sx={{ fontSize: "16px" }}
+                      />
+                      {reviewList[step].score}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
+                    {changeFormattedText(reviewList[step].comment)}
+                  </Box>
+                </Paper>
+              </Grid>
+            </Fragment>
+          ))}
         </Grid>
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -302,6 +226,7 @@ const ResultStep = ({
             {label}
           </Button>
         ))}
+
         {isOpenResetCheckDialog && (
           <ResetCheckDialog
             open={isOpenResetCheckDialog}
