@@ -29,9 +29,7 @@ export default function Home() {
         item
         xs={0}
         md={5}
-        sx={{
-          display: isMobile ? (isSearchBox ? "block" : "none") : "block",
-        }}
+        sx={{ display: isMobile && !isSearchBox ? "none" : "block" }}
       >
         <SearchBox />
       </Grid>
@@ -39,9 +37,7 @@ export default function Home() {
         item
         xs={11}
         md={5}
-        sx={{
-          display: isMobile ? (isSearchBox ? "none" : "block") : "block",
-        }}
+        sx={{ display: isMobile && isSearchBox ? "none" : "block" }}
       >
         <ReviewBox />
       </Grid>
@@ -56,6 +52,7 @@ export default function Home() {
             top: "16px",
             right: "20px",
             backgroundColor: "#F2EDD7",
+
             ":hover": { backgroundColor: "#F2EDD7" },
           }}
         >
@@ -67,24 +64,11 @@ export default function Home() {
               fontWeight: 700,
               alignItems: "center",
               color: "#755139",
-              svg: {
-                display: "block",
-                fontSize: "16px",
-                color: "#755139",
-              },
+              svg: { fontSize: "16px", color: "#755139" },
             }}
           >
-            {isSearchBox ? (
-              <>
-                <BorderColorIcon />
-                리뷰 작성하기
-              </>
-            ) : (
-              <>
-                <SearchIcon />
-                리뷰 검색하기
-              </>
-            )}
+            {isSearchBox ? <BorderColorIcon /> : <SearchIcon />}
+            {isSearchBox ? "리뷰 작성하기" : "리뷰 검색하기"}
           </Box>
         </Fab>
       )}

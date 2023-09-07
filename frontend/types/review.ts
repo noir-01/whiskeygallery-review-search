@@ -1,12 +1,6 @@
 import { SelectProps } from "@mui/material";
 
-export type ElemenetType = { name: string; value: number };
-
-export type ReviewType = {
-  elementList: ElemenetType[];
-  comment: string;
-  score: string;
-};
+export type ElementType = { name: string; value: number };
 
 export interface ReviewSliderProps {
   title: string;
@@ -23,7 +17,7 @@ export interface ElementPartBoxProps {
   title: string;
   nameList: string[];
   list: string[];
-  addElement: (selectElement: ElemenetType) => void;
+  addElement: (selectElement: ElementType) => void;
 }
 
 export interface ElementChartProps {
@@ -33,20 +27,8 @@ export interface ElementChartProps {
 }
 
 export interface ResultStepProps {
-  abv: string;
-  firstStepReview: ReviewType;
-  secondStepReview: ReviewType;
-  thridStepReview: ReviewType;
-  wbCode: string;
-  whiskey: string;
   handleBack: () => void;
   handleReset: () => void;
-}
-
-export interface ReviewStepperProps {
-  step: number;
-  review: ReviewType;
-  handleUpdateReview: (step: number, review: ReviewType) => void;
 }
 
 export interface ResetCheckDialogProps {
