@@ -90,6 +90,24 @@ const ReviewBox = () => {
             />
             <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <InputBase
+              placeholder="WB code"
+              type="number"
+              value={whiskey.wbCode}
+              onChange={(e) => updateWhiskey("wbCode", e.target.value)}
+              sx={{
+                ml: 1,
+                flex: 1,
+                fontSize: "14px",
+
+                "input[type=number]::-webkit-inner-spin-button, \
+              input[type=number]::-webkit-outer-spin-button": {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
+              }}
+            />
+            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            <InputBase
               type="number"
               placeholder="ABV (1~100)"
               value={whiskey.abv}
@@ -118,13 +136,6 @@ const ReviewBox = () => {
                   margin: 0,
                 },
               }}
-            />
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            <InputBase
-              placeholder="WB code"
-              value={whiskey.wbCode}
-              onChange={(e) => updateWhiskey("wbCode", e.target.value)}
-              sx={{ ml: 1, flex: 1, fontSize: "14px" }}
             />
           </Paper>
 
