@@ -83,24 +83,48 @@ const ReviewBox = () => {
             }}
           >
             <InputBase
-              placeholder="Whiskey"
+              placeholder="Whiskey name"
               value={whiskey.name}
               onChange={(e) => updateWhiskey("name", e.target.value)}
               sx={{ ml: 1, flex: 2 }}
             />
             <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <InputBase
-              placeholder="ABV"
+              type="number"
+              placeholder="ABV (1~100)"
               value={whiskey.abv}
-              onChange={(e) => updateWhiskey("abv", e.target.value)}
-              sx={{ ml: 1, flex: 1 }}
+              onBlur={(e) => {
+                if (e.target.value !== "")
+                  updateWhiskey(
+                    "abv",
+                    Number(e.target.value).toFixed(0).toString()
+                  );
+              }}
+              onChange={(e) => {
+                if (Number(e.target.value) > 99) updateWhiskey("abv", "100");
+                else if (Number(e.target.value) < 1) {
+                  if (e.target.value === "") updateWhiskey("abv", "");
+                  else updateWhiskey("abv", "1");
+                } else updateWhiskey("abv", e.target.value);
+              }}
+              sx={{
+                ml: 1,
+                flex: 1,
+                fontSize: "14px",
+
+                "input[type=number]::-webkit-inner-spin-button, \
+                input[type=number]::-webkit-outer-spin-button": {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
+              }}
             />
             <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <InputBase
               placeholder="WB code"
               value={whiskey.wbCode}
               onChange={(e) => updateWhiskey("wbCode", e.target.value)}
-              sx={{ ml: 1, flex: 1 }}
+              sx={{ ml: 1, flex: 1, fontSize: "14px" }}
             />
           </Paper>
 

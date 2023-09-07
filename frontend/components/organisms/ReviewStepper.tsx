@@ -142,15 +142,38 @@ const ReviewStepper = ({ step }: { step: number }) => {
         )}
 
         <Grid item xs={6.5}>
-          <Paper sx={{ px: 2, height: "100%" }}>
+          <Paper
+            sx={{
+              px: 2,
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <InputBase
               type="number"
-              placeholder="Total score"
+              placeholder="Total score (1 ~ 100)"
               value={reviewList[step].score}
-              onChange={(e) => updateReview("score", step, e.target.value)}
+              onBlur={(e) => {
+                if (e.target.value !== "")
+                  updateReview(
+                    "score",
+                    step,
+                    Number(e.target.value).toFixed(0).toString()
+                  );
+              }}
+              onChange={(e) => {
+                if (Number(e.target.value) > 99)
+                  updateReview("score", step, "100");
+                else if (Number(e.target.value) < 1) {
+                  if (e.target.value === "") updateReview("score", step, "");
+                  else updateReview("score", step, "1");
+                } else updateReview("score", step, e.target.value);
+              }}
               sx={{
                 width: "100%",
                 fontSize: { xs: "14px", sm: "18px" },
+
                 "input[type=number]::-webkit-inner-spin-button, \
                   input[type=number]::-webkit-outer-spin-button": {
                   WebkitAppearance: "none",
