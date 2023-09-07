@@ -5,7 +5,6 @@ import {
   Grid,
   IconButton,
   InputBase,
-  List,
   Paper,
   Typography,
 } from "@mui/material";
@@ -20,6 +19,7 @@ import ElementChart from "@/components/molecules/ElementChart";
 import ElementPartBox from "@/components/molecules/ElementPartBox";
 import getElementList from "@/data/getElementList";
 import type { ElemenetType, ReviewStepperProps } from "@/types/review";
+import { enqueueSnackbar } from "notistack";
 
 const ReviewStepper = ({
   step,
@@ -59,8 +59,7 @@ const ReviewStepper = ({
         ...review,
         elementList: newList,
       });
-    }
-    if (nameList.includes(selectElement.name)) {
+    } else if (nameList.includes(selectElement.name)) {
       const newList = elementList.filter((element) => {
         return element.name !== selectElement.name;
       });
@@ -68,6 +67,11 @@ const ReviewStepper = ({
       handleUpdateReview(step, {
         ...review,
         elementList: newList,
+      });
+    } else {
+      enqueueSnackbar(`최대 8개까지 선택이 가능합니다.`, {
+        variant: "error",
+        autoHideDuration: 2000,
       });
     }
   };
@@ -86,121 +90,135 @@ const ReviewStepper = ({
 
   return (
     <Box>
-      {!open && nameList.length > 0 && (
-        <Grid
-          container
-          spacing={1}
-          columns={13}
-          sx={{
-            height: "100%",
-            transition: "height 0.5s",
-            overflow: "hidden",
-            pb: 1,
-          }}
-        >
-          <Grid item xs={6.5}>
-            <Paper sx={{ height: "100%", py: 0.5 }}>
-              <Typography sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}>
-                Diagram
-              </Typography>
-              <Divider sx={{ m: 0.5 }} />
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <ElementChart
-                  id={`${step}`}
-                  nameList={nameList}
-                  valueList={valueList}
-                />
-              </Box>
-            </Paper>
-          </Grid>
+      <Grid
+        container
+        spacing={1}
+        columns={13}
+        sx={{
+          height: "100%",
+          transition: "height 0.5s",
+          overflow: "hidden",
+          pb: 1,
+        }}
+      >
+        {!open && nameList.length > 0 && (
+          <>
+            <Grid item xs={6.5}>
+              <Paper sx={{ height: "100%", py: 0.5 }}>
+                <Typography
+                  sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}
+                >
+                  Diagram
+                </Typography>
+                <Divider sx={{ m: 0.5 }} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ElementChart
+                    id={`${step}`}
+                    nameList={nameList}
+                    valueList={valueList}
+                  />
+                </Box>
+              </Paper>
+            </Grid>
 
-          <Grid item xs={6.5}>
-            <Paper
-              sx={{
-                py: 0.5,
-                display: "flex",
-                flexDirection: "column",
-                flex: 1,
-                height: "100%",
-              }}
-            >
-              <Typography sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}>
-                Elements
-              </Typography>
-              <Divider sx={{ m: 0.5 }} />
-              <Box
+            <Grid item xs={6.5}>
+              <Paper
                 sx={{
-                  height: "100%",
+                  py: 0.5,
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "center",
+                  flex: 1,
+                  height: "100%",
                 }}
               >
-                {elementList.map((element, index) => (
-                  <ReviewSlider
-                    title={element.name}
-                    value={element.value}
-                    onClick={handleDeleteElement}
-                    handleChangeElementValue={handleChangeElementValue}
-                    key={index}
-                  />
-                ))}
-              </Box>
-            </Paper>
-          </Grid>
+                <Typography
+                  sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}
+                >
+                  {`Elements (${elementList.length}/8)`}
+                </Typography>
+                <Divider sx={{ m: 0.5 }} />
+                <Box
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  {elementList.map((element, index) => (
+                    <ReviewSlider
+                      title={element.name}
+                      value={element.value}
+                      onClick={handleDeleteElement}
+                      handleChangeElementValue={handleChangeElementValue}
+                      key={index}
+                    />
+                  ))}
+                </Box>
+              </Paper>
+            </Grid>
+          </>
+        )}
 
-          <Grid item xs={6.5}>
-            <Paper sx={{ px: 2, height: "100%", display: "flex" }}>
-              <InputBase
-                type="number"
-                placeholder="Total score"
-                value={score}
-                onChange={(e) => {
-                  setScore(e.target.value);
-                  handleUpdateReview(step, {
-                    ...review,
-                    score: e.target.value,
-                  });
-                }}
-                sx={{ fontSize: { xs: "14px", sm: "18px" } }}
-              />
-            </Paper>
-          </Grid>
-          <Grid item xs={6.5}>
-            <Paper
+        <Grid item xs={6.5}>
+          <Paper sx={{ px: 2, height: "100%", display: "flex" }}>
+            <InputBase
+              type="number"
+              placeholder="Total score"
+              value={score}
+              onChange={(e) => {
+                setScore(e.target.value);
+                handleUpdateReview(step, {
+                  ...review,
+                  score: e.target.value,
+                });
+              }}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                flex: 1,
+                fontSize: { xs: "14px", sm: "18px" },
+                "input[type=number]::-webkit-inner-spin-button, \
+                  input[type=number]::-webkit-outer-spin-button": {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
+              }}
+            />
+          </Paper>
+        </Grid>
+
+        <Grid item xs={6.5}>
+          <Paper
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flex: 1,
+            }}
+          >
+            <InputBase
+              placeholder="Add Element"
+              value={addElement.name}
+              onChange={(e) =>
+                setAddElement({ ...addElement, name: e.target.value })
+              }
+              sx={{ ml: 2, flex: 1, fontSize: { xs: "14px", sm: "18px" } }}
+            />
+            <IconButton
+              onClick={() => {
+                if (addElement.name !== "") {
+                  handleClickElement(addElement);
+                  setAddElement({ name: "", value: 3 });
+                }
               }}
             >
-              <InputBase
-                placeholder="Add Element"
-                value={addElement.name}
-                onChange={(e) =>
-                  setAddElement({ ...addElement, name: e.target.value })
-                }
-                sx={{ ml: 2, flex: 1, fontSize: { xs: "14px", sm: "18px" } }}
-              />
-              <IconButton
-                onClick={() => {
-                  if (addElement.name !== "") {
-                    handleClickElement(addElement);
-                    setAddElement({ name: "", value: 3 });
-                  }
-                }}
-              >
-                <PlaylistAddIcon sx={{ fontSize: "20px" }} />
-              </IconButton>
-            </Paper>
-          </Grid>
+              <PlaylistAddIcon sx={{ fontSize: "20px" }} />
+            </IconButton>
+          </Paper>
         </Grid>
-      )}
+      </Grid>
 
       <Box sx={{ mb: 1 }}>
         <Paper sx={{ px: 1, pb: 0 }}>
@@ -213,7 +231,7 @@ const ReviewStepper = ({
             }}
           >
             <Typography sx={{ mx: 1, fontSize: { xs: "12px", sm: "16px" } }}>
-              Element List
+              {`Element List (${elementList.length}/8)`}
             </Typography>
             <IconButton
               onClick={() => setOpen(!open)}

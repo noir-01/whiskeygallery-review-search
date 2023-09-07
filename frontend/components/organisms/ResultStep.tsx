@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import html2canvas from "html2canvas";
 import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import {
+  DateRange as DateRangeIcon,
   Download as DownloadIcon,
   KeyboardReturnRounded as KeyboardReturnRoundedIcon,
   Liquor as LiquorIcon,
@@ -80,6 +81,25 @@ const ResultStep = ({
     },
   ];
 
+  const rating = () => {
+    const firstScore = Number(firstStepReview.score);
+    const secondScore = Number(secondStepReview.score);
+    const thirdScore = Number(thridStepReview.score);
+
+    let zeroCount = 0;
+    if (firstScore === 0) zeroCount++;
+    if (secondScore === 0) zeroCount++;
+    if (thirdScore === 0) zeroCount++;
+
+    if (zeroCount !== 3)
+      return (
+        (firstScore + secondScore + thirdScore) /
+        (3 - zeroCount)
+      ).toFixed(1);
+
+    return 0;
+  };
+
   return (
     <Box sx={{ mb: 14 }}>
       <Box
@@ -102,9 +122,19 @@ const ResultStep = ({
         >
           <LiquorIcon sx={{ color: "white", fontSize: "36px" }} />
           <LocalBarIcon sx={{ color: "white", fontSize: "24px" }} />
-          <Typography sx={{ color: "white", fontWeight: 700, ml: "auto" }}>
+          <Box
+            sx={{
+              color: "white",
+              fontWeight: 700,
+              ml: "auto",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <DateRangeIcon sx={{ width: "20px" }} />
             {todayDate()}
-          </Typography>
+          </Box>
         </Box>
         <Paper sx={{ p: 1, mb: 1 }}>
           <Box
@@ -118,6 +148,7 @@ const ResultStep = ({
             <Box sx={{ flex: 1 }}>Whiskey</Box>
             <Box sx={{ flex: 1 }}>ABV</Box>
             <Box sx={{ flex: 1 }}>WB code</Box>
+            <Box sx={{ flex: 1 }}>Rating</Box>
           </Box>
           <Divider />
           <Box
@@ -130,11 +161,11 @@ const ResultStep = ({
             <Box sx={{ flex: 1 }}>{whiskey}</Box>
             <Box sx={{ flex: 1 }}>{abv}</Box>
             <Box sx={{ flex: 1 }}>{wbCode}</Box>
+            <Box sx={{ flex: 1 }}>{rating()}</Box>
           </Box>
         </Paper>
         <Grid
           container
-          xs={12}
           rowSpacing={1}
           sx={{ justifyContent: "space-between", mb: 1 }}
         >
