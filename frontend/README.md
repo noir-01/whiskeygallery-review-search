@@ -6,6 +6,7 @@
 라이브러리 : 
 <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=white">
 <img src="https://img.shields.io/badge/reactquery-FF4154?style=for-the-badge&logo=ReactQuery&logoColor=white">
+zustand
 
 프레임워크 : 
 <img src="https://img.shields.io/badge/nextjs-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
