@@ -1,5 +1,4 @@
-import { useState, KeyboardEvent, useEffect, useRef } from "react";
-import { useRouter } from "next/router";
+import { useState, KeyboardEvent, useRef } from "react";
 import { useSnackbar } from "notistack";
 import {
   Box,
@@ -14,8 +13,6 @@ import {
 } from "@mui/material";
 import {
   ArrowDropUp as ArrowDropUpIcon,
-  HighlightOff as HighlightOffIcon,
-  LibraryAdd as LibraryAddIcon,
   Search as SearchIcon,
   Tune as TuneIcon,
 } from "@mui/icons-material";
@@ -27,14 +24,9 @@ import type { SearchType, SortOptionType } from "@/types/search";
 
 const SearchBox = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const router = useRouter();
 
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-
-  const [focusPostId, setFocusPostId] = useState(0);
-  const [focusPostTitle, setFocusPostTitle] = useState("");
-  const [focusPostLink, setFocusPostLink] = useState("");
 
   const [displayedPost, setDisplayedPost] = useState(20);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -42,6 +34,9 @@ const SearchBox = () => {
   const [isOpenSearchTools, setIsOpenSearchTools] = useState(false);
   const [isOtherSearch, setIsOtherSearch] = useState(false);
   const [sortOption, setSortOption] = useState<SortOptionType>("최신순");
+
+  const [visitedPostList, setVisitedPostList] = useState<number[]>([]);
+  const [recentlyVisitedPost, setRecentlyVisitedPost] = useState<number>(0);
 
   const searchOptionA1 = useRef("");
   const searchOptionA2 = useRef("");
@@ -154,13 +149,11 @@ const SearchBox = () => {
     }
   );
 
-  useEffect(() => {
-    if (!router.query?.iframe) {
-      setFocusPostTitle("");
-      setFocusPostLink("");
-      setFocusPostId(0);
+  const addVisitedList = (visitedPostId: number) => {
+    if (!visitedPostList.includes(visitedPostId)) {
+      setVisitedPostList([...visitedPostList, visitedPostId]);
     }
-  }, [router.query]);
+  };
 
   return (
     <Box
@@ -188,333 +181,272 @@ const SearchBox = () => {
         {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
       </Typography>
       <CustomLoading isLoading={isFetching || isInitialLoading} />
-      {!focusPostTitle && (
-        <>
-          <Box sx={{ mb: 2 }}>
-            <Paper
-              component="form"
+      <Box sx={{ mb: 2 }}>
+        <Paper
+          component="form"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            px: 1,
+            width: { xs: "90vw", sm: "auto" },
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <Box sx={{ width: "100%", display: "flex" }}>
+            <InputBase
+              disabled={isOpenSearchTools}
+              type="search"
+              placeholder="리뷰를 검색하세요."
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                px: 1,
-                width: { xs: "90vw", sm: "auto" },
-                position: "relative",
-                overflow: "hidden",
+                flex: 1,
+                opacity: isOpenSearchTools ? 0 : 1,
+                height: isOpenSearchTools ? 0 : "40px",
+                transition: ".5s",
+                "input::-webkit-search-cancel-button": { display: "none" },
+              }}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyPress={enterKeyEventOnSearch}
+            />
+            <IconButton
+              type="button"
+              sx={{
+                p: "8px",
+                position: "absolute",
+                top: isOpenSearchTools ? "-4px" : 0,
+                right: isOpenSearchTools ? "-4px" : "40px",
+                transition: ".5s",
+              }}
+              onClick={() => {
+                setIsOpenSearchTools(!isOpenSearchTools);
+                setSearchInput(searchOptionA1.current);
               }}
             >
-              <Box sx={{ width: "100%", display: "flex" }}>
-                <InputBase
-                  disabled={isOpenSearchTools}
-                  type="search"
-                  placeholder="리뷰를 검색하세요."
-                  sx={{
-                    flex: 1,
-                    opacity: isOpenSearchTools ? 0 : 1,
-                    height: isOpenSearchTools ? 0 : "40px",
-                    transition: ".5s",
-                    "input::-webkit-search-cancel-button": { display: "none" },
-                  }}
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyPress={enterKeyEventOnSearch}
-                />
-                <IconButton
-                  type="button"
-                  sx={{
-                    p: "8px",
-                    position: "absolute",
-                    top: isOpenSearchTools ? "-4px" : 0,
-                    right: isOpenSearchTools ? "-4px" : "40px",
-                    transition: ".5s",
-                  }}
-                  onClick={() => {
-                    setIsOpenSearchTools(!isOpenSearchTools);
-                    setSearchInput(searchOptionA1.current);
-                  }}
-                >
-                  {isOpenSearchTools ? (
-                    <ArrowDropUpIcon fontSize="medium" />
-                  ) : (
-                    <TuneIcon />
-                  )}
-                </IconButton>
-                <Button
-                  size="small"
-                  aria-label="search"
-                  onClick={onClickSearchIcon}
-                  sx={{
-                    position: "absolute",
-                    top: isOpenSearchTools ? "132px" : "4px",
-                    right: isOpenSearchTools ? "8px" : "12px",
-                    minWidth: 0,
-                    bgcolor: isOpenSearchTools ? "#755139" : "transparent",
-                    color: isOpenSearchTools ? "white" : "gray",
-                    transition: ".5s",
-                    px: isOpenSearchTools ? 11 : 1,
-                    height: isOpenSearchTools ? "36px" : "32px",
-                    width: isOpenSearchTools ? "97%" : 0,
+              {isOpenSearchTools ? (
+                <ArrowDropUpIcon fontSize="medium" />
+              ) : (
+                <TuneIcon />
+              )}
+            </IconButton>
+            <Button
+              size="small"
+              aria-label="search"
+              onClick={onClickSearchIcon}
+              sx={{
+                position: "absolute",
+                top: isOpenSearchTools ? "132px" : "4px",
+                right: isOpenSearchTools ? "8px" : "12px",
+                minWidth: 0,
+                bgcolor: isOpenSearchTools ? "#755139" : "transparent",
+                color: isOpenSearchTools ? "white" : "gray",
+                transition: ".5s",
+                px: isOpenSearchTools ? 11 : 1,
+                height: isOpenSearchTools ? "36px" : "32px",
+                width: isOpenSearchTools ? "97%" : 0,
 
-                    ":active": {
-                      bgcolor: isOpenSearchTools ? "#755139" : "transparent",
-                    },
-                    ":hover": {
-                      bgcolor: isOpenSearchTools ? "#755139" : "transparent",
-                    },
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      transition: ".5s",
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      fontWeight: 700,
-                      color: "white",
-                      px: isOpenSearchTools ? 1 : 0,
-                    }}
-                  >
-                    상세 검색하기
-                  </Typography>
-                  <SearchIcon />
-                </Button>
-              </Box>
-              <Box
+                ":active": {
+                  bgcolor: isOpenSearchTools ? "#755139" : "transparent",
+                },
+                ":hover": {
+                  bgcolor: isOpenSearchTools ? "#755139" : "transparent",
+                },
+              }}
+            >
+              <Typography
+                variant="body1"
                 sx={{
-                  height: isOpenSearchTools ? "175px" : 0,
-                  overflow: "hidden",
                   transition: ".5s",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  fontWeight: 700,
+                  color: "white",
+                  px: isOpenSearchTools ? 1 : 0,
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    width: "100%",
-                    my: 1,
-                    gap: 0.5,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor: "#755139",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "white",
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      width: "44px",
-                      p: 0.5,
-                      mr: 0.5,
-                    }}
-                  >
-                    AND
-                  </Box>
-                  <InputBase
-                    type="search"
-                    placeholder="option1"
-                    sx={{ flexBasis: "25%" }}
-                    defaultValue={searchOptionA1.current}
-                    onChange={(e) => (searchOptionA1.current = e.target.value)}
-                    onKeyPress={enterKeyEventOnSearch}
-                  />
-                  <InputBase
-                    type="search"
-                    placeholder="option2"
-                    sx={{ flexBasis: "25%" }}
-                    defaultValue={searchOptionA2.current}
-                    onChange={(e) => (searchOptionA2.current = e.target.value)}
-                    onKeyPress={enterKeyEventOnSearch}
-                  />
-                  <InputBase
-                    type="search"
-                    placeholder="option3"
-                    sx={{ flexBasis: "25%" }}
-                    defaultValue={searchOptionA3.current}
-                    onChange={(e) => (searchOptionA3.current = e.target.value)}
-                    onKeyPress={enterKeyEventOnSearch}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    width: "100%",
-                    my: 1,
-                    gap: 0.5,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor: "#755139",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "white",
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      p: 0.5,
-                      width: "44px",
-                      mr: 0.5,
-                    }}
-                  >
-                    OR
-                  </Box>
-                  <InputBase
-                    type="search"
-                    placeholder="option1"
-                    sx={{
-                      flexBasis: "25%",
-                    }}
-                    defaultValue={searchOptionO1.current}
-                    onChange={(e) => (searchOptionO1.current = e.target.value)}
-                    onKeyPress={enterKeyEventOnSearch}
-                  />
-                  <InputBase
-                    type="search"
-                    placeholder="option2"
-                    sx={{ flexBasis: "25%" }}
-                    defaultValue={searchOptionO2.current}
-                    onChange={(e) => (searchOptionO2.current = e.target.value)}
-                    onKeyPress={enterKeyEventOnSearch}
-                  />
-                  <InputBase
-                    type="search"
-                    placeholder="option3"
-                    sx={{ flexBasis: "25%" }}
-                    defaultValue={searchOptionO3.current}
-                    onChange={(e) => (searchOptionO3.current = e.target.value)}
-                    onKeyPress={enterKeyEventOnSearch}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    width: "100%",
-                    my: 1,
-                    gap: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor: "#755139",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "white",
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      p: 0.5,
-                      width: "44px",
-                    }}
-                  >
-                    Age
-                  </Box>
-                  <InputBase
-                    type="search"
-                    placeholder="age"
-                    defaultValue={age.current}
-                    onChange={(e) => (age.current = e.target.value)}
-                    onKeyPress={enterKeyEventOnSearch}
-                    sx={{ flexBasis: "35%" }}
-                  />
-                  <Button
-                    variant="contained"
-                    sx={{
-                      flex: 1,
-                      bgcolor: "#755139",
-                      ":active": { bgcolor: "#755139" },
-                      ":hover": { bgcolor: "#755139" },
-                    }}
-                    onClick={() => setIsOtherSearch(!isOtherSearch)}
-                  >
-                    {isOtherSearch ? "리뷰 검색기" : "기타 리뷰 검색기"}
-                  </Button>
-                </Box>
-              </Box>
-            </Paper>
+                상세 검색하기
+              </Typography>
+              <SearchIcon />
+            </Button>
           </Box>
-          {data ? (
+          <Box
+            sx={{
+              height: isOpenSearchTools ? "175px" : 0,
+              overflow: "hidden",
+              transition: ".5s",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                mx: { xs: 0.5, sm: 2 },
+                width: "100%",
+                my: 1,
+                gap: 0.5,
               }}
             >
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
-                {`검색 결과 [총 ${data?.length}개]`}
-              </Typography>
-              <DropDownOption
-                value={sortOption}
-                onChange={(e) =>
-                  setSortOption(e.target.value as SortOptionType)
-                }
-                optionList={[
-                  { value: "최신순", content: "최신순" },
-                  { value: "추천순", content: "추천순" },
-                  { value: "댓글순", content: "댓글순" },
-                ]}
-              />
-            </Box>
-          ) : null}
-        </>
-      )}
-      {focusPostTitle && (
-        <Paper
-          sx={{
-            overflow: "hidden",
-            my: 2,
-            p: 0.5,
-            height: "60vh",
-            width: "110%",
-            ml: "-5%",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              px: 1,
-              py: 0.5,
-            }}
-          >
-            <Typography
-              variant="subtitle2"
-              sx={{
-                maxWidth: "70vw",
-                display: "-webkit-box",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: "vertical",
-              }}
-            >
-              {focusPostTitle}
-            </Typography>
-            <Box sx={{ display: "flex", alignContent: "center", gap: 1 }}>
-              <IconButton
-                sx={{ width: "20px", height: "20px" }}
-                onClick={() => window.open(focusPostLink, "_blank")}
-              >
-                <LibraryAddIcon />
-              </IconButton>
-              <IconButton
-                sx={{ width: "20px", height: "20px" }}
-                onClick={() => {
-                  setFocusPostTitle("");
-                  setFocusPostLink("");
-                  setFocusPostId(0);
-                  router.push(`/`);
+              <Box
+                sx={{
+                  backgroundColor: "#755139",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontWeight: 700,
+                  borderRadius: 2,
+                  width: "44px",
+                  p: 0.5,
+                  mr: 0.5,
                 }}
               >
-                <HighlightOffIcon />
-              </IconButton>
+                AND
+              </Box>
+              <InputBase
+                type="search"
+                placeholder="option1"
+                sx={{ flexBasis: "25%" }}
+                defaultValue={searchOptionA1.current}
+                onChange={(e) => (searchOptionA1.current = e.target.value)}
+                onKeyPress={enterKeyEventOnSearch}
+              />
+              <InputBase
+                type="search"
+                placeholder="option2"
+                sx={{ flexBasis: "25%" }}
+                defaultValue={searchOptionA2.current}
+                onChange={(e) => (searchOptionA2.current = e.target.value)}
+                onKeyPress={enterKeyEventOnSearch}
+              />
+              <InputBase
+                type="search"
+                placeholder="option3"
+                sx={{ flexBasis: "25%" }}
+                defaultValue={searchOptionA3.current}
+                onChange={(e) => (searchOptionA3.current = e.target.value)}
+                onKeyPress={enterKeyEventOnSearch}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                my: 1,
+                gap: 0.5,
+              }}
+            >
+              <Box
+                sx={{
+                  backgroundColor: "#755139",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontWeight: 700,
+                  borderRadius: 2,
+                  p: 0.5,
+                  width: "44px",
+                  mr: 0.5,
+                }}
+              >
+                OR
+              </Box>
+              <InputBase
+                type="search"
+                placeholder="option1"
+                sx={{
+                  flexBasis: "25%",
+                }}
+                defaultValue={searchOptionO1.current}
+                onChange={(e) => (searchOptionO1.current = e.target.value)}
+                onKeyPress={enterKeyEventOnSearch}
+              />
+              <InputBase
+                type="search"
+                placeholder="option2"
+                sx={{ flexBasis: "25%" }}
+                defaultValue={searchOptionO2.current}
+                onChange={(e) => (searchOptionO2.current = e.target.value)}
+                onKeyPress={enterKeyEventOnSearch}
+              />
+              <InputBase
+                type="search"
+                placeholder="option3"
+                sx={{ flexBasis: "25%" }}
+                defaultValue={searchOptionO3.current}
+                onChange={(e) => (searchOptionO3.current = e.target.value)}
+                onKeyPress={enterKeyEventOnSearch}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                my: 1,
+                gap: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  backgroundColor: "#755139",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontWeight: 700,
+                  borderRadius: 2,
+                  p: 0.5,
+                  width: "44px",
+                }}
+              >
+                Age
+              </Box>
+              <InputBase
+                type="search"
+                placeholder="age"
+                defaultValue={age.current}
+                onChange={(e) => (age.current = e.target.value)}
+                onKeyPress={enterKeyEventOnSearch}
+                sx={{ flexBasis: "35%" }}
+              />
+              <Button
+                variant="contained"
+                sx={{
+                  flex: 1,
+                  bgcolor: "#755139",
+                  ":active": { bgcolor: "#755139" },
+                  ":hover": { bgcolor: "#755139" },
+                }}
+                onClick={() => setIsOtherSearch(!isOtherSearch)}
+              >
+                {isOtherSearch ? "리뷰 검색기" : "기타 리뷰 검색기"}
+              </Button>
             </Box>
           </Box>
-          <iframe src={focusPostLink} width="100%" height="100%" />
         </Paper>
-      )}
+      </Box>
+      {data ? (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mx: { xs: 0.5, sm: 2 },
+          }}
+        >
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+            {`검색 결과 [총 ${data?.length}개]`}
+          </Typography>
+          <DropDownOption
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value as SortOptionType)}
+            optionList={[
+              { value: "최신순", content: "최신순" },
+              { value: "추천순", content: "추천순" },
+              { value: "댓글순", content: "댓글순" },
+            ]}
+          />
+        </Box>
+      ) : null}
 
       {data ? (
         <Box
@@ -522,9 +454,7 @@ const SearchBox = () => {
             backgroundColor: "white",
             borderRadius: 1.5,
             width: { xs: "90vw", sm: "95vw", md: "42vw" },
-            height: focusPostTitle
-              ? { xs: "20vh", md: "20vh" }
-              : isOpenSearchTools
+            height: isOpenSearchTools
               ? { xs: "50vh", md: "55vh" }
               : { xs: "65vh", md: "78vh" },
           }}
@@ -533,7 +463,7 @@ const SearchBox = () => {
             container
             id="list label"
             sx={{
-              display: focusPostTitle ? "none" : "flex",
+              display: "flex",
               fontSize: "15px",
               fontWeight: 700,
               width: "100%",
@@ -554,9 +484,7 @@ const SearchBox = () => {
           </Grid>
           <Box
             sx={{
-              height: focusPostTitle
-                ? { xs: "18vh", md: "20vh" }
-                : isOpenSearchTools
+              height: isOpenSearchTools
                 ? { xs: "42vh", md: "48vh" }
                 : { xs: "60vh", md: "73vh" },
               overflow: "auto",
@@ -600,20 +528,27 @@ const SearchBox = () => {
                       title={item.title}
                       sx={{
                         p: 0.5,
-                        backgroundColor:
-                          focusPostId === item.id ? "#755139" : "white",
-                        color: focusPostId === item.id ? "white" : "black",
+                        backgroundColor: visitedPostList.includes(item.id)
+                          ? "#755139"
+                          : "white",
+                        color: visitedPostList.includes(item.id)
+                          ? "white"
+                          : "black",
+                        opacity: visitedPostList.includes(item.id)
+                          ? recentlyVisitedPost === item.id
+                            ? 1
+                            : 0.7
+                          : 1,
                         ":hover": {
-                          backgroundColor:
-                            focusPostId === item.id ? "#755139" : "white",
+                          backgroundColor: visitedPostList.includes(item.id)
+                            ? "#755139"
+                            : "white",
                         },
                       }}
                       onClick={() => {
-                        setFocusPostTitle(item.title);
-                        setFocusPostLink(item.url);
-                        setFocusPostId(item.id);
-                        router.push(`/`);
-                        router.push(`/?iframe=${item.id}`);
+                        window.open(item.url, "_blank");
+                        addVisitedList(item.id);
+                        setRecentlyVisitedPost(item.id);
                       }}
                     >
                       <Grid container>
