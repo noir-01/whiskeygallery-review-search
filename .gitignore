@@ -12,10 +12,9 @@ dccrolling/database/review_other.json
 dccrolling/database/review_other_total.json
 dccrolling/database/review_whiskey.json
 
-
 dccrolling/mysql_auth.py
 dccrolling/reviewUpload.sh
-dccrolling/reviewUpload.sh.save
+dccrolling/reviewUpload.log
 
 main/migrations/
 staticfiles/
