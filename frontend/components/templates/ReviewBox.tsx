@@ -86,12 +86,12 @@ const ReviewBox = () => {
               placeholder="Whiskey name"
               value={whiskey.name}
               onChange={(e) => updateWhiskey("name", e.target.value)}
-              sx={{ ml: 1, flex: { xs: 1, sm: 2 } }}
+              sx={{ ml: 1, flex: 2 }}
             />
             <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <InputBase
               type="number"
-              placeholder="ABV (1 ~ 100)"
+              placeholder="ABV (1~100)"
               value={whiskey.abv}
               onBlur={(e) => {
                 if (e.target.value !== "")
@@ -110,6 +110,7 @@ const ReviewBox = () => {
               sx={{
                 ml: 1,
                 flex: 1,
+                fontSize: "14px",
 
                 "input[type=number]::-webkit-inner-spin-button, \
                 input[type=number]::-webkit-outer-spin-button": {
@@ -123,7 +124,7 @@ const ReviewBox = () => {
               placeholder="WB code"
               value={whiskey.wbCode}
               onChange={(e) => updateWhiskey("wbCode", e.target.value)}
-              sx={{ ml: 1, flex: 1 }}
+              sx={{ ml: 1, flex: 1, fontSize: "14px" }}
             />
           </Paper>
 
