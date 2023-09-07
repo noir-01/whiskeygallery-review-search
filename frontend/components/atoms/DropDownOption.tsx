@@ -1,10 +1,4 @@
-import {
-  InputBase,
-  MenuItem,
-  Select,
-  SelectProps,
-  Typography,
-} from "@mui/material";
+import { InputBase, MenuItem, Select, Typography } from "@mui/material";
 
 import type { DropDownOptionProps } from "@/types/review";
 
@@ -26,11 +20,7 @@ const DropDownOption = ({
         key={item.value}
         value={item.value}
         divider={idx !== optionList.length - 1}
-        sx={{
-          height: "40px",
-          minHeight: 0,
-          px: 1,
-        }}
+        sx={{ height: "40px", minHeight: 0, px: 1 }}
       >
         <Typography variant="subtitle2" sx={{ pl: 1, fontWeight: 700 }}>
           {item.content}

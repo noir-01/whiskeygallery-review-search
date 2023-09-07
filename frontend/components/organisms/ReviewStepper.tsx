@@ -18,61 +18,41 @@ import ReviewSlider from "@/components/atoms/ReviewSlider";
 import ElementChart from "@/components/molecules/ElementChart";
 import ElementPartBox from "@/components/molecules/ElementPartBox";
 import getElementList from "@/data/getElementList";
-import type { ElemenetType, ReviewStepperProps } from "@/types/review";
-import { enqueueSnackbar } from "notistack";
+import { useReviewStore } from "@/store/MemoReview";
+import type { ElementType } from "@/types/review";
+import snackbar from "@/utils/snackbar";
 
-const ReviewStepper = ({
-  step,
-  review,
-  handleUpdateReview,
-}: ReviewStepperProps) => {
+const ReviewStepper = ({ step }: { step: number }) => {
+  const { reviewList, updateReview } = useReviewStore();
+
   const [open, setOpen] = useState(false);
-  const [elementList, setElementList] = useState<ElemenetType[]>(
-    review.elementList
-  );
-  const [comment, setComment] = useState<string>(review.comment);
-  const [score, setScore] = useState<string>(review.score);
-  const [addElement, setAddElement] = useState<ElemenetType>({
+  const [addElement, setAddElement] = useState<ElementType>({
     name: "",
     value: 3,
   });
 
-  const nameList = useMemo(
-    () => elementList.map((element) => element.name),
-    [elementList]
+  const elementList = useMemo(
+    () => reviewList[step].elementList,
+    [reviewList[step].elementList]
   );
-  const valueList = useMemo(
-    () => elementList.map((element) => element.value),
-    [elementList]
-  );
+  const nameList = elementList.map((element) => element.name);
+  const valueList = elementList.map((element) => element.value);
 
-  const handleDeleteElement = (value: string) => {
-    const newList = elementList.filter((element) => element.name !== value);
-    setElementList(newList);
+  const handleDeleteElement = (targetName: string) => {
+    const newList = elementList.filter(
+      (element) => element.name !== targetName
+    );
+    updateReview("elementList", step, newList);
   };
 
-  const handleClickElement = (selectElement: ElemenetType) => {
+  const handleClickElement = (selectElement: ElementType) => {
     if (!nameList.includes(selectElement.name) && elementList.length < 8) {
       const newList = [...elementList, selectElement];
-      setElementList(newList);
-      handleUpdateReview(step, {
-        ...review,
-        elementList: newList,
-      });
+      updateReview("elementList", step, newList);
     } else if (nameList.includes(selectElement.name)) {
-      const newList = elementList.filter((element) => {
-        return element.name !== selectElement.name;
-      });
-      setElementList(newList);
-      handleUpdateReview(step, {
-        ...review,
-        elementList: newList,
-      });
+      handleDeleteElement(selectElement.name);
     } else {
-      enqueueSnackbar(`최대 8개까지 선택이 가능합니다.`, {
-        variant: "error",
-        autoHideDuration: 2000,
-      });
+      snackbar(`최대 8개까지 선택이 가능합니다.`);
     }
   };
 
@@ -81,11 +61,7 @@ const ReviewStepper = ({
       if (element.name === id) element.value = newValue;
       return element;
     });
-    setElementList(newList);
-    handleUpdateReview(step, {
-      ...review,
-      elementList: newList,
-    });
+    updateReview("elementList", step, newList);
   };
 
   return (
@@ -166,19 +142,14 @@ const ReviewStepper = ({
         )}
 
         <Grid item xs={6.5}>
-          <Paper sx={{ px: 2, height: "100%", display: "flex" }}>
+          <Paper sx={{ px: 2, height: "100%" }}>
             <InputBase
               type="number"
               placeholder="Total score"
-              value={score}
-              onChange={(e) => {
-                setScore(e.target.value);
-                handleUpdateReview(step, {
-                  ...review,
-                  score: e.target.value,
-                });
-              }}
+              value={reviewList[step].score}
+              onChange={(e) => updateReview("score", step, e.target.value)}
               sx={{
+                width: "100%",
                 fontSize: { xs: "14px", sm: "18px" },
                 "input[type=number]::-webkit-inner-spin-button, \
                   input[type=number]::-webkit-outer-spin-button": {
@@ -191,13 +162,7 @@ const ReviewStepper = ({
         </Grid>
 
         <Grid item xs={6.5}>
-          <Paper
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              flex: 1,
-            }}
-          >
+          <Paper sx={{ display: "flex", alignItems: "center", flex: 1 }}>
             <InputBase
               placeholder="Add Element"
               value={addElement.name}
@@ -235,16 +200,12 @@ const ReviewStepper = ({
             </Typography>
             <IconButton
               onClick={() => setOpen(!open)}
-              sx={{ width: "32px", height: "32px" }}
+              sx={{ width: "32px", height: "32px", svg: { fontSize: "20px" } }}
             >
-              {open ? (
-                <UnfoldLessIcon sx={{ fontSize: "20px" }} />
-              ) : (
-                <UnfoldMoreIcon sx={{ fontSize: "20px" }} />
-              )}
+              {open ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
             </IconButton>
           </Box>
-          <Divider sx={{ m: 0 }} />
+
           <Box
             sx={{
               width: "100%",
@@ -295,14 +256,8 @@ const ReviewStepper = ({
           >
             <InputBase
               placeholder="Comment"
-              value={comment}
-              onChange={(e) => {
-                setComment(e.target.value);
-                handleUpdateReview(step, {
-                  ...review,
-                  comment: e.target.value,
-                });
-              }}
+              value={reviewList[step].comment}
+              onChange={(e) => updateReview("comment", step, e.target.value)}
               sx={{ ml: 1, flex: 1, fontSize: { xs: "14px", sm: "18px" } }}
               multiline
               maxRows={3}

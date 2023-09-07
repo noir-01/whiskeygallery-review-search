@@ -3,10 +3,6 @@ import { Close as CloseIcon } from "@mui/icons-material";
 
 import type { ReviewSliderProps } from "@/types/review";
 
-const valuetext = (value: number) => {
-  return `${value}`;
-};
-
 const ReviewSlider = ({
   title,
   value,
@@ -40,7 +36,7 @@ const ReviewSlider = ({
     </Box>
     <Slider
       defaultValue={3}
-      getAriaValueText={valuetext}
+      aria-valuetext={`${value}`}
       valueLabelDisplay="auto"
       step={1}
       marks
