@@ -41,6 +41,7 @@ const SearchBox = () => {
 
   const [isOpenSearchTools, setIsOpenSearchTools] = useState(false);
   const [isOtherSearch, setIsOtherSearch] = useState(false);
+  const [age, setAge] = useState("");
   const [sortOption, setSortOption] = useState<SortOptionType>("최신순");
 
   const searchOptionA1 = useRef("");
@@ -49,7 +50,6 @@ const SearchBox = () => {
   const searchOptionO1 = useRef("");
   const searchOptionO2 = useRef("");
   const searchOptionO3 = useRef("");
-  const age = useRef("");
 
   const noticeRequiredInput = () => {
     enqueueSnackbar("검색어를 입력하세요.", {
@@ -64,8 +64,7 @@ const SearchBox = () => {
     searchOptionA3.current === "" &&
     searchOptionO1.current === "" &&
     searchOptionO2.current === "" &&
-    searchOptionO3.current === "" &&
-    age.current === "";
+    searchOptionO3.current === "";
 
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
@@ -129,7 +128,7 @@ const SearchBox = () => {
         searchOptionO1.current
       }&oSearch2=${searchOptionO2.current}&oSearch3=${
         searchOptionO3.current
-      }&age=${age.current}`
+      }&age=${age}`
     );
     return value.json();
   };
@@ -410,11 +409,18 @@ const SearchBox = () => {
                     Age
                   </Box>
                   <InputBase
-                    type="search"
                     placeholder="age"
-                    defaultValue={age.current}
-                    onChange={(e) => (age.current = e.target.value)}
+                    value={age}
                     onKeyPress={enterKeyEventOnSearch}
+                    onChange={(e) => {
+                      const regex = /\D/gi;
+                      const slicedValue = e.target.value.replaceAll(regex, "");
+                      if (slicedValue === "") setAge("");
+                      else {
+                        const numValue = Number(slicedValue) ?? 0;
+                        setAge(numValue < 0 ? "0" : `${numValue}`);
+                      }
+                    }}
                     sx={{ flexBasis: "35%" }}
                   />
                   <Button
