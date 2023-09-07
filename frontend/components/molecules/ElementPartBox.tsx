@@ -40,6 +40,7 @@ const ElementPartBox = ({
             backgroundColor: nameList.includes(item) ? "#755139" : "white",
             color: nameList.includes(item) ? "#ffffff" : "black",
             borderRadius: 4,
+
             ":hover": {
               backgroundColor: nameList.includes(item) ? "#755139" : "white",
             },
