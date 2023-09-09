@@ -18,9 +18,9 @@ import type { SearchType, SortOptionType } from "@/types/search";
 import convertMilliToDay from "@/utils/convertMilliToDay";
 import snackbar from "@/utils/snackbar";
 
-import ArrowDropUpIcon from "../atoms/icons/ArrowDropUpIcon";
-import SearchIcon from "../atoms/icons/SearchIcon";
-import TuneIcon from "../atoms/icons/TuneIcon";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import SearchIcon from "@mui/icons-material/Search";
+import TuneIcon from "@mui/icons-material/Tune";
 
 const SearchBox = () => {
   const [searchInput, setSearchInput] = useState("");
