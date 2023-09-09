@@ -1,6 +1,11 @@
 import { Fragment, useState } from "react";
 import html2canvas from "html2canvas";
-import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 import ElementChart from "@/components/molecules/ElementChart";
 import CustomDialog from "@/components/molecules/CustomDialog";

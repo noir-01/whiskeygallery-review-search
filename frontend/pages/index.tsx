@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import router from "next/router";
-import { Box, Fab, Grid, useMediaQuery, useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
+import Grid from "@mui/material/Grid";
 
 import ReviewBox from "@/components/templates/ReviewBox";
 import SearchBox from "@/components/templates/SearchBox";
@@ -9,9 +11,6 @@ import BorderColorIcon from "@mui/icons-material/BorderColor";
 import SearchIcon from "@mui/icons-material/Search";
 
 export default function Home() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
   const [isSearchBox, setIsSearchBox] = useState(true);
 
   useEffect(() => {
@@ -41,7 +40,7 @@ export default function Home() {
         item
         xs={0}
         md={5}
-        sx={{ display: isMobile && !isSearchBox ? "none" : "block" }}
+        sx={{ display: { xs: !isSearchBox ? "none" : "block", md: "block" } }}
       >
         <SearchBox />
       </Grid>
@@ -49,41 +48,40 @@ export default function Home() {
         item
         xs={11}
         md={5}
-        sx={{ display: isMobile && isSearchBox ? "none" : "block" }}
+        sx={{ display: { xs: isSearchBox ? "none" : "block", md: "block" } }}
       >
         <ReviewBox />
       </Grid>
 
-      {isMobile && (
-        <Fab
-          size="small"
-          variant="extended"
-          onClick={() => setIsSearchBox(!isSearchBox)}
-          sx={{
-            position: "fixed",
-            top: "16px",
-            right: "20px",
-            backgroundColor: "#F2EDD7",
+      <Fab
+        size="small"
+        variant="extended"
+        onClick={() => setIsSearchBox(!isSearchBox)}
+        sx={{
+          display: { xs: "block", md: "none" },
+          position: "fixed",
+          top: "16px",
+          right: "20px",
+          backgroundColor: "#F2EDD7",
 
-            ":hover": { backgroundColor: "#F2EDD7" },
+          ":hover": { backgroundColor: "#F2EDD7" },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            gap: 0.5,
+            fontSize: "12px",
+            fontWeight: 700,
+            alignItems: "center",
+            color: "#755139",
+            svg: { fontSize: "16px", color: "#755139" },
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              gap: 0.5,
-              fontSize: "12px",
-              fontWeight: 700,
-              alignItems: "center",
-              color: "#755139",
-              svg: { fontSize: "16px", color: "#755139" },
-            }}
-          >
-            {isSearchBox ? <BorderColorIcon /> : <SearchIcon />}
-            {isSearchBox ? "리뷰 작성하기" : "리뷰 검색하기"}
-          </Box>
-        </Fab>
-      )}
+          {isSearchBox ? <BorderColorIcon /> : <SearchIcon />}
+          {isSearchBox ? "리뷰 작성하기" : "리뷰 검색하기"}
+        </Box>
+      </Fab>
     </Grid>
   );
 }

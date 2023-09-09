@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { SelectProps } from "@mui/material";
+import { SelectProps } from "@mui/material/Select";
 
 export type ElementType = { name: string; value: number };
 

@@ -1,15 +1,13 @@
 import { useState, KeyboardEvent, useRef } from "react";
-import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  IconButton,
-  InputBase,
-  ListItemButton,
-  Paper,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import ListItemButton from "@mui/material/ListItemButton";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import { useQuery } from "@tanstack/react-query";
 
 import CustomLoading from "@/components/atoms/CustomLoading";
@@ -63,7 +61,8 @@ const SearchBox = () => {
         snackbar("검색어를 입력하세요.");
         return;
       }
-      setSearchQuery(searchInput);
+      setSearchInput(searchInput.trim());
+      setSearchQuery(searchInput.trim());
     }
     setDisplayedPost(20);
     setHasMoreData(false);
@@ -84,7 +83,7 @@ const SearchBox = () => {
     const value = await fetch(
       `https://whiskeygallery-review.com:444${
         isOtherSearch ? "/other" : ""
-      }/search/?aSearch1=${searchInput}&aSearch2=${
+      }/search/?aSearch1=${searchInput.trim()}&aSearch2=${
         searchOptionA2.current
       }&aSearch3=${searchOptionA3.current}&oSearch1=${
         searchOptionO1.current
