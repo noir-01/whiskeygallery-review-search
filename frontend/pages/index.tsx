@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import router from "next/router";
 import { Box, Fab, Grid, useMediaQuery, useTheme } from "@mui/material";
 
 import ReviewBox from "@/components/templates/ReviewBox";
@@ -10,7 +11,19 @@ import SearchIcon from "@/components/atoms/icons/SearchIcon";
 export default function Home() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [isSearchBox, setIsSearchBox] = useState(true);
+
+  useEffect(() => {
+    window.onbeforeunload = async (event) => {
+      event.preventDefault();
+      return "";
+    };
+
+    return () => {
+      window.onbeforeunload = null;
+    };
+  }, [router]);
 
   return (
     <Grid
