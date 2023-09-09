@@ -1,15 +1,13 @@
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  Divider,
-  InputBase,
-  Paper,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import InputBase from "@mui/material/InputBase";
+import Paper from "@mui/material/Paper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
+import Typography from "@mui/material/Typography";
 
 import ResultStep from "@/components/organisms/ResultStep";
 import ReviewStepper from "@/components/organisms/ReviewStepper";

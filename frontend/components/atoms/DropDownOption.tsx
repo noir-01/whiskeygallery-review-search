@@ -1,4 +1,7 @@
-import { InputBase, MenuItem, Select, Typography } from "@mui/material";
+import InputBase from "@mui/material/InputBase";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
 
 import type { DropDownOptionProps } from "@/types/review";
 

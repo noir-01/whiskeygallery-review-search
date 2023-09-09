@@ -1,10 +1,11 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { SnackbarProvider, closeSnackbar } from "notistack";
-import { CssBaseline, IconButton } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+import IconButton from "@mui/material/IconButton";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import CloseIcon from "@/components/atoms/icons/CloseIcon";
+import CloseIcon from "@mui/icons-material/Close";
 
 const App = (props: AppProps) => {
   const { Component, pageProps } = props;
