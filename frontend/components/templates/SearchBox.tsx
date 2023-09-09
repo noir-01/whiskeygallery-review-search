@@ -85,7 +85,7 @@ const SearchBox = () => {
 
   const getData = async (): Promise<SearchType[]> => {
     const value = await fetch(
-      `https://whiskeyreview.ddns.net:444${
+      `https://whiskeygallery-review.com:444${
         isOtherSearch ? "/other" : ""
       }/search/?aSearch1=${searchOptionA1.current}&aSearch2=${
         searchOptionA2.current
