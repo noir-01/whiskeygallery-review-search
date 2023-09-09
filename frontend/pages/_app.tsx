@@ -2,8 +2,9 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { SnackbarProvider, closeSnackbar } from "notistack";
 import { CssBaseline, IconButton } from "@mui/material";
-import { Close as CloseIcon } from "@mui/icons-material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import CloseIcon from "@/components/atoms/icons/CloseIcon";
 
 const App = (props: AppProps) => {
   const { Component, pageProps } = props;
@@ -12,7 +13,7 @@ const App = (props: AppProps) => {
     description: "위스키 리뷰 검색 & 작성 사이트",
     title: "위스키 리뷰 검색/작성기",
     url: "https://whiskeyreview.ddns.net",
-    // image:"",
+    image: "/favicon.ico",
   };
 
   return (
@@ -35,7 +36,11 @@ const App = (props: AppProps) => {
       <CssBaseline />
       <SnackbarProvider
         action={(snackbarId) => (
-          <IconButton onClick={() => closeSnackbar(snackbarId)} color="inherit">
+          <IconButton
+            aria-label="snackbar close button"
+            onClick={() => closeSnackbar(snackbarId)}
+            color="inherit"
+          >
             <CloseIcon />
           </IconButton>
         )}

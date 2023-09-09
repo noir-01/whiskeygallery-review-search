@@ -5,7 +5,7 @@ export default function Document() {
     description: "위스키 리뷰 검색 & 작성 사이트",
     title: "위스키 리뷰 검색/작성기",
     url: "https://whiskeyreview.ddns.net",
-    // image:"",
+    image: "/favicon.ico",
   };
 
   return (
@@ -63,6 +63,7 @@ export default function Document() {
         />
 
         <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
       </Head>
       <body>
         <Main />

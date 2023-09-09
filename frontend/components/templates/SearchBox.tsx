@@ -10,11 +10,6 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import {
-  ArrowDropUp as ArrowDropUpIcon,
-  Search as SearchIcon,
-  Tune as TuneIcon,
-} from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 
 import CustomLoading from "@/components/atoms/CustomLoading";
@@ -22,6 +17,10 @@ import DropDownOption from "@/components/atoms/DropDownOption";
 import type { SearchType, SortOptionType } from "@/types/search";
 import convertMilliToDay from "@/utils/convertMilliToDay";
 import snackbar from "@/utils/snackbar";
+
+import ArrowDropUpIcon from "../atoms/icons/ArrowDropUpIcon";
+import SearchIcon from "../atoms/icons/SearchIcon";
+import TuneIcon from "../atoms/icons/TuneIcon";
 
 const SearchBox = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -177,6 +176,7 @@ const SearchBox = () => {
             />
             <IconButton
               type="button"
+              aria-label="search filter button"
               sx={{
                 p: "8px",
                 position: "absolute",
