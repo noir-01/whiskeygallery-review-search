@@ -43,7 +43,6 @@ const ReviewSlider = ({
       min={1}
       max={5}
       onChange={(e, value) => {
-        console.log(value);
         if (typeof value === "number") handleChangeElementValue(title, value);
       }}
       value={value}

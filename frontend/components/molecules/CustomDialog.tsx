@@ -1,12 +1,13 @@
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
 
-import { ResetCheckDialogProps } from "@/types/review";
+import { CustomDialogProps } from "@/types/review";
 
-const ResetCheckDialog = ({
+const CustomDialog = ({
+  content,
   open,
   onClose,
   onClick,
-}: ResetCheckDialogProps) => (
+}: CustomDialogProps) => (
   <Dialog
     open={open}
     onKeyDown={(e) => {
@@ -15,9 +16,7 @@ const ResetCheckDialog = ({
     }}
     onBackdropClick={onClose}
   >
-    <DialogContent sx={{ fontWeight: 700 }}>
-      정말로 리셋하시겠습니까?
-    </DialogContent>
+    <DialogContent sx={{ fontWeight: 700 }}>{content}</DialogContent>
     <DialogActions
       sx={{
         button: {
@@ -32,4 +31,4 @@ const ResetCheckDialog = ({
   </Dialog>
 );
 
-export default ResetCheckDialog;
+export default CustomDialog;

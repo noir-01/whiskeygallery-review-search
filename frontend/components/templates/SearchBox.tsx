@@ -36,7 +36,6 @@ const SearchBox = () => {
   const [visitedPostList, setVisitedPostList] = useState<number[]>([]);
   const [recentlyVisitedPost, setRecentlyVisitedPost] = useState<number>(0);
 
-  const searchOptionA1 = useRef("");
   const searchOptionA2 = useRef("");
   const searchOptionA3 = useRef("");
   const searchOptionO1 = useRef("");
@@ -45,7 +44,7 @@ const SearchBox = () => {
   const age = useRef("");
 
   const checkIsEmptyInput = () =>
-    searchOptionA1.current === "" &&
+    searchInput === "" &&
     searchOptionA2.current === "" &&
     searchOptionA3.current === "" &&
     searchOptionO1.current === "" &&
@@ -65,7 +64,6 @@ const SearchBox = () => {
         return;
       }
       setSearchQuery(searchInput);
-      searchOptionA1.current = searchInput;
     }
     setDisplayedPost(20);
     setHasMoreData(false);
@@ -86,7 +84,7 @@ const SearchBox = () => {
     const value = await fetch(
       `https://whiskeygallery-review.com:444${
         isOtherSearch ? "/other" : ""
-      }/search/?aSearch1=${searchOptionA1.current}&aSearch2=${
+      }/search/?aSearch1=${searchInput}&aSearch2=${
         searchOptionA2.current
       }&aSearch3=${searchOptionA3.current}&oSearch1=${
         searchOptionO1.current
@@ -148,7 +146,7 @@ const SearchBox = () => {
             flexDirection: "column",
             alignItems: "center",
             px: 1,
-            width: { xs: "90vw", sm: "auto" },
+            width: { xs: "90vw", sm: "95vw", md: "auto" },
             position: "relative",
             overflow: "hidden",
           }}
@@ -163,6 +161,8 @@ const SearchBox = () => {
                 opacity: isOpenSearchTools ? 0 : 1,
                 height: isOpenSearchTools ? 0 : "40px",
                 transition: ".5s",
+                mr: { xs: "15vw", sm: "10vw", md: "8vw", lg: "6vw" },
+
                 "input::-webkit-search-cancel-button": { display: "none" },
               }}
               value={searchInput}
@@ -180,10 +180,7 @@ const SearchBox = () => {
                 right: isOpenSearchTools ? "-4px" : "40px",
                 transition: ".5s",
               }}
-              onClick={() => {
-                setIsOpenSearchTools(!isOpenSearchTools);
-                setSearchInput(searchOptionA1.current);
-              }}
+              onClick={() => setIsOpenSearchTools(!isOpenSearchTools)}
             >
               {isOpenSearchTools ? (
                 <ArrowDropUpIcon fontSize="medium" />
@@ -266,8 +263,8 @@ const SearchBox = () => {
                 disabled={isLoading}
                 placeholder="option1"
                 sx={{ flexBasis: "25%" }}
-                defaultValue={searchOptionA1.current}
-                onChange={(e) => (searchOptionA1.current = e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
               />
               <InputBase
