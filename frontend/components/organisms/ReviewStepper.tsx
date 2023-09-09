@@ -17,9 +17,9 @@ import { useReviewStore } from "@/store/MemoReview";
 import type { ElementType } from "@/types/review";
 import snackbar from "@/utils/snackbar";
 
-import PlaylistAddIcon from "../atoms/icons/PlaylistAddIcon";
-import UnfoldLessIcon from "../atoms/icons/UnfoldLessIcon";
-import UnfoldMoreIcon from "../atoms/icons/UnfoldMoreIcon";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
+import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 
 const ReviewStepper = ({ step }: { step: number }) => {
   const { reviewList, updateReview } = useReviewStore();

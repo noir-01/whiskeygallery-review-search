@@ -9,13 +9,13 @@ import { useWhiskeyStore } from "@/store/MemoWhiskey";
 import type { ElementType, ResultStepProps } from "@/types/review";
 import formattedTodayDate from "@/utils/formattedTodayDate";
 
-import KeyboardReturnRoundedIcon from "../atoms/icons/KeyboardReturnRoundedIcon";
-import RestartAltRoundedIcon from "../atoms/icons/RestartAltRoundedIcon";
-import DownloadIcon from "../atoms/icons/DownloadIcon";
-import LiquorIcon from "../atoms/icons/LiquorIcon";
-import LocalBarIcon from "../atoms/icons/LocalBarIcon";
-import DateRangeIcon from "../atoms/icons/DateRangeIcon";
-import TaskAltRoundedIcon from "../atoms/icons/TaskAltRoundedIcon";
+import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
+import DownloadIcon from "@mui/icons-material/Download";
+import LiquorIcon from "@mui/icons-material/Liquor";
+import LocalBarIcon from "@mui/icons-material/LocalBar";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 
 const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
   const { reviewList } = useReviewStore();
