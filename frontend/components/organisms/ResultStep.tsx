@@ -1,6 +1,11 @@
 import { Fragment, useState } from "react";
 import html2canvas from "html2canvas";
-import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 import ElementChart from "@/components/molecules/ElementChart";
 import CustomDialog from "@/components/molecules/CustomDialog";
@@ -9,13 +14,13 @@ import { useWhiskeyStore } from "@/store/MemoWhiskey";
 import type { ElementType, ResultStepProps } from "@/types/review";
 import formattedTodayDate from "@/utils/formattedTodayDate";
 
-import KeyboardReturnRoundedIcon from "../atoms/icons/KeyboardReturnRoundedIcon";
-import RestartAltRoundedIcon from "../atoms/icons/RestartAltRoundedIcon";
-import DownloadIcon from "../atoms/icons/DownloadIcon";
-import LiquorIcon from "../atoms/icons/LiquorIcon";
-import LocalBarIcon from "../atoms/icons/LocalBarIcon";
-import DateRangeIcon from "../atoms/icons/DateRangeIcon";
-import TaskAltRoundedIcon from "../atoms/icons/TaskAltRoundedIcon";
+import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
+import DownloadIcon from "@mui/icons-material/Download";
+import LiquorIcon from "@mui/icons-material/Liquor";
+import LocalBarIcon from "@mui/icons-material/LocalBar";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 
 const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
   const { reviewList } = useReviewStore();

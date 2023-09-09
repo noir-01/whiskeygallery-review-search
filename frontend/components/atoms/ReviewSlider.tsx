@@ -1,7 +1,10 @@
-import { Box, Slider, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Slider from "@mui/material/Slider";
+import Typography from "@mui/material/Typography";
 
 import type { ReviewSliderProps } from "@/types/review";
-import CloseIcon from "./icons/CloseIcon";
+
+import CloseIcon from "@mui/icons-material/Close";
 
 const ReviewSlider = ({
   title,

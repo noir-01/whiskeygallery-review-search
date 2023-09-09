@@ -1,4 +1,7 @@
-import { Box, List, ListItemButton, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import Typography from "@mui/material/Typography";
 
 import type { ElementPartBoxProps } from "@/types/review";
 
