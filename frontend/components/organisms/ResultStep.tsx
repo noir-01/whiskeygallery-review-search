@@ -3,7 +3,7 @@ import html2canvas from "html2canvas";
 import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
 
 import ElementChart from "@/components/molecules/ElementChart";
-import ResetCheckDialog from "@/components/molecules/ResetCheckDialog";
+import CustomDialog from "@/components/molecules/CustomDialog";
 import { useReviewStore } from "@/store/MemoReview";
 import { useWhiskeyStore } from "@/store/MemoWhiskey";
 import type { ElementType, ResultStepProps } from "@/types/review";
@@ -22,6 +22,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
   const { whiskey } = useWhiskeyStore();
 
   const [isOpenResetCheckDialog, setIsOpenResetCheckDialog] = useState(false);
+  const [isOpenPushDialog, setIsOpenPushDialog] = useState(false);
 
   const getNameList = (elementList: ElementType[]) =>
     elementList.map((element) => element.name);
@@ -39,6 +40,8 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
     link.href = canvas.toDataURL("image/png");
     link.download = `${formattedTodayDate()}_${whiskey.name}.png`;
     link.click();
+
+    setIsOpenPushDialog(true);
   };
 
   const ChangeFormattedText = ({
@@ -241,10 +244,32 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
         ))}
 
         {isOpenResetCheckDialog && (
-          <ResetCheckDialog
+          <CustomDialog
+            content="정말로 리셋하시겠습니까?"
             open={isOpenResetCheckDialog}
             onClose={() => setIsOpenResetCheckDialog(false)}
             onClick={handleReset}
+          />
+        )}
+
+        {isOpenPushDialog && (
+          <CustomDialog
+            content={
+              <>
+                {"리뷰가 이미지로 저장되었습니다."}
+                <br />
+                {"위스키 갤러리에 작성하러 가시겠습니까?"}
+              </>
+            }
+            open={isOpenPushDialog}
+            onClose={() => setIsOpenPushDialog(false)}
+            onClick={() => {
+              setIsOpenPushDialog(false);
+              window.open(
+                "https://gall.dcinside.com/mgallery/board/write/?id=whiskey",
+                "_blank"
+              );
+            }}
           />
         )}
       </Box>

@@ -6,11 +6,14 @@ import SearchBox from "@/components/templates/SearchBox";
 
 import BorderColorIcon from "@/components/atoms/icons/BorderColorIcon";
 import SearchIcon from "@/components/atoms/icons/SearchIcon";
+import CustomDialog from "@/components/molecules/CustomDialog";
 
 export default function Home() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [isSearchBox, setIsSearchBox] = useState(true);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
 
   return (
     <Grid
@@ -71,6 +74,16 @@ export default function Home() {
           </Box>
         </Fab>
       )}
+      <CustomDialog
+        content={
+          "페이지에서 나가시겠습니까? 리뷰를 작성중이신 경우, 모두 삭제됩니다."
+        }
+        open={isOpenDialog}
+        onClose={() => setIsOpenDialog(false)}
+        onClick={() => {
+          setIsOpenDialog(false);
+        }}
+      />
     </Grid>
   );
 }

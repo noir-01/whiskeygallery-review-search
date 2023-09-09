@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { SelectProps } from "@mui/material";
 
 export type ElementType = { name: string; value: number };
@@ -32,7 +33,8 @@ export interface ResultStepProps {
   handleReset: () => void;
 }
 
-export interface ResetCheckDialogProps {
+export interface CustomDialogProps {
+  content: ReactNode;
   open: boolean;
   onClose: () => void;
   onClick: () => void;
