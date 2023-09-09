@@ -1,13 +1,11 @@
 import { useMemo, useState } from "react";
-import {
-  Box,
-  Divider,
-  Grid,
-  IconButton,
-  InputBase,
-  Paper,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 import ReviewSlider from "@/components/atoms/ReviewSlider";
 import ElementChart from "@/components/molecules/ElementChart";
