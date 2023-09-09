@@ -8,11 +8,6 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import {
-  PlaylistAdd as PlaylistAddIcon,
-  UnfoldLess as UnfoldLessIcon,
-  UnfoldMore as UnfoldMoreIcon,
-} from "@mui/icons-material";
 
 import ReviewSlider from "@/components/atoms/ReviewSlider";
 import ElementChart from "@/components/molecules/ElementChart";
@@ -21,6 +16,10 @@ import getElementList from "@/data/getElementList";
 import { useReviewStore } from "@/store/MemoReview";
 import type { ElementType } from "@/types/review";
 import snackbar from "@/utils/snackbar";
+
+import PlaylistAddIcon from "../atoms/icons/PlaylistAddIcon";
+import UnfoldLessIcon from "../atoms/icons/UnfoldLessIcon";
+import UnfoldMoreIcon from "../atoms/icons/UnfoldMoreIcon";
 
 const ReviewStepper = ({ step }: { step: number }) => {
   const { reviewList, updateReview } = useReviewStore();
@@ -195,6 +194,7 @@ const ReviewStepper = ({ step }: { step: number }) => {
               sx={{ ml: 2, flex: 1, fontSize: { xs: "14px", sm: "18px" } }}
             />
             <IconButton
+              aria-label="add new element button"
               onClick={() => {
                 if (addElement.name !== "") {
                   handleClickElement(addElement);
@@ -222,6 +222,7 @@ const ReviewStepper = ({ step }: { step: number }) => {
               {`Element List (${elementList.length}/8)`}
             </Typography>
             <IconButton
+              aria-label="element list expand button"
               onClick={() => setOpen(!open)}
               sx={{ width: "32px", height: "32px", svg: { fontSize: "20px" } }}
             >

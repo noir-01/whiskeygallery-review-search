@@ -1,15 +1,6 @@
 import { Fragment, useState } from "react";
 import html2canvas from "html2canvas";
 import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
-import {
-  DateRange as DateRangeIcon,
-  Download as DownloadIcon,
-  KeyboardReturnRounded as KeyboardReturnRoundedIcon,
-  Liquor as LiquorIcon,
-  LocalBar as LocalBarIcon,
-  RestartAltRounded as RestartAltRoundedIcon,
-  TaskAltRounded as TaskAltRoundedIcon,
-} from "@mui/icons-material";
 
 import ElementChart from "@/components/molecules/ElementChart";
 import ResetCheckDialog from "@/components/molecules/ResetCheckDialog";
@@ -17,6 +8,14 @@ import { useReviewStore } from "@/store/MemoReview";
 import { useWhiskeyStore } from "@/store/MemoWhiskey";
 import type { ElementType, ResultStepProps } from "@/types/review";
 import formattedTodayDate from "@/utils/formattedTodayDate";
+
+import KeyboardReturnRoundedIcon from "../atoms/icons/KeyboardReturnRoundedIcon";
+import RestartAltRoundedIcon from "../atoms/icons/RestartAltRoundedIcon";
+import DownloadIcon from "../atoms/icons/DownloadIcon";
+import LiquorIcon from "../atoms/icons/LiquorIcon";
+import LocalBarIcon from "../atoms/icons/LocalBarIcon";
+import DateRangeIcon from "../atoms/icons/DateRangeIcon";
+import TaskAltRoundedIcon from "../atoms/icons/TaskAltRoundedIcon";
 
 const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
   const { reviewList } = useReviewStore();
@@ -42,13 +41,20 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
     link.click();
   };
 
-  const changeFormattedText = (multiLineText: string) =>
-    multiLineText.split("\n").map((line, index) => (
-      <Fragment key={index}>
-        {line}
-        {index !== multiLineText.length - 1 && <br />}{" "}
-      </Fragment>
-    ));
+  const ChangeFormattedText = ({
+    multiLineText,
+  }: {
+    multiLineText: string;
+  }) => (
+    <>
+      {multiLineText.split("\n").map((line, index) => (
+        <Fragment key={index}>
+          {line}
+          {index !== multiLineText.length - 1 && <br />}{" "}
+        </Fragment>
+      ))}
+    </>
+  );
 
   const rating = () => {
     const firstScore = Number(reviewList[0].score);
@@ -197,7 +203,9 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
                     </Typography>
                   </Box>
                   <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                    {changeFormattedText(reviewList[step].comment)}
+                    <ChangeFormattedText
+                      multiLineText={reviewList[step].comment}
+                    />
                   </Box>
                 </Paper>
               </Grid>

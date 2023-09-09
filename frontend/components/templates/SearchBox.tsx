@@ -10,11 +10,6 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import {
-  ArrowDropUp as ArrowDropUpIcon,
-  Search as SearchIcon,
-  Tune as TuneIcon,
-} from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 
 import CustomLoading from "@/components/atoms/CustomLoading";
@@ -22,6 +17,10 @@ import DropDownOption from "@/components/atoms/DropDownOption";
 import type { SearchType, SortOptionType } from "@/types/search";
 import convertMilliToDay from "@/utils/convertMilliToDay";
 import snackbar from "@/utils/snackbar";
+
+import ArrowDropUpIcon from "../atoms/icons/ArrowDropUpIcon";
+import SearchIcon from "../atoms/icons/SearchIcon";
+import TuneIcon from "../atoms/icons/TuneIcon";
 
 const SearchBox = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -114,6 +113,8 @@ const SearchBox = () => {
     }
   );
 
+  const isLoading = isFetching || isInitialLoading;
+
   const addVisitedList = (visitedPostId: number) => {
     if (!visitedPostList.includes(visitedPostId))
       setVisitedPostList([...visitedPostList, visitedPostId]);
@@ -123,12 +124,7 @@ const SearchBox = () => {
     <Box
       sx={{
         backgroundColor: "#F2EDD7",
-        mt:
-          isFetching || isInitialLoading || data
-            ? 0
-            : isOpenSearchTools
-            ? "30vh"
-            : "40vh",
+        mt: isLoading || data ? 0 : isOpenSearchTools ? "30vh" : "40vh",
         mb: data ? 0 : isOpenSearchTools ? "30vh" : "50vh",
         transition: ".5s",
       }}
@@ -139,13 +135,11 @@ const SearchBox = () => {
           fontWeight: 700,
           my: 2,
           color: "#755139",
-          textAlign:
-            data || isFetching || isInitialLoading || data ? "left" : "center",
+          textAlign: data || isLoading ? "left" : "center",
         }}
       >
         {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
       </Typography>
-      <CustomLoading isLoading={isFetching || isInitialLoading} />
       <Box sx={{ mb: 2 }}>
         <Paper
           component="form"
@@ -161,7 +155,7 @@ const SearchBox = () => {
         >
           <Box sx={{ width: "100%", display: "flex" }}>
             <InputBase
-              disabled={isOpenSearchTools}
+              disabled={isOpenSearchTools || isLoading}
               type="search"
               placeholder="리뷰를 검색하세요."
               sx={{
@@ -177,6 +171,8 @@ const SearchBox = () => {
             />
             <IconButton
               type="button"
+              disabled={isLoading}
+              aria-label="search filter button"
               sx={{
                 p: "8px",
                 position: "absolute",
@@ -197,6 +193,7 @@ const SearchBox = () => {
             </IconButton>
             <Button
               size="small"
+              disabled={isLoading}
               aria-label="search"
               onClick={onSearch}
               sx={{
@@ -216,6 +213,9 @@ const SearchBox = () => {
                 },
                 ":hover": {
                   bgcolor: isOpenSearchTools ? "#755139" : "transparent",
+                },
+                ":disabled": {
+                  opacity: 0.8,
                 },
               }}
             >
@@ -263,6 +263,7 @@ const SearchBox = () => {
               </Box>
               <InputBase
                 type="search"
+                disabled={isLoading}
                 placeholder="option1"
                 sx={{ flexBasis: "25%" }}
                 defaultValue={searchOptionA1.current}
@@ -271,6 +272,7 @@ const SearchBox = () => {
               />
               <InputBase
                 type="search"
+                disabled={isLoading}
                 placeholder="option2"
                 sx={{ flexBasis: "25%" }}
                 defaultValue={searchOptionA2.current}
@@ -279,6 +281,7 @@ const SearchBox = () => {
               />
               <InputBase
                 type="search"
+                disabled={isLoading}
                 placeholder="option3"
                 sx={{ flexBasis: "25%" }}
                 defaultValue={searchOptionA3.current}
@@ -305,6 +308,7 @@ const SearchBox = () => {
               </Box>
               <InputBase
                 type="search"
+                disabled={isLoading}
                 placeholder="option1"
                 sx={{ flexBasis: "25%" }}
                 defaultValue={searchOptionO1.current}
@@ -313,6 +317,7 @@ const SearchBox = () => {
               />
               <InputBase
                 type="search"
+                disabled={isLoading}
                 placeholder="option2"
                 sx={{ flexBasis: "25%" }}
                 defaultValue={searchOptionO2.current}
@@ -321,6 +326,7 @@ const SearchBox = () => {
               />
               <InputBase
                 type="search"
+                disabled={isLoading}
                 placeholder="option3"
                 sx={{ flexBasis: "25%" }}
                 defaultValue={searchOptionO3.current}
@@ -346,6 +352,7 @@ const SearchBox = () => {
               </Box>
               <InputBase
                 type="search"
+                disabled={isLoading}
                 placeholder="age"
                 defaultValue={age.current}
                 onChange={(e) => (age.current = e.target.value)}
@@ -354,6 +361,7 @@ const SearchBox = () => {
               />
               <Button
                 variant="contained"
+                disabled={isLoading}
                 sx={{
                   flex: 1,
                   bgcolor: "#755139",
@@ -370,7 +378,11 @@ const SearchBox = () => {
         </Paper>
       </Box>
 
-      {data ? (
+      <Box sx={{ display: isLoading ? "block" : "none", mt: "5vh" }}>
+        <CustomLoading isLoading={isLoading} />
+      </Box>
+
+      {!isLoading && data ? (
         <>
           <Box
             sx={{
