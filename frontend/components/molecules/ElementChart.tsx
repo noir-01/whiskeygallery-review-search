@@ -13,7 +13,12 @@ import {
 
 import type { ElementChartProps } from "@/types/review";
 
-const ElementChart = ({ id, nameList, valueList }: ElementChartProps) => {
+const ElementChart = ({
+  id,
+  nameList,
+  valueList,
+  isHideLabel,
+}: ElementChartProps) => {
   const isBarType = useMemo(() => {
     return nameList.length < 3;
   }, [nameList.length]);
@@ -52,7 +57,7 @@ const ElementChart = ({ id, nameList, valueList }: ElementChartProps) => {
           r: {
             suggestedMin: 0,
             suggestedMax: 5,
-            ticks: { stepSize: 1 },
+            ticks: { stepSize: 1, display: isHideLabel ? false : true },
           },
           ...(isBarType && {
             y: {
