@@ -20,12 +20,19 @@ main/migrations/
 staticfiles/
 whiskey/settings.py
 
+#frontend
+
+.DS_Store
 
 frontend/node_modules/
 frontend/dist/
 frontend/.cache/
 frontend/.next/
 frontend/*.pem
+
+frontend/public/sw.js
+frontend/public/workbox-*.js
+frontend/public/workbox-*.js.map
 
 # debug
 frontend/npm-debug.log*
