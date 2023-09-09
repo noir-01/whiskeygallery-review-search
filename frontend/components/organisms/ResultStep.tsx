@@ -174,6 +174,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
                 <Paper sx={{ py: 1, height: "100%" }}>
                   <ElementChart
                     id={`${step}`}
+                    isHideLabel
                     nameList={getNameList(reviewList[step].elementList)}
                     valueList={getValueList(reviewList[step].elementList)}
                   />

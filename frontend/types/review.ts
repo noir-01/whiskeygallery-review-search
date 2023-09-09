@@ -24,6 +24,7 @@ export interface ElementChartProps {
   id: string;
   nameList: string[];
   valueList: number[];
+  isHideLabel?: boolean;
 }
 
 export interface ResultStepProps {
