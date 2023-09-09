@@ -63,7 +63,7 @@ const ElementChart = ({
             y: {
               suggestedMin: 0,
               suggestedMax: 6,
-              ticks: { stepSize: 1 },
+              ticks: { stepSize: 1, display: isHideLabel ? false : true },
             },
           }),
         },
