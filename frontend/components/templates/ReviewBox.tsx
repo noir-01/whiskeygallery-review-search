@@ -195,7 +195,7 @@ const ReviewBox = () => {
                 ":hover": { bgcolor: "#755139" },
               }}
             >
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
+              {activeStep === steps.length - 1 ? "Result" : "Next"}
             </Button>
           </Box>
 
