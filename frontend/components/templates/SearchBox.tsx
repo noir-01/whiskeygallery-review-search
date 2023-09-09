@@ -144,7 +144,6 @@ const SearchBox = () => {
       >
         {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
       </Typography>
-      <CustomLoading isLoading={isFetching || isInitialLoading} />
       <Box sx={{ mb: 2 }}>
         <Paper
           component="form"
@@ -368,6 +367,15 @@ const SearchBox = () => {
             </Box>
           </Box>
         </Paper>
+      </Box>
+
+      <Box
+        sx={{
+          display: isFetching || isInitialLoading ? "block" : "none",
+          mt: "5vh",
+        }}
+      >
+        <CustomLoading isLoading={isFetching || isInitialLoading} />
       </Box>
 
       {data ? (
