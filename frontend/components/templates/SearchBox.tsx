@@ -27,7 +27,7 @@ const SearchBox = () => {
   const [displayedPost, setDisplayedPost] = useState(20);
   const [hasMoreData, setHasMoreData] = useState(true);
 
-  const [isOpenSearchTools, setIsOpenSearchTools] = useState(false);
+  const [isOpenSearchTools, setIsOpenSearchTools] = useState(true);
   const [isOtherSearch, setIsOtherSearch] = useState(false);
   const [sortOption, setSortOption] = useState<SortOptionType>("최신순");
 
