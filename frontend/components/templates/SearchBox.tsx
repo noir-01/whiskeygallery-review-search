@@ -27,7 +27,7 @@ const SearchBox = () => {
   const [displayedPost, setDisplayedPost] = useState(20);
   const [hasMoreData, setHasMoreData] = useState(true);
 
-  const [isOpenSearchTools, setIsOpenSearchTools] = useState(false);
+  const [isOpenSearchTools, setIsOpenSearchTools] = useState(true);
   const [isOtherSearch, setIsOtherSearch] = useState(false);
   const [sortOption, setSortOption] = useState<SortOptionType>("최신순");
 
@@ -121,9 +121,10 @@ const SearchBox = () => {
     <Box
       sx={{
         backgroundColor: "#F2EDD7",
-        mt: isLoading || data ? 0 : isOpenSearchTools ? "30vh" : "40vh",
+        mt: isLoading || data ? 0 : isOpenSearchTools ? "30vh" : "35vh",
         mb: data ? 0 : isOpenSearchTools ? "30vh" : "50vh",
         transition: ".5s",
+        maxWidth: "680px",
       }}
     >
       <Typography
@@ -146,6 +147,7 @@ const SearchBox = () => {
             alignItems: "center",
             px: 1,
             width: { xs: "90vw", sm: "95vw", md: "auto" },
+            maxWidth: "680px",
             position: "relative",
             overflow: "hidden",
           }}
@@ -405,10 +407,11 @@ const SearchBox = () => {
             sx={{
               backgroundColor: "white",
               borderRadius: 1.5,
-              width: { xs: "90vw", sm: "95vw", md: "42vw" },
+              width: { xs: "90vw", sm: "95vw", md: "46vw" },
               height: isOpenSearchTools
                 ? { xs: "50vh", md: "55vh" }
                 : { xs: "65vh", md: "78vh" },
+              maxWidth: "680px",
             }}
           >
             <Grid

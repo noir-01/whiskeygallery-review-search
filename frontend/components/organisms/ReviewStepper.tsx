@@ -280,7 +280,7 @@ const ReviewStepper = ({ step }: { step: number }) => {
               placeholder="Comment"
               value={reviewList[step].comment}
               onChange={(e) => updateReview("comment", step, e.target.value)}
-              sx={{ ml: 1, flex: 1, fontSize: { xs: "14px", sm: "18px" } }}
+              sx={{ ml: 1, flex: 1, fontSize: { xs: "14px", sm: "16px" } }}
               multiline
               maxRows={3}
             />

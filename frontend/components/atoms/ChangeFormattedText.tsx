@@ -6,7 +6,7 @@ const ChangeFormattedText = ({ multiLineText }: { multiLineText: string }) => (
       <Typography
         key={index}
         variant="body2"
-        sx={{ fontSize: { xs: "12px", sm: "auto" } }}
+        sx={{ fontSize: { xs: "11px", sm: "12px" }, wordBreak: "break-all" }}
       >
         {line}
         {index !== multiLineText.length - 1 && <br />}{" "}
