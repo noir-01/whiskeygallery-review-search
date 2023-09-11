@@ -88,7 +88,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
   ];
 
   return (
-    <Box>
+    <Box sx={{ mx: { xs: "-3vw", md: 0 } }}>
       <Box
         id="your-component-id"
         sx={{
@@ -139,13 +139,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
             {rating() !== 0 && <Box sx={{ flex: 1 }}>Rating</Box>}
           </Box>
           <Divider />
-          <Box
-            sx={{
-              display: "flex",
-              textAlign: "center",
-              fontWeight: "600",
-            }}
-          >
+          <Box sx={{ display: "flex", textAlign: "center", fontWeight: "600" }}>
             <Box sx={{ flex: 2 }}>{whiskey.name}</Box>
             {whiskey.wbCode !== "" && (
               <Box sx={{ flex: 1.5 }}>{whiskey.wbCode}</Box>
@@ -162,55 +156,77 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
           rowSpacing={1}
           sx={{ justifyContent: "space-between", mb: 1 }}
         >
-          {[0, 1, 2].map((step: number) => (
-            <Fragment key={step}>
-              <Grid item xs={5} sm={4}>
-                <Paper sx={{ py: 1, height: "100%" }}>
-                  <ElementChart
-                    id={`${step}`}
-                    isHideLabel
-                    nameList={getNameList(reviewList[step].elementList)}
-                    valueList={getValueList(reviewList[step].elementList)}
-                  />
-                </Paper>
-              </Grid>
-              <Grid item xs={6.8} sm={7.8}>
-                <Paper sx={{ p: 1, height: "100%" }}>
-                  <Box
-                    sx={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Typography
+          {[0, 1, 2].map((step: number) => {
+            const isEmptyList = reviewList[step].elementList.length === 0;
+            const isEmptyStep =
+              isEmptyList &&
+              reviewList[step].comment === "" &&
+              reviewList[step].score === "";
+
+            if (isEmptyStep) return <></>;
+            return (
+              <Fragment key={step}>
+                {!isEmptyList && (
+                  <Grid item xs={5} sm={4}>
+                    <Paper
                       sx={{
-                        fontSize: { xs: "14px", sm: "16px" },
-                        fontWeight: 600,
-                      }}
-                    >
-                      {["Nose", "Palate", "Finish"][step]}
-                    </Typography>
-                    <Typography
-                      sx={{
+                        p: 1,
+                        height: "100%",
                         display: "flex",
-                        alignItems: "center",
-                        gap: 0.5,
-                        fontWeight: 700,
+                        justifyContent: "center",
                       }}
                     >
-                      <TaskAltRoundedIcon
-                        color="action"
-                        sx={{ fontSize: "16px" }}
+                      <ElementChart
+                        id={`${step}`}
+                        isHideLabel
+                        nameList={getNameList(reviewList[step].elementList)}
+                        valueList={getValueList(reviewList[step].elementList)}
                       />
-                      {reviewList[step].score}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                    <ChangeFormattedText
-                      multiLineText={reviewList[step].comment}
-                    />
-                  </Box>
-                </Paper>
-              </Grid>
-            </Fragment>
-          ))}
+                    </Paper>
+                  </Grid>
+                )}
+                <Grid
+                  item
+                  xs={isEmptyList ? 12 : 6.8}
+                  sm={isEmptyList ? 12 : 7.8}
+                >
+                  <Paper sx={{ p: 1, height: "100%" }}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: { xs: "14px", sm: "16px" },
+                          fontWeight: 600,
+                        }}
+                      >
+                        {["Nose", "Palate", "Finish"][step]}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.5,
+                          fontWeight: 700,
+                        }}
+                      >
+                        <TaskAltRoundedIcon
+                          color="action"
+                          sx={{ fontSize: "16px" }}
+                        />
+                        {reviewList[step].score}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <ChangeFormattedText
+                        multiLineText={reviewList[step].comment}
+                      />
+                    </Box>
+                  </Paper>
+                </Grid>
+              </Fragment>
+            );
+          })}
         </Grid>
       </Box>
 

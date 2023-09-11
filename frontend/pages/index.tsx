@@ -39,16 +39,22 @@ export default function Home() {
       <Grid
         item
         xs={0}
-        md={5}
-        sx={{ display: { xs: !isSearchBox ? "none" : "block", md: "block" } }}
+        md={5.5}
+        sx={{
+          display: { xs: !isSearchBox ? "none" : "flex", md: "flex" },
+          justifyContent: "center",
+        }}
       >
         <SearchBox />
       </Grid>
       <Grid
         item
         xs={11}
-        md={5}
-        sx={{ display: { xs: isSearchBox ? "none" : "block", md: "block" } }}
+        md={5.5}
+        sx={{
+          display: { xs: isSearchBox ? "none" : "flex", md: "flex" },
+          justifyContent: "center",
+        }}
       >
         <ReviewBox />
       </Grid>
