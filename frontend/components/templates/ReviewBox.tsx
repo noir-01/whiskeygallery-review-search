@@ -59,7 +59,7 @@ const ReviewBox = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", pt: 2 }}>
+    <Box sx={{ width: "100%", pt: 2, maxWidth: "680px" }}>
       <Typography
         variant="h5"
         sx={{ fontWeight: 700, mb: 2, color: "#755139" }}
