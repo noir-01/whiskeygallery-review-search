@@ -1,9 +1,8 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import html2canvas from "html2canvas";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
@@ -39,7 +38,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
   const handleClickDownload = async () => {
     const element = document.getElementById("your-component-id");
     const canvas = await html2canvas(element as HTMLElement, {
-      scale: 4,
+      scale: 1.5,
     });
 
     const link = document.createElement("a");
@@ -151,11 +150,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
           </Box>
         </Paper>
 
-        <Grid
-          container
-          rowSpacing={1}
-          sx={{ justifyContent: "space-between", mb: 1 }}
-        >
+        <Box sx={{ mb: 1, display: "flex", flexDirection: "column", gap: 1 }}>
           {[0, 1, 2].map((step: number) => {
             const isEmptyList = reviewList[step].elementList.length === 0;
             const isEmptyStep =
@@ -165,69 +160,60 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
 
             if (isEmptyStep) return <></>;
             return (
-              <Fragment key={step}>
-                {!isEmptyList && (
-                  <Grid item xs={5} sm={4}>
-                    <Paper
-                      sx={{
-                        p: 1,
-                        height: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
+              <Paper key={step} sx={{ p: 1, height: "100%" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    px: 0.5,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "14px", sm: "16px" },
+                      fontWeight: 600,
+                      mb: 0.5,
+                    }}
+                  >
+                    {["Nose", "Palate", "Finish"][step]}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                      fontWeight: 700,
+                    }}
+                  >
+                    <TaskAltRoundedIcon
+                      color="action"
+                      sx={{ fontSize: "16px" }}
+                    />
+                    {reviewList[step].score}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Box sx={{ maxWidth: "180px", mt: "-32px", mb: "-16px" }}>
+                    {!isEmptyList && (
                       <ElementChart
                         id={`${step}`}
                         isHideLabel
                         nameList={getNameList(reviewList[step].elementList)}
                         valueList={getValueList(reviewList[step].elementList)}
                       />
-                    </Paper>
-                  </Grid>
-                )}
-                <Grid
-                  item
-                  xs={isEmptyList ? 12 : 6.8}
-                  sm={isEmptyList ? 12 : 7.8}
-                >
-                  <Paper sx={{ p: 1, height: "100%" }}>
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-between" }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: { xs: "14px", sm: "16px" },
-                          fontWeight: 600,
-                        }}
-                      >
-                        {["Nose", "Palate", "Finish"][step]}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          fontWeight: 700,
-                        }}
-                      >
-                        <TaskAltRoundedIcon
-                          color="action"
-                          sx={{ fontSize: "16px" }}
-                        />
-                        {reviewList[step].score}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <ChangeFormattedText
-                        multiLineText={reviewList[step].comment}
-                      />
-                    </Box>
-                  </Paper>
-                </Grid>
-              </Fragment>
+                    )}
+                  </Box>
+                </Box>
+                <ChangeFormattedText multiLineText={reviewList[step].comment} />
+              </Paper>
             );
           })}
-        </Grid>
+        </Box>
       </Box>
 
       <Box
