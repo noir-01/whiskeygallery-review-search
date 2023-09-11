@@ -408,10 +408,8 @@ const SearchBox = () => {
               backgroundColor: "white",
               borderRadius: 1.5,
               width: { xs: "90vw", sm: "95vw", md: "46vw" },
-              height: isOpenSearchTools
-                ? { xs: "50vh", md: "55vh" }
-                : { xs: "65vh", md: "78vh" },
               maxWidth: "680px",
+              pb: 1,
             }}
           >
             <Grid
@@ -440,10 +438,11 @@ const SearchBox = () => {
             <Box
               sx={{
                 height: isOpenSearchTools
-                  ? { xs: "42vh", md: "48vh" }
-                  : { xs: "60vh", md: "73vh" },
+                  ? "calc(100vh - 380px)"
+                  : "calc(100vh - 240px)",
+                transition: ".5s",
                 overflow: "auto",
-                p: "6px 6px 10px 6px",
+                p: "6px",
 
                 "&::-webkit-scrollbar": {
                   width: "6px",
@@ -555,6 +554,10 @@ const SearchBox = () => {
                     alignItems: "center",
                     cursor: "pointer",
                     height: "30px",
+
+                    ":hover": {
+                      opacity: 0.5,
+                    },
                   }}
                   onClick={() => {
                     if (data.length > displayedPost) {
