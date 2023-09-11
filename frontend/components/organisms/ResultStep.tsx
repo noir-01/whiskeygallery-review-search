@@ -7,6 +7,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
+import ChangeFormattedText from "../atoms/ChangeFormattedText";
 import ElementChart from "@/components/molecules/ElementChart";
 import CustomDialog from "@/components/molecules/CustomDialog";
 import { useReviewStore } from "@/store/MemoReview";
@@ -48,21 +49,6 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
 
     setIsOpenPushDialog(true);
   };
-
-  const ChangeFormattedText = ({
-    multiLineText,
-  }: {
-    multiLineText: string;
-  }) => (
-    <>
-      {multiLineText.split("\n").map((line, index) => (
-        <Fragment key={index}>
-          {line}
-          {index !== multiLineText.length - 1 && <br />}{" "}
-        </Fragment>
-      ))}
-    </>
-  );
 
   const rating = () => {
     const firstScore = Number(reviewList[0].score);
@@ -178,7 +164,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
         >
           {[0, 1, 2].map((step: number) => (
             <Fragment key={step}>
-              <Grid item xs={5.8} sm={4}>
+              <Grid item xs={5} sm={4}>
                 <Paper sx={{ py: 1, height: "100%" }}>
                   <ElementChart
                     id={`${step}`}
@@ -188,12 +174,17 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
                   />
                 </Paper>
               </Grid>
-              <Grid item xs={6} sm={7.8}>
+              <Grid item xs={6.8} sm={7.8}>
                 <Paper sx={{ p: 1, height: "100%" }}>
                   <Box
                     sx={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "14px", sm: "16px" },
+                        fontWeight: 600,
+                      }}
+                    >
                       {["Nose", "Palate", "Finish"][step]}
                     </Typography>
                     <Typography
