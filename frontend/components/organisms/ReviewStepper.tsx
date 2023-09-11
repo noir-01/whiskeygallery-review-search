@@ -69,75 +69,10 @@ const ReviewStepper = ({ step }: { step: number }) => {
         columns={13}
         sx={{
           height: "100%",
-          transition: "height 0.5s",
           overflow: "hidden",
           pb: 1,
         }}
       >
-        {!open && nameList.length > 0 && (
-          <>
-            <Grid item xs={6.5}>
-              <Paper sx={{ height: "100%", py: 0.5 }}>
-                <Typography
-                  sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}
-                >
-                  Diagram
-                </Typography>
-                <Divider sx={{ m: 0.5 }} />
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <ElementChart
-                    id={`${step}`}
-                    nameList={nameList}
-                    valueList={valueList}
-                  />
-                </Box>
-              </Paper>
-            </Grid>
-
-            <Grid item xs={6.5}>
-              <Paper
-                sx={{
-                  py: 0.5,
-                  display: "flex",
-                  flexDirection: "column",
-                  flex: 1,
-                  height: "100%",
-                }}
-              >
-                <Typography
-                  sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}
-                >
-                  {`Elements (${elementList.length}/8)`}
-                </Typography>
-                <Divider sx={{ m: 0.5 }} />
-                <Box
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  {elementList.map((element, index) => (
-                    <ReviewSlider
-                      title={element.name}
-                      value={element.value}
-                      onClick={handleDeleteElement}
-                      handleChangeElementValue={handleChangeElementValue}
-                      key={index}
-                    />
-                  ))}
-                </Box>
-              </Paper>
-            </Grid>
-          </>
-        )}
-
         <Grid item xs={6.5}>
           <Paper
             sx={{
@@ -204,10 +139,76 @@ const ReviewStepper = ({ step }: { step: number }) => {
             </IconButton>
           </Paper>
         </Grid>
+
+        <Grid item xs={6.5}>
+          <Paper sx={{ height: "100%", py: 0.5 }}>
+            <Typography sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}>
+              Diagram
+            </Typography>
+            <Divider sx={{ m: 0.5 }} />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <ElementChart
+                id={`${step}`}
+                nameList={nameList}
+                valueList={valueList}
+              />
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={6.5}>
+          <Paper
+            sx={{
+              py: 0.5,
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              height: "100%",
+            }}
+          >
+            <Typography sx={{ px: 1, fontSize: { xs: "12px", sm: "16px" } }}>
+              {`Elements (${elementList.length}/8)`}
+            </Typography>
+            <Divider sx={{ m: 0.5 }} />
+            <Box
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              {elementList.map((element, index) => (
+                <ReviewSlider
+                  title={element.name}
+                  value={element.value}
+                  onClick={handleDeleteElement}
+                  handleChangeElementValue={handleChangeElementValue}
+                  key={index}
+                />
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
       </Grid>
 
       <Box sx={{ mb: 1 }}>
-        <Paper sx={{ px: 1, pb: 0 }}>
+        <Paper
+          sx={{
+            px: 1,
+            pb: 0,
+            ...(open && {
+              mr: 1,
+              position: "absolute",
+              top: "60px",
+            }),
+          }}
+        >
           <Box
             sx={{
               display: "flex",
@@ -233,14 +234,7 @@ const ReviewStepper = ({ step }: { step: number }) => {
               width: "100%",
               bgcolor: "background.paper",
               borderRadius: 1,
-              height: open
-                ? { xs: "60vh", sm: "70vh" }
-                : nameList.length > 0
-                ? nameList.length >= 3
-                  ? "15vh"
-                  : "25vh"
-                : "50vh",
-              transition: "height 0.5s",
+              height: open ? "80vh" : nameList.length >= 3 ? "10vh" : "15vh",
               overflow: "auto",
             }}
           >
@@ -282,7 +276,7 @@ const ReviewStepper = ({ step }: { step: number }) => {
               onChange={(e) => updateReview("comment", step, e.target.value)}
               sx={{ ml: 1, flex: 1, fontSize: { xs: "14px", sm: "16px" } }}
               multiline
-              maxRows={3}
+              rows={3}
             />
           </Paper>
         </Box>
