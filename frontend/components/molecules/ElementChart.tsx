@@ -19,9 +19,7 @@ const ElementChart = ({
   valueList,
   isHideLabel,
 }: ElementChartProps) => {
-  const isBarType = useMemo(() => {
-    return nameList.length < 3;
-  }, [nameList.length]);
+  const isBarType = useMemo(() => nameList.length < 3, [nameList.length]);
 
   useEffect(() => {
     Chart.register(
