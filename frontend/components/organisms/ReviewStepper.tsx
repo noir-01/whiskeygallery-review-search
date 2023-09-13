@@ -206,6 +206,7 @@ const ReviewStepper = ({ step }: { step: number }) => {
               mr: 1,
               position: "absolute",
               top: "60px",
+              zIndex: 30,
             }),
           }}
         >
