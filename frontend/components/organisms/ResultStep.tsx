@@ -198,7 +198,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Box sx={{ maxWidth: "180px", mt: "-32px", mb: "-16px" }}>
+                  <Box sx={{ maxWidth: "180px", mt: "-28px" }}>
                     {!isEmptyList && (
                       <ElementChart
                         id={`${step}`}
