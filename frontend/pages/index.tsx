@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import router from "next/router";
 import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
 import Grid from "@mui/material/Grid";
 
 import ReviewBox from "@/components/templates/ReviewBox";
@@ -59,9 +58,7 @@ export default function Home() {
         <ReviewBox />
       </Grid>
 
-      <Fab
-        size="small"
-        variant="extended"
+      <Box
         onClick={() => setIsSearchBox(!isSearchBox)}
         sx={{
           display: { xs: "block", md: "none" },
@@ -69,6 +66,11 @@ export default function Home() {
           top: "16px",
           right: "20px",
           backgroundColor: "#F2EDD7",
+          cursor: "pointer",
+          zIndex: 10,
+          p: 1,
+          borderRadius: 10,
+          boxShadow: "2px 2px 6px 2px rgba(0, 0, 0, 0.25)",
 
           ":hover": { backgroundColor: "#F2EDD7" },
         }}
@@ -87,7 +89,7 @@ export default function Home() {
           {isSearchBox ? <BorderColorIcon /> : <SearchIcon />}
           {isSearchBox ? "리뷰 작성하기" : "리뷰 검색하기"}
         </Box>
-      </Fab>
+      </Box>
     </Grid>
   );
 }
