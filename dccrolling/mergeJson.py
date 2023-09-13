@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 import json
-path = "/home/blanc/ReviewSearchVenv/src/whiskey/dccrolling/database"
+import os
+import pathlib
+
+filePath = os.path.abspath(__file__)
+parent_path = pathlib.Path(filePath).parent
+path = str(parent_path) + "/database"
+
+#path = "/home/blanc/ReviewSearchVenv/src/whiskey/dccrolling/database"
 
 with open(path+"/review_beer.json",encoding='utf8') as f1:
     data1 = json.load(f1)
