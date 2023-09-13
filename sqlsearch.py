@@ -2,15 +2,15 @@ import pymysql
 import unicodedata
 import pandas as pd
 import json
+import os
+import pathlib
 
-import sys
-#sys.path.append('/home/blanc/ReviewSearchVenv/src/whiskey')
-#from dccrolling import mysql_auth
-
+filePath = os.path.abspath(__file__)
+parent_path = pathlib.Path(filePath).parent
+path = str(parent_path) + "/dccrolling/database"
 #검색 로직 수정
 def searchTitleInclude(andWord,orWord,age,isOther):
-    path = "/home/blanc/ReviewSearchVenv/src/whiskey/dccrolling/database"
-
+    
     #어느 DB에서 검색할 것인지 isOther로 판단 : whiskey or not
     if(isOther == False):
         with open(path + '/review_whiskey.json', 'r',encoding='utf8') as f:
