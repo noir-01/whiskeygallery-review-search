@@ -62,17 +62,8 @@ const ReviewStepper = ({ step }: { step: number }) => {
   };
 
   return (
-    <Box>
-      <Grid
-        container
-        spacing={1}
-        columns={13}
-        sx={{
-          height: "100%",
-          overflow: "hidden",
-          pb: 1,
-        }}
-      >
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+      <Grid container spacing={1.5} columns={13}>
         <Grid item xs={6.5}>
           <Paper
             sx={{
@@ -146,12 +137,7 @@ const ReviewStepper = ({ step }: { step: number }) => {
               Diagram
             </Typography>
             <Divider sx={{ m: 0.5 }} />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
               <ElementChart
                 id={`${step}`}
                 nameList={nameList}
@@ -197,91 +183,85 @@ const ReviewStepper = ({ step }: { step: number }) => {
         </Grid>
       </Grid>
 
-      <Box sx={{ mb: 1 }}>
-        <Paper
+      <Paper
+        sx={{
+          px: 1,
+          pb: 0,
+
+          ...(open && {
+            mr: 1,
+            position: "absolute",
+            top: "60px",
+            zIndex: 30,
+          }),
+        }}
+      >
+        <Box
           sx={{
-            px: 1,
-            pb: 0,
-            ...(open && {
-              mr: 1,
-              position: "absolute",
-              top: "60px",
-              zIndex: 30,
-            }),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            pr: 0.5,
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              pr: 0.5,
-            }}
+          <Typography sx={{ mx: 1, fontSize: { xs: "12px", sm: "16px" } }}>
+            {`Element List (${elementList.length}/8)`}
+          </Typography>
+          <IconButton
+            aria-label="element list expand button"
+            onClick={() => setOpen(!open)}
+            sx={{ width: "32px", height: "32px", svg: { fontSize: "20px" } }}
           >
-            <Typography sx={{ mx: 1, fontSize: { xs: "12px", sm: "16px" } }}>
-              {`Element List (${elementList.length}/8)`}
-            </Typography>
-            <IconButton
-              aria-label="element list expand button"
-              onClick={() => setOpen(!open)}
-              sx={{ width: "32px", height: "32px", svg: { fontSize: "20px" } }}
-            >
-              {open ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
-            </IconButton>
-          </Box>
-
-          <Box
-            sx={{
-              width: "100%",
-              bgcolor: "background.paper",
-              borderRadius: 1,
-              height: open ? "80vh" : nameList.length >= 3 ? "10vh" : "15vh",
-              overflow: "auto",
-            }}
-          >
-            {getElementList.map(({ title, values }) => (
-              <ElementPartBox
-                key={title}
-                title={title}
-                list={values}
-                addElement={handleClickElement}
-                nameList={nameList}
-              />
-            ))}
-          </Box>
-        </Paper>
-      </Box>
-
-      {!open && (
-        <Box sx={{ mb: 1 }}>
-          <Paper
-            component="form"
-            sx={{
-              p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-
-              "&::-webkit-scrollbar": {
-                width: "12px",
-                backgroundColor: "lightgray",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "gray",
-                borderRadius: "20px",
-              },
-            }}
-          >
-            <InputBase
-              placeholder="Comment"
-              value={reviewList[step].comment}
-              onChange={(e) => updateReview("comment", step, e.target.value)}
-              sx={{ ml: 1, flex: 1, fontSize: { xs: "14px", sm: "16px" } }}
-              multiline
-              rows={3}
-            />
-          </Paper>
+            {open ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
+          </IconButton>
         </Box>
-      )}
+
+        <Box
+          sx={{
+            width: "100%",
+            bgcolor: "background.paper",
+            borderRadius: 1,
+            height: open ? "80vh" : nameList.length >= 3 ? "10vh" : "15vh",
+            overflow: "auto",
+          }}
+        >
+          {getElementList.map(({ title, values }) => (
+            <ElementPartBox
+              key={title}
+              title={title}
+              list={values}
+              addElement={handleClickElement}
+              nameList={nameList}
+            />
+          ))}
+        </Box>
+      </Paper>
+
+      <Paper
+        component="form"
+        sx={{
+          p: "2px 4px",
+          display: "flex",
+          alignItems: "center",
+
+          "&::-webkit-scrollbar": {
+            width: "12px",
+            backgroundColor: "lightgray",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "gray",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <InputBase
+          placeholder="Comment"
+          value={reviewList[step].comment}
+          onChange={(e) => updateReview("comment", step, e.target.value)}
+          sx={{ ml: 1, flex: 1, fontSize: { xs: "14px", sm: "16px" } }}
+          multiline
+        />
+      </Paper>
     </Box>
   );
 };
