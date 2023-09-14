@@ -8,7 +8,7 @@ import os
 import pathlib
 
 filePath = os.path.abspath(__file__)
-parent_path = pathlib.Path(filePath).parent
+parent_path = pathlib.Path(filePath).parent.parent.parent
 path = str(parent_path) + "/dccrolling/database/"
 
 with open(path+"review_whiskey.json","r",encoding='utf8') as f:
@@ -27,6 +27,6 @@ nameList = sorted(nameDict.items(),key=lambda x:x[1],reverse=True)
 for name in nameList:
     trie.insert(name[0])
 
-with open("wordTrie.pickle","wb") as f:
+with open(str(parent_path)+"/main/module/wordTrie.pickle","wb") as f:
     pickle.dump(trie,f)
     pickle.dump(nameDict,f)
