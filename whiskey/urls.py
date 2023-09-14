@@ -37,5 +37,6 @@ urlpatterns = [
     #path('other/', views.post_view),
     path('other/search/', views.search),
     path('search/', views.search),
+    path('autocomplete/',views.autocomplete)
 
 ]+ static(STATIC_URL, document_root=STATIC_ROOT)
