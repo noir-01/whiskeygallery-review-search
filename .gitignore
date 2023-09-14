@@ -17,6 +17,8 @@ dccrolling/reviewUpload.sh
 dccrolling/reviewUpload.log
 
 main/migrations/
+main/module/makeTrie.sh
+main/module/wordTrie.pickle
 staticfiles/
 whiskey/settings.py
 
