@@ -6,6 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import CloseIcon from "@mui/icons-material/Close";
+import Script from "next/script";
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 const App = (props: AppProps) => {
   const { Component, pageProps } = props;
@@ -33,6 +35,18 @@ const App = (props: AppProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="referrer" content="no-referrer-when-downgrade" />
         <link rel="icon" href="/favicon.ico" />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+</Script>
       </Head>
       <CssBaseline />
       <SnackbarProvider
