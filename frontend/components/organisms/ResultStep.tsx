@@ -38,7 +38,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
   const handleClickDownload = async () => {
     const element = document.getElementById("your-component-id");
     const canvas = await html2canvas(element as HTMLElement, {
-      scale: 1.5,
+      scale: 4,
     });
 
     const link = document.createElement("a");
@@ -192,12 +192,7 @@ const ResultStep = ({ handleBack, handleReset }: ResultStepProps) => {
                     {reviewList[step].score}
                   </Typography>
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <Box sx={{ maxWidth: "180px", mt: "-28px" }}>
                     {!isEmptyList && (
                       <ElementChart
