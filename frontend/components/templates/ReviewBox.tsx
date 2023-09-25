@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
@@ -14,6 +14,9 @@ import ReviewStepper from "@/components/organisms/ReviewStepper";
 import { useReviewStore } from "@/store/MemoReview";
 import { useWhiskeyStore } from "@/store/MemoWhiskey";
 import snackbar from "@/utils/snackbar";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useQuery } from "@tanstack/react-query";
+import { TextField } from "@mui/material";
 
 const ReviewBox = () => {
   const { resetReviewList } = useReviewStore();
@@ -58,6 +61,25 @@ const ReviewBox = () => {
     snackbar("리셋되었습니다.", "success");
   };
 
+  const getNameList = async (input: string): Promise<{ result: string[] }> => {
+    const value = await fetch(
+      `https://whiskeygallery-review.com:444/autocomplete?word=${input}`
+    );
+    return value.json();
+  };
+
+  const { data: nameList } = useQuery(
+    ["review", whiskey.name],
+    async () => await getNameList(whiskey.name).then((res) => res.result),
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60,
+      onError: (err) =>
+        snackbar(`에러가 발생했습니다. 다시 시도해주세요. (error:${err})`),
+    }
+  );
+
   return (
     <Box sx={{ width: "100%", pt: 2, maxWidth: "680px" }}>
       <Typography
@@ -73,20 +95,41 @@ const ReviewBox = () => {
           <Paper
             component="form"
             sx={{
-              p: "0 4px",
+              p: "0 4px 0 0",
               display: "flex",
               alignItems: "center",
               my: 1.5,
               flex: 1,
+              height: "36px",
             }}
           >
-            <InputBase
-              placeholder="Whiskey name"
-              value={whiskey.name}
-              onChange={(e) => updateWhiskey("name", e.target.value)}
-              sx={{ ml: 1, flex: 2 }}
+            <Autocomplete
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Whiskey name"
+                  value={whiskey.name}
+                  onChange={(e) => updateWhiskey("name", e.target.value)}
+                  autoFocus={true}
+                  fullWidth
+                  inputProps={{
+                    style: { padding: "0px" },
+                    ...params.inputProps,
+                  }}
+                />
+              )}
+              sx={{
+                flex: 2,
+                "> .MuiInputBase-root": {
+                  py: 0,
+                  px: 3,
+                  height: "44px",
+                  borderRadius: "21px 0 0 21px",
+                },
+              }}
+              options={nameList || []}
             />
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            <Divider sx={{ height: 28, mr: 0.5 }} orientation="vertical" />
             <InputBase
               placeholder="WB code"
               type="number"
