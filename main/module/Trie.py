@@ -26,10 +26,7 @@ class Trie:
             else:
                 return False
 
-        if current_node.data:
-            return True
-        else:
-            return False
+        return True
 
     def starts_with(self, prefix):
         current_node = self.head
