@@ -104,6 +104,7 @@ const ReviewBox = () => {
             }}
           >
             <Autocomplete
+              freeSolo
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -115,6 +116,11 @@ const ReviewBox = () => {
                   inputProps={{
                     style: { padding: "0px" },
                     ...params.inputProps,
+                  }}
+                  sx={{
+                    ".MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
                   }}
                 />
               )}
