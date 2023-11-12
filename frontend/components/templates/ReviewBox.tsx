@@ -105,6 +105,9 @@ const ReviewBox = () => {
           >
             <Autocomplete
               freeSolo
+              onChange={(e) => {
+                updateWhiskey("name", (e.target as HTMLInputElement).outerText);
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
