@@ -22,6 +22,12 @@ import TuneIcon from "@mui/icons-material/Tune";
 
 const SearchBox = () => {
   const [searchInput, setSearchInput] = useState("");
+  const [searchOptionA2, setSearchOptionA2] = useState("");
+  const [searchOptionA3, setSearchOptionA3] = useState("");
+  const [searchOptionO1, setSearchOptionO1] = useState("");
+  const [searchOptionO2, setSearchOptionO2] = useState("");
+  const [searchOptionO3, setSearchOptionO3] = useState("");
+  const [age, setAge] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [displayedPost, setDisplayedPost] = useState(20);
@@ -34,21 +40,14 @@ const SearchBox = () => {
   const [visitedPostList, setVisitedPostList] = useState<number[]>([]);
   const [recentlyVisitedPost, setRecentlyVisitedPost] = useState<number>(0);
 
-  const searchOptionA2 = useRef("");
-  const searchOptionA3 = useRef("");
-  const searchOptionO1 = useRef("");
-  const searchOptionO2 = useRef("");
-  const searchOptionO3 = useRef("");
-  const age = useRef("");
-
   const checkIsEmptyInput = () =>
     searchInput === "" &&
-    searchOptionA2.current === "" &&
-    searchOptionA3.current === "" &&
-    searchOptionO1.current === "" &&
-    searchOptionO2.current === "" &&
-    searchOptionO3.current === "" &&
-    age.current === "";
+    searchOptionA2 === "" &&
+    searchOptionA3 === "" &&
+    searchOptionO1 === "" &&
+    searchOptionO2 === "" &&
+    searchOptionO3 === "" &&
+    age === "";
 
   const onSearch = () => {
     if (isOpenSearchTools) {
@@ -83,13 +82,7 @@ const SearchBox = () => {
     const value = await fetch(
       `https://whiskeygallery-review.com:444${
         isOtherSearch ? "/other" : ""
-      }/search/?aSearch1=${searchInput.trim()}&aSearch2=${
-        searchOptionA2.current
-      }&aSearch3=${searchOptionA3.current}&oSearch1=${
-        searchOptionO1.current
-      }&oSearch2=${searchOptionO2.current}&oSearch3=${
-        searchOptionO3.current
-      }&age=${age.current}`
+      }/search/?aSearch1=${searchInput.trim()}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3}&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3}&age=${age}`
     );
     return value.json();
   };
@@ -115,6 +108,16 @@ const SearchBox = () => {
   const addVisitedList = (visitedPostId: number) => {
     if (!visitedPostList.includes(visitedPostId))
       setVisitedPostList([...visitedPostList, visitedPostId]);
+  };
+
+  const handleDeleteAllInput = () => {
+    setSearchInput("");
+    setSearchOptionA2("");
+    setSearchOptionA3("");
+    setSearchOptionO1("");
+    setSearchOptionO2("");
+    setSearchOptionO3("");
+    setAge("");
   };
 
   return (
@@ -273,8 +276,8 @@ const SearchBox = () => {
                 disabled={isLoading}
                 placeholder="option2"
                 sx={{ flexBasis: "25%" }}
-                defaultValue={searchOptionA2.current}
-                onChange={(e) => (searchOptionA2.current = e.target.value)}
+                value={searchOptionA2}
+                onChange={(e) => setSearchOptionA2(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
               />
               <InputBase
@@ -282,8 +285,8 @@ const SearchBox = () => {
                 disabled={isLoading}
                 placeholder="option3"
                 sx={{ flexBasis: "25%" }}
-                defaultValue={searchOptionA3.current}
-                onChange={(e) => (searchOptionA3.current = e.target.value)}
+                value={searchOptionA3}
+                onChange={(e) => setSearchOptionA3(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
               />
             </Box>
@@ -309,8 +312,8 @@ const SearchBox = () => {
                 disabled={isLoading}
                 placeholder="option1"
                 sx={{ flexBasis: "25%" }}
-                defaultValue={searchOptionO1.current}
-                onChange={(e) => (searchOptionO1.current = e.target.value)}
+                value={searchOptionO1}
+                onChange={(e) => setSearchOptionO1(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
               />
               <InputBase
@@ -318,8 +321,8 @@ const SearchBox = () => {
                 disabled={isLoading}
                 placeholder="option2"
                 sx={{ flexBasis: "25%" }}
-                defaultValue={searchOptionO2.current}
-                onChange={(e) => (searchOptionO2.current = e.target.value)}
+                value={searchOptionO2}
+                onChange={(e) => setSearchOptionO2(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
               />
               <InputBase
@@ -327,8 +330,8 @@ const SearchBox = () => {
                 disabled={isLoading}
                 placeholder="option3"
                 sx={{ flexBasis: "25%" }}
-                defaultValue={searchOptionO3.current}
-                onChange={(e) => (searchOptionO3.current = e.target.value)}
+                value={searchOptionO3}
+                onChange={(e) => setSearchOptionO3(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
               />
             </Box>
@@ -352,25 +355,39 @@ const SearchBox = () => {
                 type="search"
                 disabled={isLoading}
                 placeholder="age"
-                defaultValue={age.current}
-                onChange={(e) => (age.current = e.target.value)}
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
-                sx={{ flexBasis: "35%" }}
+                sx={{ flex: 1 }}
               />
-              <Button
-                variant="contained"
-                disabled={isLoading}
-                sx={{
-                  flex: 1,
-                  bgcolor: "#755139",
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  variant="contained"
+                  disabled={checkIsEmptyInput()}
+                  onClick={handleDeleteAllInput}
+                  sx={{
+                    bgcolor: "#755139",
+                    ":active": { bgcolor: "#755139" },
+                    ":hover": { bgcolor: "#755139" },
+                  }}
+                >
+                  입력 지우기
+                </Button>
+                <Button
+                  variant="contained"
+                  disabled={isLoading}
+                  sx={{
+                    flex: 1,
+                    bgcolor: "#755139",
 
-                  ":active": { bgcolor: "#755139" },
-                  ":hover": { bgcolor: "#755139" },
-                }}
-                onClick={() => setIsOtherSearch(!isOtherSearch)}
-              >
-                {isOtherSearch ? "리뷰 검색기" : "기타 리뷰 검색기"}
-              </Button>
+                    ":active": { bgcolor: "#755139" },
+                    ":hover": { bgcolor: "#755139" },
+                  }}
+                  onClick={() => setIsOtherSearch(!isOtherSearch)}
+                >
+                  {isOtherSearch ? "리뷰 검색기" : "기타 리뷰 검색기"}
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Paper>
