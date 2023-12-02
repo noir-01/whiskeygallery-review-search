@@ -3,12 +3,12 @@ import router from "next/router";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-import ReviewBox from "@/components/templates/ReviewBox";
-import SearchBox from "@/components/templates/SearchBox";
+import ReviewSection from "@/components/templates/ReviewSection";
+import SearchSection from "@/components/templates/SearchSection";
 
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import SearchIcon from "@mui/icons-material/Search";
- 
+
 import * as gtag from "../utils/gtag";
 
 export default function Home() {
@@ -20,19 +20,16 @@ export default function Home() {
       return "";
     };
 
-    return () => {
-      window.onbeforeunload = null;
-    };
-
     const handleRouteChange = (url: URL) => {
       gtag.pageview(url);
     };
 
     router.events.on("routeChangeComplete", handleRouteChange);
+
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
+      window.onbeforeunload = null;
     };
-    
   }, [router]);
 
   return (
@@ -56,7 +53,7 @@ export default function Home() {
           justifyContent: "center",
         }}
       >
-        <SearchBox />
+        <SearchSection />
       </Grid>
       <Grid
         item
@@ -67,7 +64,7 @@ export default function Home() {
           justifyContent: "center",
         }}
       >
-        <ReviewBox />
+        <ReviewSection />
       </Grid>
 
       <Box
