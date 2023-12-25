@@ -35,12 +35,13 @@ def search(request):
             word = request.GET['oSearch'+str(i)]
             orWord.append(word) if word.strip()!='' else 1
         age = request.GET['age']
-
+        
         path = str(request.path)
         
-        #path가 그냥 search면 isOther = False
+        #path가 그냥 search면 isOther = False (그냥 리뷰 검색)
         if(path == "/search/"):
             df = searchTitleInclude(andWord,orWord,age,False)
+        #기타 리뷰 검색
         else:
             df = searchTitleInclude(andWord,orWord,age,True)
 
