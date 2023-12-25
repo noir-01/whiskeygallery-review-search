@@ -8,13 +8,16 @@ import pathlib
 filePath = os.path.abspath(__file__)
 parent_path = pathlib.Path(filePath).parent
 path = str(parent_path) + "/dccrolling/database"
-#검색 로직 수정
+
+#using in main/views.py
 def searchTitleInclude(andWord,orWord,age,isOther):
     
     #어느 DB에서 검색할 것인지 isOther로 판단 : whiskey or not
+    #일반 리뷰
     if(isOther == False):
         with open(path + '/review_whiskey.json', 'r',encoding='utf8') as f:
             json_data = json.load(f)
+    #기타 리뷰
     else:
         with open(path + '/review_other_total.json', 'r',encoding='utf8') as f:
             json_data = json.load(f)
