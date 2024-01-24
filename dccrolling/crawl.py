@@ -19,10 +19,13 @@ login = mysql_auth.Info
 def crawlByPage(inputID,liquor,category):
     global dataList
 
-    if(category=="other"):
-        subject_str = "기타리뷰"
-    else:
-        subject_str = "리뷰📝"
+    subject_str_dict = {
+        "other": "기타리기타리뷰",
+        "whiskey": "리뷰📝",
+        "beer": "리뷰",
+        "brandy":"리뷰",
+    }
+    subject_str = subject_str_dict[category]
 
     # URL
     BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.
@@ -150,4 +153,3 @@ crawl("beer")
 # time.sleep(0.001)
 
 #crawlByPage("2022-12-04","whiskey","whiskey")
-
