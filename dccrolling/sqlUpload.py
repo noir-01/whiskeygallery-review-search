@@ -6,7 +6,8 @@ import pandas as pd
 login = mysql_auth.Info
 
 #mysql에 전달받은 데이터를 업로드.
-def sqlUpload(id,title,url,recom,reply,postDate,category):
+#def sqlUpload(id,title,url,recom,reply,postDate,category):
+def sqlUpload(dataList,category):
     conn = pymysql.connect(
         host=login['host'],
         user=login['user'],
@@ -34,7 +35,8 @@ def sqlUpload(id,title,url,recom,reply,postDate,category):
                 VALUES(%s,%s,%s,%s,%s,%s)"""
 
     #새 리뷰 업로드
-    cursor.execute(sql,(id,title,url,recom,reply,postDate))
+    #cursor.execute(sql,(id,title,url,recom,reply,postDate))
+    cursor.executemany(sql,dataList)
     
     #새 리뷰를 포함해서 json으로 저장
     sql = "select * from " + tableName
