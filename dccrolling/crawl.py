@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import requests
 from urllib import request
 from bs4 import BeautifulSoup
@@ -7,6 +6,10 @@ from datetime import datetime,timedelta
 import time
 import pymysql
 import mysql_auth
+from multiprocessing import Pool,Manager
+manager = Manager()
+dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
+
 from sqlUpload import sqlUpload
 
 login = mysql_auth.Info
@@ -14,11 +17,12 @@ login = mysql_auth.Info
 #inputDate = 'yyyy-mm-dd'
 
 def crawlByPage(inputID,liquor,category):
+    global dataList
 
     if(category=="other"):
-        subject_str = "기타리기타리뷰"
+        subject_str = "기타리뷰"
     else:
-        subject_str = "리뷰"
+        subject_str = "리뷰📝"
 
     # URL
     BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.
@@ -29,18 +33,16 @@ def crawlByPage(inputID,liquor,category):
 
     page = 1
     while True:
+        time.sleep(0.001)   #부하 막기 위해 time.sleep() 삽입.
         # html
         response = requests.get(BASE_URL+str(page), headers=headers[0])
         soup = BeautifulSoup(response.content, 'html.parser')
         html_list = soup.find('tbody').find_all('tr')
-
-        time.sleep(0.001)
         for i in html_list:
             #글번호
             id = int(i.find('td', class_='gall_num').text)
             #말머리
             subject = i.find('td', class_='gall_subject').text
-
             # 제목
             title = i.find('a', href=True).text
 
@@ -83,17 +85,14 @@ def crawlByPage(inputID,liquor,category):
             except:
                 reply = 0
 
-
-            #subject가 리뷰일때만 업로드
+            #subject가 리뷰일때 업로드
             if(subject==subject_str):
-                sqlUpload(id,title,url,recom,reply,postDate,category)
+                print(id)
+                dataList.append([id,title,url,recom,reply,postDate])
+                #sqlUpload(id,title,url,recom,reply,postDate,category)
 
             if id == inputID:
-                return page    #return으로 반복문 탈출
-
-            #숫자가 크다 = 나중 날짜를 의미
-            # if(postDate<=inputID and subject != "공지"):
-            #     return page
+                return   #lastID 나오면 반복문 탈출
 
         page+=1
 
@@ -117,22 +116,38 @@ def findLastID(category):
 
     return lastID
 
+def crawl(category):
+    global dataList
+    lastID = findLastID(category)
+    print("Last Uploaded ID: ",lastID)
+    if category=="whiskey" or category=="other":
+        crawlByPage(lastID,"whiskey",category)
+    else:
+        crawlByPage(lastID, category, category)
+    
+    sqlUpload(dataList,category)
+    dataList=manager.list()  #dataList 초기화
+
+crawl("whiskey")
+crawl("other")
+crawl("brandy")
+crawl("beer")
 #category = other, brandy, beer, whiskey
-lastID = findLastID("whiskey")
-crawlByPage(lastID,"whiskey","whiskey")
-time.sleep(0.001)
+# lastID = findLastID("whiskey")
+# crawlByPage(lastID,"whiskey","whiskey")
+# time.sleep(0.001)
 
-lastID = findLastID("other")
-crawlByPage(lastID,"whiskey","other")
-time.sleep(0.001)
+# lastID = findLastID("other")
+# crawlByPage(lastID,"whiskey","other")
+# time.sleep(0.001)
 
-lastID = findLastID("beer")
-crawlByPage(lastID,"beer","beer")
-time.sleep(0.001)
+# lastID = findLastID("beer")
+# crawlByPage(lastID,"beer","beer")
+# time.sleep(0.001)
 
-lastID = findLastID("brandy")
-crawlByPage(lastID,"brandy","brandy")
-time.sleep(0.001)
+# lastID = findLastID("brandy")
+# crawlByPage(lastID,"brandy","brandy")
+# time.sleep(0.001)
 
 #crawlByPage("2022-12-04","whiskey","whiskey")
 
