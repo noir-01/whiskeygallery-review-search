@@ -30,29 +30,32 @@ def search(request):
         orWord = []
         for i in range(1,4):
             word = request.GET['aSearch'+str(i)]
-            andWord.append(word) if word.strip()!='' else 1
+            andWord.append(word)# if word.strip()!='' else 1
             
             word = request.GET['oSearch'+str(i)]
-            orWord.append(word) if word.strip()!='' else 1
+            orWord.append(word)# if word.strip()!='' else 1
         age = request.GET['age']
-        
+        nickname = request.GET['nickname']
+
         path = str(request.path)
         
         #path가 그냥 search면 isOther = False (그냥 리뷰 검색)
         if(path == "/search/"):
-            df = searchTitleInclude(andWord,orWord,age,False)
+            #df = searchTitleInclude(andWord,orWord,age,isWhiskey)
+            result = searchBySql([andWord,orWord,age,nickname,True])
         #기타 리뷰 검색
         else:
-            df = searchTitleInclude(andWord,orWord,age,True)
+            result = searchBySql([andWord,orWord,age,nickname,False])
 
-        df = df.sort_values(by='5',ascending=False)
-        df.rename(columns={"0":"id","1":"title","2":"url",
-                            "3":"recommend","4":"reply","5":"time"},inplace=True)
-        result = df.to_dict(orient='records')
-
+        # df = df.sort_values(by='5',ascending=False)
+        # df.rename(columns={"0":"id","1":"title","2":"url",
+        #                     "3":"recommend","4":"reply","5":"time"},inplace=True)
+        # result = df.to_dict(orient='records')
+        result.sort(key=lambda x:x['time'])    
+        
         return JsonResponse(result,safe=False)
 
-
+#트라이 이용 자동완성
 def autocomplete(request):
     if request.method == 'GET':
         searchWord = request.GET['word']

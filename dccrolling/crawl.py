@@ -6,9 +6,8 @@ from datetime import datetime,timedelta
 import time
 import pymysql
 import mysql_auth
-from multiprocessing import Pool,Manager
-manager = Manager()
-dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
+from multiprocessing import Pool,Manager, freeze_support
+import re
 
 from sqlUpload import sqlUpload
 
@@ -24,33 +23,54 @@ def crawlByPage(inputID,liquor,category):
         "whiskey": "리뷰📝",
         "beer": "리뷰",
         "brandy":"리뷰",
+        "cock_tail":"리뷰"
     }
     subject_str = subject_str_dict[category]
 
     # URL
-    BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.
+    #BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.
+    
+    #리뷰탭만 빠르게
+    BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=beer&sort_type=N&search_head=10&page="   
     Domain_URL = "https://gall.dcinside.com"
 
     # 헤더 설정
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0'},
+    
+    #유동닉 정규식 ex) ㅇㅇ(223.38)
+    fluidNick = re.compile('.+\(\d{1,3}[.]\d{1,3}\)')
 
     page = 1
     while True:
-        time.sleep(0.001)   #부하 막기 위해 time.sleep() 삽입.
+        #time.sleep(0.001)   #부하 막기 위해 time.sleep() 삽입.
         # html
         response = requests.get(BASE_URL+str(page), headers=headers[0])
         soup = BeautifulSoup(response.content, 'html.parser')
-        html_list = soup.find('tbody').find_all('tr')
+        try:
+            html_list = soup.find('tbody').find_all('tr')
+        except:
+            print("response: ",response, '\n', soup.find('tbody'))
+            return
+
         for i in html_list:
-            #글번호
-            id = int(i.find('td', class_='gall_num').text)
             #말머리
             subject = i.find('td', class_='gall_subject').text
+
+            if subject!=subject_str:    #말머리 다르면 다음으로 넘어가기
+                continue            
+
+            #글번호
+            id = int(i.find('td', class_='gall_num').text)
             # 제목
             title = i.find('a', href=True).text
+            #닉네임
+            nickname = i.find('td',class_="gall_writer ub-writer").text.strip()
+
+            if fluidNick.match(nickname) is not None:   #유동이면 아이피 무시하고 ㅇㅇ으로 바꾸기.
+                nickname = 'ㅇㅇ'
 
             #URL
-            url = Domain_URL + i.find('a',href=True)['href']
+            #url = Domain_URL + i.find('a',href=True)['href']
 
             # 날짜 추출
             date_tag = i.find('td', class_='gall_date')
@@ -91,7 +111,7 @@ def crawlByPage(inputID,liquor,category):
             #subject가 리뷰일때 업로드
             if(subject==subject_str):
                 print(id)
-                dataList.append([id,title,url,recom,reply,postDate])
+                dataList.append([category,id,title,nickname,recom,reply,postDate])
                 #sqlUpload(id,title,url,recom,reply,postDate,category)
 
             if id == inputID:
@@ -99,11 +119,9 @@ def crawlByPage(inputID,liquor,category):
 
         page+=1
 
-#cron을 이용해 1시간마다 업로드하기
+#cron을 이용해 주기적으로 업로드하기
 #findLastID함수: 현재 mysql상에서 가장 최근 글의 id를 return 함 => 그 글 전까지 리뷰 업로드 하면 됨.
 def findLastID(category):
-
-    page = 1
     conn = pymysql.connect(
         host=login['host'],
         user=login['user'],
@@ -112,7 +130,10 @@ def findLastID(category):
         charset=login['charset']
     )
     cursor = conn.cursor()
-    sql = "select max(id) from " + category + "Review"
+    if category=='whiskey':
+        sql = "select max(id) from whiskeyReview"
+    else:
+        sql = "select max(id) from otherReview where category=%s"%category
     cursor.execute(sql)
     lastID = cursor.fetchall()[0][0]
     conn.close()
@@ -121,35 +142,27 @@ def findLastID(category):
 
 def crawl(category):
     global dataList
-    lastID = findLastID(category)
-    print("Last Uploaded ID: ",lastID)
+    #lastID = findLastID(category)
+    #print("Last Uploaded ID: ",lastID)
     if category=="whiskey" or category=="other":
-        crawlByPage(lastID,"whiskey",category)
+        #crawlByPage(lastID,"whiskey",category)
+        crawlByPage(7441,"whiskey",category)   #마지막 페이지까지 위해 
     else:
-        crawlByPage(lastID, category, category)
+        crawlByPage(109, category, category)
     
+    print("======== UPLOAD SQL ========")
     sqlUpload(dataList,category)
     dataList=manager.list()  #dataList 초기화
 
-crawl("whiskey")
-crawl("other")
-crawl("brandy")
-crawl("beer")
+
+if __name__ == '__main__':
+    freeze_support()
+    manager = Manager()
+    dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
+    crawl("beer")
+
+# crawl("other")
+# crawl("brandy")
+# crawl("beer")
+# crawl("cock_tail")
 #category = other, brandy, beer, whiskey
-# lastID = findLastID("whiskey")
-# crawlByPage(lastID,"whiskey","whiskey")
-# time.sleep(0.001)
-
-# lastID = findLastID("other")
-# crawlByPage(lastID,"whiskey","other")
-# time.sleep(0.001)
-
-# lastID = findLastID("beer")
-# crawlByPage(lastID,"beer","beer")
-# time.sleep(0.001)
-
-# lastID = findLastID("brandy")
-# crawlByPage(lastID,"brandy","brandy")
-# time.sleep(0.001)
-
-#crawlByPage("2022-12-04","whiskey","whiskey")

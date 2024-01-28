@@ -4,9 +4,14 @@ import mysql_auth
 import json
 import pandas as pd
 login = mysql_auth.Info
+import os
+import pathlib
+filePath = os.path.abspath(__file__)
+parent_path = pathlib.Path(filePath).parent
+path = str(parent_path) + "/dccrolling/database"
 
 #mysql에 전달받은 데이터를 업로드.
-#def sqlUpload(id,title,url,recom,reply,postDate,category):
+#def sqlUpload(category, id,title,nickname,url,recom,reply,postDate):
 def sqlUpload(dataList,category):
     conn = pymysql.connect(
         host=login['host'],
@@ -21,35 +26,30 @@ def sqlUpload(dataList,category):
     #카테고리에 따라 다른 table을 사용함
     sql = "REPLACE INTO "
 
-    if(category=="other"):    
-        tableName = "otherReview"
-    elif(category=="brandy"):
-        tableName = "brandyReview"
-    elif(category=="beer"):
-        tableName = "beerReview"
-    else:
-        tableName = "whiskeyReview"
-    
-
-    sql = sql + tableName + """(id,title,url,recom,reply,postDate) 
+    if(category=="whiskey"):    
+        sql = sql + "whiskeyReview" + """(id,title,nickname,recom,reply,postDate) 
                 VALUES(%s,%s,%s,%s,%s,%s)"""
+        cursor.executemany(sql,dataList[1:7])
+    else:
+        sql = sql + "otherReview" + """(category,id,title,nickname,recom,reply,postDate) 
+                VALUES(%s,%s,%s,%s,%s,%s,%s)"""
+        cursor.executemany(sql,dataList)
 
     #새 리뷰 업로드
-    #cursor.execute(sql,(id,title,url,recom,reply,postDate))
-    cursor.executemany(sql,dataList)
+    #cursor.execute(sql,({category},id,title,nickname,url,recom,reply,postDate))
     
-    #새 리뷰를 포함해서 json으로 저장
-    sql = "select * from " + tableName
-    cursor.execute(sql)
-    rows = cursor.fetchall()
+    # #새 리뷰를 포함해서 json으로 저장
+    # sql = "select * from " + tableName
+    # cursor.execute(sql)
+    # rows = cursor.fetchall()
     
-    data = pd.DataFrame.from_dict(rows)
-    datajson = data.to_json(orient='records',force_ascii=False)
+    # data = pd.DataFrame.from_dict(rows)
+    # datajson = data.to_json(orient='records',force_ascii=False)
 
-    path = "/home/blanc/ReviewSearchVenv/src/whiskey/dccrolling/database/review_" + category + ".json"
-    with open(path , "w",encoding='utf8') as file:
-        file.write(datajson)
-    file.close()
+    # path += /review_" + category + ".json"
+    # with open(path , "w",encoding='utf8') as file:
+    #     file.write(datajson)
+    # file.close()
     
     conn.commit()
     conn.close()
