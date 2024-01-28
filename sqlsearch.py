@@ -4,13 +4,14 @@ import pandas as pd
 import json
 import os
 import pathlib
+from dccrolling.mysql_auth import Info as login
 
 filePath = os.path.abspath(__file__)
 parent_path = pathlib.Path(filePath).parent
 path = str(parent_path) + "/dccrolling/database"
 
 #using in main/views.py
-def searchTitleInclude(andWord,orWord,age,isOther):
+def searchTitleInclude(andWord,orWord,age,nickname,isOther):
     
     #어느 DB에서 검색할 것인지 isOther로 판단 : whiskey or not
     #일반 리뷰
@@ -53,18 +54,54 @@ def searchTitleInclude(andWord,orWord,age,isOther):
         result = pd.concat([orList[0],orList[1],orList[2]])
     return result
 
-#DataFrame을 전달받아 html파일 생성하는 함수
-def searchWord(df):
-    df['1'] = '<a href=' + '"' + df['url'] + '"' +' target=_blank' +'><div>' + df['title'] + '</div></a>'
-    #id와 url은 필요없는 정보
-    df.pop('id')
-    df.pop('url')
-    #정렬
-    df = df.sort_values(by='postDate',ascending=False)
+#paramList: [andWords,orWords,age,nickname,isWhiskey]
+def searchBySql(paramList):
+    conn = pymysql.connect(
+        host=login['host'],
+        user=login['user'],
+        password=login['password'],
+        db=login['db'],
+        charset=login['charset']
+    )
+    cursor = conn.cursor()
+    andWord,orWord,age,nickname,isWhiskey = paramList[0],paramList[1],paramList[2],paramList[3],paramList[4]
+    if isWhiskey:
+        category = 'whiskey'
+    else:
+        category = 'other'
 
-    #dataFrame을 html table로 변환
-    html = df.to_html( index=False, classes='stocktable', table_id='table1',escape=False)
-    html = html.replace('class="dataframe ','class="')  # It always adds a dataframe class so this removes it
+    for _ in range(3-len(andWord)):
+        andWord.append('')
+    for _ in range(3-len(orWord)):
+        orWord.append('')
 
-    with open("main/templates/main/parameter.html", "w",encoding='utf8') as file:
-        file.write(html)
+    query = '''
+    select id,title,recom,reply,nickname,postdate
+    from %sReview 
+    where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
+    (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') and
+    title like \'%%%s%%\' and nickname like \'%%%s%%\'
+
+    '''%(category,
+         andWord[0],andWord[1],andWord[2],
+         orWord[0],orWord[1],orWord[2],
+         age, nickname
+         )
+    cursor.execute(query)
+    result = cursor.fetchall()
+    result_dict = []
+    for r in result:
+        result_dict.append({
+            "id"        : r[0],
+            "title"     : r[1],
+            "recommend" : r[2],
+            "reply"     : r[3],
+            "nickname"  : r[4],
+            "time"      : r[5],
+            "category"  : category,
+        })
+    conn.close()
+    return result_dict
+
+# paramList = [['드로낙','21',''],['','',''],'','','whiskey']
+# searchBySql(paramList)
