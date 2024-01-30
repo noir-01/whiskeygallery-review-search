@@ -89,7 +89,7 @@ const SearchBox = () => {
         encodeURIComponent(searchOptionO1.current)
       }&oSearch2=${encodeURIComponent(searchOptionO2.current)}&oSearch3=${
         encodeURIComponent(searchOptionO3.current)
-      }&age=${age.current}`
+      }&age=${age.current}&nickname=`
     );
     return value.json();
   };

@@ -28,10 +28,7 @@ def crawlByPage(inputID,liquor,category):
     subject_str = subject_str_dict[category]
 
     # URL
-    #BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.
-    
-    #리뷰탭만 빠르게
-    BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=beer&sort_type=N&search_head=10&page="   
+    BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.  
     Domain_URL = "https://gall.dcinside.com"
 
     # 헤더 설정
@@ -42,7 +39,7 @@ def crawlByPage(inputID,liquor,category):
 
     page = 1
     while True:
-        #time.sleep(0.001)   #부하 막기 위해 time.sleep() 삽입.
+        time.sleep(0.001)   #부하 막기 위해 time.sleep() 삽입.
         # html
         response = requests.get(BASE_URL+str(page), headers=headers[0])
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -109,10 +106,12 @@ def crawlByPage(inputID,liquor,category):
                 reply = 0
 
             #subject가 리뷰일때 업로드
-            if(subject==subject_str):
+            if subject==subject_str:
                 print(id)
-                dataList.append([category,id,title,nickname,recom,reply,postDate])
-                #sqlUpload(id,title,url,recom,reply,postDate,category)
+                if category!="whiskey":
+                    dataList.append([category,id,title,nickname,recom,reply,postDate])
+                else:
+                    dataList.append([id,title,nickname,recom,reply,postDate])
 
             if id == inputID:
                 return   #lastID 나오면 반복문 탈출
@@ -133,7 +132,7 @@ def findLastID(category):
     if category=='whiskey':
         sql = "select max(id) from whiskeyReview"
     else:
-        sql = "select max(id) from otherReview where category=%s"%category
+        sql = "select max(id) from otherReview where category=\'%s\'"%category
     cursor.execute(sql)
     lastID = cursor.fetchall()[0][0]
     conn.close()
@@ -142,13 +141,12 @@ def findLastID(category):
 
 def crawl(category):
     global dataList
-    #lastID = findLastID(category)
+    lastID = findLastID(category)
     #print("Last Uploaded ID: ",lastID)
     if category=="whiskey" or category=="other":
-        #crawlByPage(lastID,"whiskey",category)
-        crawlByPage(7441,"whiskey",category)   #마지막 페이지까지 위해 
+        crawlByPage(lastID,"whiskey",category)
     else:
-        crawlByPage(109, category, category)
+        crawlByPage(lastID, category, category)
     
     print("======== UPLOAD SQL ========")
     sqlUpload(dataList,category)
@@ -159,10 +157,9 @@ if __name__ == '__main__':
     freeze_support()
     manager = Manager()
     dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
+    crawl("whiskey")
+    crawl("other")
+    crawl("brandy")
     crawl("beer")
-
-# crawl("other")
-# crawl("brandy")
-# crawl("beer")
-# crawl("cock_tail")
+    crawl("cock_tail")
 #category = other, brandy, beer, whiskey

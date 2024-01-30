@@ -29,27 +29,11 @@ def sqlUpload(dataList,category):
     if(category=="whiskey"):    
         sql = sql + "whiskeyReview" + """(id,title,nickname,recom,reply,postDate) 
                 VALUES(%s,%s,%s,%s,%s,%s)"""
-        cursor.executemany(sql,dataList[1:7])
+        cursor.executemany(sql,dataList)
     else:
         sql = sql + "otherReview" + """(category,id,title,nickname,recom,reply,postDate) 
                 VALUES(%s,%s,%s,%s,%s,%s,%s)"""
         cursor.executemany(sql,dataList)
-
-    #새 리뷰 업로드
-    #cursor.execute(sql,({category},id,title,nickname,url,recom,reply,postDate))
-    
-    # #새 리뷰를 포함해서 json으로 저장
-    # sql = "select * from " + tableName
-    # cursor.execute(sql)
-    # rows = cursor.fetchall()
-    
-    # data = pd.DataFrame.from_dict(rows)
-    # datajson = data.to_json(orient='records',force_ascii=False)
-
-    # path += /review_" + category + ".json"
-    # with open(path , "w",encoding='utf8') as file:
-    #     file.write(datajson)
-    # file.close()
     
     conn.commit()
     conn.close()
