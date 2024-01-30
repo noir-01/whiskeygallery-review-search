@@ -74,15 +74,17 @@ def searchBySql(paramList):
         andWord.append('')
     for _ in range(3-len(orWord)):
         orWord.append('')
+    
+    selectClause = "id,title,recom,reply,nickname,postdate" if category=='whiskey' else "id,title,recom,reply,nickname,postdate,category"
 
     query = '''
-    select id,title,recom,reply,nickname,postdate
+    select %s
     from %sReview 
     where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
     (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') and
     title like \'%%%s%%\' and nickname like \'%%%s%%\'
 
-    '''%(category,
+    '''%(selectClause,category,
          andWord[0],andWord[1],andWord[2],
          orWord[0],orWord[1],orWord[2],
          age, nickname
@@ -91,6 +93,8 @@ def searchBySql(paramList):
     result = cursor.fetchall()
     result_dict = []
     for r in result:
+        if category=="other" and r[6]=="other": 
+            category="whiskey"   #카테고리가 other 이면 whiskey로 바꾸기(위갤 기타리뷰)
         result_dict.append({
             "id"        : r[0],
             "title"     : r[1],
@@ -98,7 +102,7 @@ def searchBySql(paramList):
             "reply"     : r[3],
             "nickname"  : r[4],
             "time"      : r[5],
-            "category"  : category,
+            "category"  : 'whiskey' if category=='whiskey' else r[6] 
         })
     conn.close()
     return result_dict
