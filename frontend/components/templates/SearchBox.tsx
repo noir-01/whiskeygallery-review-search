@@ -84,9 +84,9 @@ const SearchBox = () => {
     const value = await fetch(
       `https://whiskeygallery-review.com:444${
         isOtherSearch ? "/other" : ""
-      }/search/?aSearch1=${searchInput.trim()}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3
-      }&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3
-      }&age=${age}&nickname=${nickname}`
+      }/search/?aSearch1=${encodeURIComponent(searchInput.trim())}&aSearch2=${encodeURIComponent(searchOptionA2)}&aSearch3=${encodeURIComponent(searchOptionA3)
+      }&oSearch1=${encodeURIComponent(searchOptionO1)}&oSearch2=${encodeURIComponent(searchOptionO2)}&oSearch3=${encodeURIComponent(searchOptionO3)
+      }&age=${encodeURIComponent(age)}&nickname=${encodeURIComponent(nickname)}`
     );
     return value.json();
   };
