@@ -84,9 +84,9 @@ const SearchBox = () => {
     const value = await fetch(
       `https://whiskeygallery-review.com:444${
         isOtherSearch ? "/other" : ""
-      }/search/?aSearch1=${encodeURIComponent(searchInput.trim())}&aSearch2=${encodeURIComponent(searchOptionA2)}&aSearch3=${encodeURIComponent(searchOptionA3)
-      }&oSearch1=${encodeURIComponent(searchOptionO1)}&oSearch2=${encodeURIComponent(searchOptionO2)}&oSearch3=${encodeURIComponent(searchOptionO3)
-      }&age=${encodeURIComponent(age)}&nickname=${encodeURIComponent(nickname)}`
+      }/search/?aSearch1=${searchInput.trim()}&aSearch2=${searchOptionA2}&aSearch3=${searchOptionA3
+      }&oSearch1=${searchOptionO1}&oSearch2=${searchOptionO2}&oSearch3=${searchOptionO3
+      }&age=${age}&nickname=${nickname}`
     );
     return value.json();
   };
@@ -204,7 +204,7 @@ const SearchBox = () => {
               onClick={onSearch}
               sx={{
                 position: "absolute",
-                top: isOpenSearchTools ? "172px" : "4px",
+                top: isOpenSearchTools ? "176px" : "4px",
                 right: isOpenSearchTools ? "8px" : "12px",
                 minWidth: 0,
                 bgcolor: isOpenSearchTools ? "#755139" : "transparent",
@@ -245,7 +245,7 @@ const SearchBox = () => {
           <Box
             sx={{
               width: "100%",
-              height: isOpenSearchTools ? "216px" : 0,
+              height: isOpenSearchTools ? "220px" : 0,
               overflow: "hidden",
               transition: ".5s",
             }}
@@ -365,6 +365,19 @@ const SearchBox = () => {
                 onKeyPress={enterKeyEventOnSearch}
                 sx={{ flex: 1 }}
               />
+              <Button
+                  variant="contained"
+                  disabled={checkIsEmptyInput()}
+                  onClick={handleDeleteAllInput}
+                  sx={{
+                    display: "flex",
+                    bgcolor: "#755139",
+                    ":active": { bgcolor: "#755139" },
+                    ":hover": { bgcolor: "#755139" },
+                  }}
+                >
+                  입력 지우기
+                </Button>
             </Box>
             <Box sx={{ display: "flex", width: "100%", my: 1, gap: 1 }}>
               <Box
@@ -392,18 +405,6 @@ const SearchBox = () => {
                 sx={{ flex: 1 }}
               />
               <Box sx={{ display: "flex", gap: 1 }}>
-                <Button
-                  variant="contained"
-                  disabled={checkIsEmptyInput()}
-                  onClick={handleDeleteAllInput}
-                  sx={{
-                    bgcolor: "#755139",
-                    ":active": { bgcolor: "#755139" },
-                    ":hover": { bgcolor: "#755139" },
-                  }}
-                >
-                  입력 지우기
-                </Button>
                 <Button
                   variant="contained"
                   disabled={isLoading}
