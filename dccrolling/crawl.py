@@ -23,12 +23,15 @@ def crawlByPage(inputID,liquor,category):
         "whiskey": "리뷰📝",
         "beer": "리뷰",
         "brandy":"리뷰",
-        "cock_tail":"리뷰"
+        "cock_tail":"리뷰",
+        "rum" : "리뷰",
+        "nuncestbibendum" : "리뷰(리뷰(술)",
     }
     subject_str = subject_str_dict[category]
 
     # URL
     BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.  
+    #BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=nuncestbibendum&sort_type=N&search_head=60&page="
     Domain_URL = "https://gall.dcinside.com"
 
     # 헤더 설정
@@ -145,10 +148,11 @@ def crawl(category):
     #print("Last Uploaded ID: ",lastID)
     if category=="whiskey" or category=="other":
         crawlByPage(lastID,"whiskey",category)
+        pass
     else:
         crawlByPage(lastID, category, category)
     
-    print("======== UPLOAD SQL ========")
+    print("======== UPLOAD SQL (category = %s) ========"%category)
     sqlUpload(dataList,category)
     dataList=manager.list()  #dataList 초기화
 
@@ -157,9 +161,7 @@ if __name__ == '__main__':
     freeze_support()
     manager = Manager()
     dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
-    crawl("whiskey")
-    crawl("other")
-    crawl("brandy")
-    crawl("beer")
-    crawl("cock_tail")
-#category = other, brandy, beer, whiskey
+    
+    categoryList = ["whiskey","other", "brandy", "beer", "cock_tail", "rum", "nuncestbibendum"]
+    for c in categoryList:
+        crawl(c)
