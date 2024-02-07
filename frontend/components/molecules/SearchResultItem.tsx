@@ -42,7 +42,7 @@ const SearchResultItem = ({
         },
       }}
       onClick={() => {
-        window.open(searchResultData.url, "_blank");
+        window.open("https://gall.dcinside.com/mgallery/board/view/?id="+searchResultData.category + "&no=" + searchResultData.id, "_blank");
         addVisitedList(searchResultData.id);
         handleChangeLastVisitPost(searchResultData.id);
       }}
