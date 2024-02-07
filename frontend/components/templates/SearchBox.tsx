@@ -393,12 +393,12 @@ const SearchBox = () => {
                   width: "58px",
                 }}
               >
-                닉네임
+                글쓴이
               </Box>
               <InputBase
                 type="search"
                 disabled={isLoading}
-                placeholder="nickname"
+                placeholder="writer"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 onKeyPress={enterKeyEventOnSearch}
