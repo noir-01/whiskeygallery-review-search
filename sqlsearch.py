@@ -81,29 +81,33 @@ def searchBySql(paramList):
     select %s
     from %sReview 
     where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
-    (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') and
-    title like \'%%%s%%\' and nickname like \'%%%s%%\'
+    (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') 
+    and title like \'%%%s%%\' 
+    and nickname = \'%s\'
 
     '''%(selectClause,category,
          andWord[0],andWord[1],andWord[2],
          orWord[0],orWord[1],orWord[2],
          age, nickname
          )
-    cursor.execute(query)
-    result = cursor.fetchall()
-    result_dict = []
-    for r in result:
-        if category=="other" and r[6]=="other": 
-            category="whiskey"   #카테고리가 other 이면 whiskey로 바꾸기(위갤 기타리뷰)
-        result_dict.append({
-            "id"        : r[0],
-            "title"     : r[1],
-            "recommend" : r[2],
-            "reply"     : r[3],
-            "nickname"  : r[4],
-            "time"      : r[5],
-            "category"  : 'whiskey' if category=='whiskey' else r[6] 
-        })
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        result_dict = []
+        for r in result:
+            if category=="other" and r[6]=="other": 
+                category="whiskey"   #카테고리가 other 이면 whiskey로 바꾸기(위갤 기타리뷰)
+            result_dict.append({
+                "id"        : r[0],
+                "title"     : r[1],
+                "recommend" : r[2],
+                "reply"     : r[3],
+                "nickname"  : r[4],
+                "time"      : r[5],
+                "category"  : 'whiskey' if category=='whiskey' else r[6] 
+            })
+    except:
+        result_dict = []
     conn.close()
     return result_dict
 
