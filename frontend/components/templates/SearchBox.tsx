@@ -40,7 +40,7 @@ const SearchBox = () => {
 
   const [visitedPostList, setVisitedPostList] = useState<number[]>([]);
   const [recentlyVisitedPost, setRecentlyVisitedPost] = useState<number>(0);
-
+  const BASE_URL = "https://gall.dcinside.com/mgallery/board/view/?id="
   const checkIsEmptyInput = () =>
     searchInput === "" &&
     searchOptionA2 === "" &&
@@ -549,7 +549,7 @@ const SearchBox = () => {
                           },
                         }}
                         onClick={() => {
-                          window.open(item.url, "_blank");
+                          window.open(BASE_URL +item.category + "&no=" + item.id, "_blank");
                           addVisitedList(item.id);
                           setRecentlyVisitedPost(item.id);
                         }}
