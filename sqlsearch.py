@@ -77,19 +77,33 @@ def searchBySql(paramList):
     
     selectClause = "id,title,recom,reply,nickname,postdate" if category=='whiskey' else "id,title,recom,reply,nickname,postdate,category"
 
-    query = '''
-    select %s
-    from %sReview 
-    where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
-    (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') 
-    and title like \'%%%s%%\' 
-    and nickname = \'%s\'
+    if nickname!='':    #닉네임 있을 경우에만 닉네임 쿼리에 넣어서 검색.
+        query = '''
+        select %s
+        from %sReview 
+        where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
+        (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') 
+        and title like \'%%%s%%\' 
+        and nickname = \'%s\'
 
-    '''%(selectClause,category,
-         andWord[0],andWord[1],andWord[2],
-         orWord[0],orWord[1],orWord[2],
-         age, nickname
-         )
+        '''%(selectClause,category,
+            andWord[0],andWord[1],andWord[2],
+            orWord[0],orWord[1],orWord[2],
+            age, nickname
+            )
+    else:
+        query = '''
+        select %s
+        from %sReview 
+        where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
+        (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') 
+        and title like \'%%%s%%\' 
+
+        '''%(selectClause,category,
+            andWord[0],andWord[1],andWord[2],
+            orWord[0],orWord[1],orWord[2],
+            age)
+        
     try:
         cursor.execute(query)
         result = cursor.fetchall()
