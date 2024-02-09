@@ -30,10 +30,10 @@ def search(request):
         orWord = []
         for i in range(1,4):
             word = request.GET['aSearch'+str(i)]
-            andWord.append(word)# if word.strip()!='' else 1
+            andWord.append(word) if word.strip()!='' else 1
             
             word = request.GET['oSearch'+str(i)]
-            orWord.append(word)# if word.strip()!='' else 1
+            orWord.append(word) if word.strip()!='' else 1
         age = request.GET['age']
         nickname = request.GET['nickname']
 

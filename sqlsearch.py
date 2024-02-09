@@ -69,41 +69,31 @@ def searchBySql(paramList):
         category = 'whiskey'
     else:
         category = 'other'
-
-    for _ in range(3-len(andWord)):
-        andWord.append('')
-    for _ in range(3-len(orWord)):
-        orWord.append('')
     
     selectClause = "id,title,recom,reply,nickname,postdate" if category=='whiskey' else "id,title,recom,reply,nickname,postdate,category"
 
+    query = '''
+        select %s
+        from %sReview 
+        where title like \'%%%s%%\' 
+        '''%(selectClause,category,age)
+    
     if nickname!='':    #닉네임 있을 경우에만 닉네임 쿼리에 넣어서 검색.
-        query = '''
-        select %s
-        from %sReview 
-        where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
-        (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') 
-        and title like \'%%%s%%\' 
-        and nickname = \'%s\'
+        query += " and nickname = \'%s\'" %(nickname)
+    
+    #andWord 추가
+    for i, keyword in enumerate(andWord):
+        query = query + " and title like \'%%%s%%\'" %keyword
+    
+    #orWord 추가
+    for i, keyword in enumerate(orWord):
+        if i==0:
+            query = query + " and (title like \'%%%s%%\'" %keyword
+        else:
+            query = query + " or title like \'%%%s%%\'" %keyword
+        if i==len(orWord)-1:
+            query +=")"
 
-        '''%(selectClause,category,
-            andWord[0],andWord[1],andWord[2],
-            orWord[0],orWord[1],orWord[2],
-            age, nickname
-            )
-    else:
-        query = '''
-        select %s
-        from %sReview 
-        where title like \'%%%s%%\' and title like \'%%%s%%\' and title like \'%%%s%%\' and 
-        (title like \'%%%s%%\' or title like \'%%%s%%\' or title like \'%%%s%%\') 
-        and title like \'%%%s%%\' 
-
-        '''%(selectClause,category,
-            andWord[0],andWord[1],andWord[2],
-            orWord[0],orWord[1],orWord[2],
-            age)
-        
     try:
         cursor.execute(query)
         result = cursor.fetchall()
