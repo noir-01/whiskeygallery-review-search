@@ -15,7 +15,7 @@ login = mysql_auth.Info
 #if 날짜 조건 안맞으면 page 값 +=1 해서 리턴
 #inputDate = 'yyyy-mm-dd'
 
-def crawlByPage(inputID,liquor,category):
+def crawlByPage(lastID,liquor,category):
     global dataList
 
     subject_str_dict = {
@@ -23,12 +23,15 @@ def crawlByPage(inputID,liquor,category):
         "whiskey": "리뷰📝",
         "beer": "리뷰",
         "brandy":"리뷰",
-        "cock_tail":"리뷰"
+        "cock_tail":"리뷰",
+        "rum" : "리뷰",
+        "nuncestbibendum" : "리뷰(리뷰(술)",
     }
     subject_str = subject_str_dict[category]
 
     # URL
     BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.  
+    #BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=nuncestbibendum&sort_type=N&search_head=60&page="
     Domain_URL = "https://gall.dcinside.com"
 
     # 헤더 설정
@@ -66,9 +69,6 @@ def crawlByPage(inputID,liquor,category):
             if fluidNick.match(nickname) is not None:   #유동이면 아이피 무시하고 ㅇㅇ으로 바꾸기.
                 nickname = 'ㅇㅇ'
 
-            #URL
-            #url = Domain_URL + i.find('a',href=True)['href']
-
             # 날짜 추출
             date_tag = i.find('td', class_='gall_date')
             date_dict = date_tag.attrs
@@ -80,18 +80,11 @@ def crawlByPage(inputID,liquor,category):
             else:
                 postDate =  date_tag.text
 
-            """
-            # 조회 수 추출
-            views_tag = i.find('td', class_='gall_count')
-            view = views_tag.text
-            """
-
             # 추천 수 추출
             recommend_tag = i.find('td', class_='gall_recommend')
             recom = recommend_tag.text
 
             # 댓글 수 추출
-
             try:
                 reply_tag = i.span.string.text
                 if reply_tag[0] =='[':
@@ -113,7 +106,7 @@ def crawlByPage(inputID,liquor,category):
                 else:
                     dataList.append([id,title,nickname,recom,reply,postDate])
 
-            if id == inputID:
+            if id <= lastID:
                 return   #lastID 나오면 반복문 탈출
 
         page+=1
@@ -129,10 +122,11 @@ def findLastID(category):
         charset=login['charset']
     )
     cursor = conn.cursor()
+    #3일 내의 리뷰 최신화
     if category=='whiskey':
-        sql = "select max(id) from whiskeyReview"
+        sql = "select max(id) from whiskeyReview where postDate = DATE_FORMAT(date_sub(now(),interval 3 day), \'%Y-%m-%d\');"
     else:
-        sql = "select max(id) from otherReview where category=\'%s\'"%category
+        sql = "select max(id) from otherReview where category=\'%s\' and postDate = DATE_FORMAT(date_sub(now(),interval 3 day), \'%%Y-%%m-%%d\');"%category
     cursor.execute(sql)
     lastID = cursor.fetchall()[0][0]
     conn.close()
@@ -142,13 +136,13 @@ def findLastID(category):
 def crawl(category):
     global dataList
     lastID = findLastID(category)
-    #print("Last Uploaded ID: ",lastID)
+    print("Last Uploaded ID (%s): %s"%(category, lastID))
     if category=="whiskey" or category=="other":
         crawlByPage(lastID,"whiskey",category)
     else:
         crawlByPage(lastID, category, category)
     
-    print("======== UPLOAD SQL ========")
+    print("======== UPLOAD SQL (category = %s) ========"%category)
     sqlUpload(dataList,category)
     dataList=manager.list()  #dataList 초기화
 
@@ -157,9 +151,7 @@ if __name__ == '__main__':
     freeze_support()
     manager = Manager()
     dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
-    crawl("whiskey")
-    crawl("other")
-    crawl("brandy")
-    crawl("beer")
-    crawl("cock_tail")
-#category = other, brandy, beer, whiskey
+    
+    categoryList = ["whiskey","other", "brandy", "beer", "cock_tail", "rum", "nuncestbibendum"]
+    for c in categoryList:
+        crawl(c)
