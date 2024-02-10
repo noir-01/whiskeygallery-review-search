@@ -124,9 +124,9 @@ def findLastID(category):
     cursor = conn.cursor()
     #3일 내의 리뷰 최신화
     if category=='whiskey':
-        sql = "select max(id) from whiskeyReview where postDate = DATE_FORMAT(date_sub(now(),interval 3 day), \'%Y-%m-%d\');"
+        sql = "select min(id) from whiskeyReview where postDate >= DATE_FORMAT(date_sub(now(),interval 2 day), \'%Y-%m-%d\');"
     else:
-        sql = "select max(id) from otherReview where category=\'%s\' and postDate = DATE_FORMAT(date_sub(now(),interval 3 day), \'%%Y-%%m-%%d\');"%category
+        sql = "select min(id) from otherReview where category=\'%s\' and postDate >= DATE_FORMAT(date_sub(now(),interval 2 day), \'%%Y-%%m-%%d\');"%category
     cursor.execute(sql)
     lastID = cursor.fetchall()[0][0]
     conn.close()
