@@ -12,7 +12,7 @@ dccrolling/database/review_other.json
 dccrolling/database/review_other_total.json
 dccrolling/database/review_whiskey.json
 
-dccrolling/mysql_auth.py
+auth/mysql_auth.py
 dccrolling/reviewUpload.sh
 dccrolling/reviewUpload.log
 
