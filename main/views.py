@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import sys
-from sqlsearch import *
+from main.sqlsearch import *
 import pymysql
 import json
 import pandas as pd

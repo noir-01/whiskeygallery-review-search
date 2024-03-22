@@ -4,7 +4,7 @@ import pandas as pd
 import json
 import os
 import pathlib
-from dccrolling.mysql_auth import Info as login
+from mysql_auth import Info as login
 
 filePath = os.path.abspath(__file__)
 parent_path = pathlib.Path(filePath).parent
