@@ -4,11 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import sys
 from main.sqlsearch import *
-import pymysql
-import json
 import pandas as pd
-import requests
-import datetime
 import pickle
 import os
 import pathlib
@@ -38,14 +34,15 @@ def search(request):
         nickname = request.GET['nickname']
 
         path = str(request.path)
-        
+
+        param = [andWord,orWord,age,nickname,True,request.META['REMOTE_ADDR']]
         #path가 그냥 search면 isOther = False (그냥 리뷰 검색)
         if(path == "/search/"):
-            #df = searchTitleInclude(andWord,orWord,age,isWhiskey)
-            result = searchBySql([andWord,orWord,age,nickname,True])
+            result = searchBySql(param)
         #기타 리뷰 검색
         else:
-            result = searchBySql([andWord,orWord,age,nickname,False])
+            param[4] = False
+            result = searchBySql(param)
 
         # df = df.sort_values(by='5',ascending=False)
         # df.rename(columns={"0":"id","1":"title","2":"url",

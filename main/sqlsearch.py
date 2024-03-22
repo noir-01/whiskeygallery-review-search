@@ -1,61 +1,21 @@
 import pymysql
 import unicodedata
 import pandas as pd
-import json
+from datetime import datetime
 import os
 import pathlib
-from mysql_auth import Info as login
+import mysql_auth
+login = mysql_auth.Info
 
 filePath = os.path.abspath(__file__)
 parent_path = pathlib.Path(filePath).parent
 path = str(parent_path) + "/dccrolling/database"
 
-#using in main/views.py
-def searchTitleInclude(andWord,orWord,age,nickname,isOther):
-    
-    #어느 DB에서 검색할 것인지 isOther로 판단 : whiskey or not
-    #일반 리뷰
-    if(isOther == False):
-        with open(path + '/review_whiskey.json', 'r',encoding='utf8') as f:
-            json_data = json.load(f)
-    #기타 리뷰
-    else:
-        with open(path + '/review_other_total.json', 'r',encoding='utf8') as f:
-            json_data = json.load(f)
-
-    dataframe = pd.json_normalize(json_data)
-
-    #검색 로직
-    #먼저 and 검색 수행: dataframe 복사본 만들어서
-    age_df = dataframe['1'].str.contains(age)
-    word_df = dataframe[age_df]
-
-    for word in andWord:
-        #pandas 검색기능 활용
-        word_df = word_df[word_df['1'].str.contains(word,case=False)]
-    
-    #word_df에서 orList 내의 단어들을 각각 검색 후 합치기.
-    orList =[]
-    for word in orWord:
-        or_df = word_df['1'].str.contains(word,case=False)
-        orList.append(pd.DataFrame.from_dict(word_df[or_df]))
-
-    #중복 제거 (or검색해서 나온 결과를 합친거라 결과가 겹칠 수 있음)
-    wordnum = len(orList)
-
-    if wordnum ==0:
-        result = word_df
-
-    if wordnum==1:
-        result = orList[0]
-    elif wordnum==2:
-        result = pd.concat([orList[0],orList[1]])
-    elif wordnum==3:
-        result = pd.concat([orList[0],orList[1],orList[2]])
-    return result
-
-#paramList: [andWords,orWords,age,nickname,isWhiskey]
+#paramList: [andWords,orWords,age,nickname,isWhiskey, ip]
 def searchBySql(paramList):
+
+    andWord,orWord,age,nickname,isWhiskey,ip = paramList[0],paramList[1],paramList[2],paramList[3],paramList[4],paramList[5]
+
     conn = pymysql.connect(
         host=login['host'],
         user=login['user'],
@@ -64,7 +24,6 @@ def searchBySql(paramList):
         charset=login['charset']
     )
     cursor = conn.cursor()
-    andWord,orWord,age,nickname,isWhiskey = paramList[0],paramList[1],paramList[2],paramList[3],paramList[4]
     if isWhiskey:
         category = 'whiskey'
     else:
@@ -112,8 +71,24 @@ def searchBySql(paramList):
             })
     except:
         result_dict = []
-    conn.close()
-    return result_dict
 
+    def saveSearchWord(paramList):
+        with conn.cursor() as cursor:
+        # Create or replace the record
+            sql = """
+            INSERT INTO searchLog (ip, searchTime, aSearch1, aSearch2, aSearch3, oSearch1, oSearch2, oSearch3, age, nickname, isWhiskey)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            andWord = paramList[0]+[None]*(3-len(paramList[0]))
+            orWord = paramList[1]+[None]*(3-len(paramList[1]))
+            cursor.execute(sql,
+                (ip, datetime.now(), andWord[0],andWord[1],andWord[2], orWord[0],orWord[1],orWord[2],
+                age,nickname,isWhiskey))
+            conn.commit()
+
+    saveSearchWord(paramList)
+    conn.close()
+
+    return result_dict
 # paramList = [['드로낙','21',''],['','',''],'','','whiskey']
 # searchBySql(paramList)
