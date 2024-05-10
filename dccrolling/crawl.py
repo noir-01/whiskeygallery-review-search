@@ -16,6 +16,7 @@ login = mysql_auth.Info
 #inputDate = 'yyyy-mm-dd'
 
 def crawlByPage(lastID,liquor,category):
+    #dataList = multiprocessing 위한 list.
     global dataList
 
     subject_str_dict = {

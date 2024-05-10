@@ -34,8 +34,12 @@ def search(request):
         nickname = request.GET['nickname']
 
         path = str(request.path)
-
-        param = [andWord,orWord,age,nickname,True,request.META['REMOTE_ADDR']]
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        param = [andWord,orWord,age,nickname,True,ip]
         #path가 그냥 search면 isOther = False (그냥 리뷰 검색)
         if(path == "/search/"):
             result = searchBySql(param)
