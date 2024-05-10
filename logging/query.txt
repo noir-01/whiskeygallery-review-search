@@ -31,3 +31,41 @@ WHERE value IS NOT NULL AND value != ''
 GROUP BY value
 ORDER BY frequency DESC
 LIMIT 10;
+
+##PYTHON QUERY##
+
+    query = """
+    SELECT value, COUNT(*) AS frequency
+    FROM (
+        SELECT aSearch1 AS value FROM searchLog
+        WHERE searchTime >= DATE_SUB(NOW(), INTERVAL {})
+        UNION ALL
+
+        SELECT aSearch2 AS value FROM searchLog
+        WHERE searchTime >= DATE_SUB(NOW(), INTERVAL {})
+        UNION ALL
+
+        SELECT aSearch3 AS value FROM searchLog
+        WHERE searchTime >= DATE_SUB(NOW(), INTERVAL {})
+        UNION ALL
+
+        SELECT oSearch1 AS value FROM searchLog
+        WHERE searchTime >= DATE_SUB(NOW(), INTERVAL {})
+        UNION ALL
+
+        SELECT oSearch2 AS value FROM searchLog
+        WHERE searchTime >= DATE_SUB(NOW(), INTERVAL {})
+        UNION ALL
+
+        SELECT oSearch3 AS value FROM searchLog
+        WHERE searchTime >= DATE_SUB(NOW(), INTERVAL {})
+        UNION ALL
+
+        SELECT age AS value FROM searchLog
+        WHERE searchTime >= DATE_SUB(NOW(), INTERVAL {})
+    ) AS combined_values
+    WHERE value IS NOT NULL AND value != ''
+    GROUP BY value
+    ORDER BY frequency DESC
+    LIMIT 10;
+    """.format(time,time,time,time,time,time,time)
