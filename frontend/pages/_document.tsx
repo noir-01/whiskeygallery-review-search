@@ -6,7 +6,7 @@ export default function Document() {
   const meta = {
     description: "위스키 리뷰 검색 & 작성 사이트",
     title: "위스키 리뷰 검색/작성기",
-    url: "https://whiskeyreview.ddns.net",
+    url: "https://whiskeygallery-review.com",
     image: "/favicon.ico",
   };
 
