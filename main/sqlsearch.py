@@ -13,7 +13,15 @@ path = str(parent_path) + "/dccrolling/database"
 
 #paramList: [andWords,orWords,age,nickname,isWhiskey, ip]
 def searchBySql(paramList):
-
+    #먼저 paramList에 있는 따옴표를 제거함.
+    for i in range(4):
+        #andWords/orWords
+        if i==0 or i==1:
+            paramList[i] = [word.replace("'","''").replace("_","'_") for word in paramList[i]]
+        #age/nickname
+        elif i==2 or i==3:
+            paramList[i] = paramList[i].replace("'","''").replace("_","'_")
+            
     andWord,orWord,age,nickname,isWhiskey,ip = paramList[0],paramList[1],paramList[2],paramList[3],paramList[4],paramList[5]
 
     conn = pymysql.connect(
@@ -90,5 +98,3 @@ def searchBySql(paramList):
     conn.close()
 
     return result_dict
-# paramList = [['드로낙','21',''],['','',''],'','','whiskey']
-# searchBySql(paramList)
