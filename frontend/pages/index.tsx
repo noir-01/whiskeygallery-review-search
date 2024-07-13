@@ -8,7 +8,7 @@ import SearchBox from "@/components/templates/SearchBox";
 
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import SearchIcon from "@mui/icons-material/Search";
- 
+
 import * as gtag from "../utils/gtag";
 
 export default function Home() {
@@ -24,15 +24,14 @@ export default function Home() {
       window.onbeforeunload = null;
     };
 
-    const handleRouteChange = (url: URL) => {
-      gtag.pageview(url);
-    };
+    // const handleRouteChange = (url: URL) => {
+    //   gtag.pageview(url);
+    // };
 
-    router.events.on("routeChangeComplete", handleRouteChange);
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
-    
+    // router.events.on("routeChangeComplete", handleRouteChange);
+    // return () => {
+    //   router.events.off("routeChangeComplete", handleRouteChange);
+    // };
   }, [router]);
 
   return (
