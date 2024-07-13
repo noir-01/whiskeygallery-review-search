@@ -13,6 +13,20 @@ export default function Document() {
   return (
     <Html lang="ko">
       <Head>
+        <meta charSet="utf-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+
+        <title>{meta.title}</title>
+        <meta name="title" content={meta.title} key="title" />
+        <meta name="description" content={meta.description} key="description" />
+
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+        />
+        <meta name="referrer" content="no-referrer-when-downgrade" />
+        <link rel="icon" href="/favicon.ico" />
+
         <meta property="og:type" content="website" />
 
         <meta name="mobile-web-app-capable" content="yes" />
@@ -68,21 +82,21 @@ export default function Document() {
         <link rel="manifest" href="/manifest.json" />
         {/* Global Site Tag (gtag.js) - Google Analytics */}
         <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', '${GA_TRACKING_ID}', {
                 page_path: window.location.pathname,
               });
-          `
-            }}
-          />
+          `,
+          }}
+        />
       </Head>
       <body>
         <Main />
