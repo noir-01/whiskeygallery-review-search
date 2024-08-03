@@ -101,13 +101,13 @@ def crawlByPage(liquor,category):
 
             except:
                 reply = 0
-
-            if subject==subject_str or '위위리' in title:
-                print(id)
-                if category!="whiskey":
-                    dataList.append([category,id,title,nickname,recom,reply,postDate])
-                else:
-                    dataList.append([id,title,nickname,recom,reply,postDate])
+            
+            # if subject==subject_str or '위위리' in title:
+            #     print(id)
+            if category!="whiskey":
+                dataList.append([category,id,title,nickname,recom,reply,postDate])
+            else:
+                dataList.append([id,title,nickname,recom,reply,postDate])
 
             # if id <= lastID:
             #     return   #lastID 나오면 반복문 탈출
