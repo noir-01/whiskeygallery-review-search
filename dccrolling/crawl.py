@@ -15,7 +15,7 @@ login = mysql_auth.Info
 #if 날짜 조건 안맞으면 page 값 +=1 해서 리턴
 #inputDate = 'yyyy-mm-dd'
 
-def crawlByPage(lastID,liquor,category):
+def crawlByPage(liquor,category):
     #dataList = multiprocessing 위한 list.
     global dataList
 
@@ -33,6 +33,7 @@ def crawlByPage(lastID,liquor,category):
     # URL
     BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=" + liquor + "&page=" #술 종류와 page값이 비어있다.  
     #BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=nuncestbibendum&sort_type=N&search_head=60&page="
+    #BASE_URL = "https://gall.dcinside.com/mgallery/board/lists/?id=whiskey&sort_type=N&search_head=120&page="
     Domain_URL = "https://gall.dcinside.com"
 
     # 헤더 설정
@@ -57,13 +58,15 @@ def crawlByPage(lastID,liquor,category):
             #말머리
             subject = i.find('td', class_='gall_subject').text
 
-            if subject!=subject_str:    #말머리 다르면 다음으로 넘어가기
+            # 제목
+            title = i.find('a', href=True).text
+
+            if subject!=subject_str and '위위리' not in title:    #말머리 다르면 다음으로 넘어가기
                 continue            
 
             #글번호
             id = int(i.find('td', class_='gall_num').text)
-            # 제목
-            title = i.find('a', href=True).text
+        
             #닉네임
             nickname = i.find('td',class_="gall_writer ub-writer").text.strip()
 
@@ -99,20 +102,23 @@ def crawlByPage(lastID,liquor,category):
             except:
                 reply = 0
 
-            #subject가 리뷰일때 업로드
-            if subject==subject_str:
+            if subject==subject_str or '위위리' in title:
                 print(id)
                 if category!="whiskey":
                     dataList.append([category,id,title,nickname,recom,reply,postDate])
                 else:
                     dataList.append([id,title,nickname,recom,reply,postDate])
 
-            if id <= lastID:
-                return   #lastID 나오면 반복문 탈출
-
+            # if id <= lastID:
+            #     return   #lastID 나오면 반복문 탈출
+            
+            postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
+            if postDate_datetime < datetime.today() - timedelta(days=3):
+            #if postDate_datetime < datetime.strptime("2020-09-03",'%Y-%m-%d'):
+                return
+            
         page+=1
 
-#cron을 이용해 주기적으로 업로드하기
 #findLastID함수: 현재 mysql상에서 가장 최근 글의 id를 return 함 => 그 글 전까지 리뷰 업로드 하면 됨.
 def findLastID(category):
     conn = pymysql.connect(
@@ -144,12 +150,12 @@ def findLastID(category):
 
 def crawl(category):
     global dataList
-    lastID = findLastID(category)
-    print("======== Last Uploaded ID (%s): %s ========"%(category, lastID))
+    #lastID = findLastID(category)
+    #print("======== Last Uploaded ID (%s): %s ========"%(category, lastID))
     if category=="whiskey" or category=="other":
-        crawlByPage(lastID,"whiskey",category)
+        crawlByPage("whiskey",category)
     else:
-        crawlByPage(lastID, category, category)
+        crawlByPage(category, category)
     
     print("UPLOAD SQL (category = %s) "%category)
     sqlUpload(dataList,category)
@@ -162,5 +168,6 @@ if __name__ == '__main__':
     dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
     
     categoryList = ["whiskey","other", "brandy", "beer", "cock_tail", "rum", "nuncestbibendum"]
+    #categoryList = ["whiskey"]
     for c in categoryList:
         crawl(c)
