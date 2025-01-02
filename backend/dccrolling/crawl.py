@@ -26,7 +26,8 @@ def crawlByPage(liquor,category):
         "brandy":"리뷰",
         "cock_tail":"리뷰",
         "rum" : "리뷰",
-        "nuncestbibendum" : "리뷰(리뷰(술)",
+        "nuncestbibendum" : "술리뷰술리뷰🍸",
+        "oaksusu" : "리뷰🌽"
     }
     subject_str = subject_str_dict[category]
 
@@ -57,12 +58,11 @@ def crawlByPage(liquor,category):
         for i in html_list:
             #말머리
             subject = i.find('td', class_='gall_subject').text
+            if subject=="공지" or subject=="설문" :
+                continue
 
             # 제목
-            title = i.find('a', href=True).text
-
-            if subject!=subject_str and '위위리' not in title:    #말머리 다르면 다음으로 넘어가기
-                continue            
+            title = i.find('a', href=True).text           
 
             #글번호
             id = int(i.find('td', class_='gall_num').text)
@@ -101,22 +101,24 @@ def crawlByPage(liquor,category):
 
             except:
                 reply = 0
-            
-            # if subject==subject_str or '위위리' in title:
-            #     print(id)
-            if category!="whiskey":
-                dataList.append([category,id,title,nickname,recom,reply,postDate])
+            if '/' in postDate:
+                postDate_datetime = datetime.strptime(postDate,'%y/%m/%d')
             else:
-                dataList.append([id,title,nickname,recom,reply,postDate])
+                postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
 
-            # if id <= lastID:
-            #     return   #lastID 나오면 반복문 탈출
-            
-            postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
             if postDate_datetime < datetime.today() - timedelta(days=3):
             #if postDate_datetime < datetime.strptime("2020-09-03",'%Y-%m-%d'):
                 return
-            
+
+            if subject==subject_str:
+                print(id)
+                if category!="whiskey":
+                    dataList.append([category,id,title,nickname,recom,reply,postDate])
+                else:
+                    dataList.append([id,title,nickname,recom,reply,postDate])
+
+            # if id <= lastID:
+            #     return   #lastID 나오면 반복문 탈출
         page+=1
 
 #findLastID함수: 현재 mysql상에서 가장 최근 글의 id를 return 함 => 그 글 전까지 리뷰 업로드 하면 됨.
@@ -168,6 +170,6 @@ if __name__ == '__main__':
     dataList = manager.list()   #multiprocessing 위한 전역변수 리스트
     
     categoryList = ["whiskey","other", "brandy", "beer", "cock_tail", "rum", "nuncestbibendum"]
-    #categoryList = ["whiskey"]
+    #categoryList = ["nuncestbibendum"]
     for c in categoryList:
         crawl(c)
