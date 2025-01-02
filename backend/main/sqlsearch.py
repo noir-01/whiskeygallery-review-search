@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 import os
 import pathlib
-from auth import mysql_auth
+import mysql_auth
 login = mysql_auth.Info
 
 filePath = os.path.abspath(__file__)
@@ -84,13 +84,13 @@ def searchBySql(paramList):
         with conn.cursor() as cursor:
         # Create or replace the record
             sql = """
-            INSERT INTO searchLog (ip, searchTime, aSearch1, aSearch2, aSearch3, oSearch1, oSearch2, oSearch3, age, nickname, isWhiskey)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO searchLog (searchTime, aSearch1, aSearch2, aSearch3, oSearch1, oSearch2, oSearch3, age, nickname, isWhiskey)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             andWord = paramList[0]+[None]*(3-len(paramList[0]))
             orWord = paramList[1]+[None]*(3-len(paramList[1]))
             cursor.execute(sql,
-                (ip, datetime.now(), andWord[0],andWord[1],andWord[2], orWord[0],orWord[1],orWord[2],
+                (datetime.now(), andWord[0],andWord[1],andWord[2], orWord[0],orWord[1],orWord[2],
                 age,nickname,isWhiskey))
             conn.commit()
 
