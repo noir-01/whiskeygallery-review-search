@@ -6,11 +6,14 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# 현재 위치(Dockerfile이 있는 위치)에 있는 파일을 WORKDIR로 복사
-COPY . /usr/src/app/
+# 현재 위치에 있는 requirements.txt만 먼저 복사
+COPY requirements.txt /usr/src/app/
 
-#install dependencies - requirements.txt에 나열된 라이브러리 설치
+# dependencies 설치
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r /usr/src/app/requirements.txt
+
+# 나머지 애플리케이션 파일 복사
+COPY . /usr/src/app/
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "whiskey.wsgi:application"]
