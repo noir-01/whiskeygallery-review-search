@@ -5,9 +5,14 @@ from bs4 import BeautifulSoup
 from datetime import datetime,timedelta
 import time
 import pymysql
-import mysql_auth
 from multiprocessing import Pool,Manager, freeze_support
 import re
+import os
+import sys
+
+path = os.path.join(os.path.dirname(__file__), '..', 'auth')
+sys.path.append(path)
+import mysql_auth
 
 from sqlUpload import sqlUpload
 
@@ -106,7 +111,7 @@ def crawlByPage(liquor,category):
             else:
                 postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
 
-            if postDate_datetime < datetime.today() - timedelta(days=3):
+            if postDate_datetime < datetime.today() - timedelta(days=15):
             #if postDate_datetime < datetime.strptime("2020-09-03",'%Y-%m-%d'):
                 return
 

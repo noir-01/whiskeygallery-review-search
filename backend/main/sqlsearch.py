@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 import os
 import pathlib
-import mysql_auth
+from auth import mysql_auth
 login = mysql_auth.Info
 
 filePath = os.path.abspath(__file__)

@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 import pymysql
-import mysql_auth
 import json
 import pandas as pd
-login = mysql_auth.Info
 import os
+import sys
 import pathlib
+
+path = os.path.join(os.path.dirname(__file__), '..', 'auth')
+sys.path.append(path)
+import mysql_auth
+login = mysql_auth.Info
+
 filePath = os.path.abspath(__file__)
 parent_path = pathlib.Path(filePath).parent
 path = str(parent_path) + "/dccrolling/database"
