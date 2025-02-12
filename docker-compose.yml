@@ -5,6 +5,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     network_mode: host
+    image: whiskey-backend:v1.1
     
 
   frontend:
@@ -12,6 +13,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     network_mode: host
+    image: whiskey-frontend:v1.1
 
 volumes:
   mysql_data:
