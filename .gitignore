@@ -27,7 +27,7 @@ whiskey/settings.py
 .DS_Store
 .env
 
-frontend/.env
+frontend/.env**
 frontend/node_modules/
 frontend/dist/
 frontend/.cache/
