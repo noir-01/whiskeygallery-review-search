@@ -15,6 +15,8 @@ sys.path.append(path)
 import mysql_auth
 
 from sqlUpload import sqlUpload
+updateIntervalDay = 4
+
 
 login = mysql_auth.Info
 #if 날짜 조건 안맞으면 page 값 +=1 해서 리턴
@@ -111,12 +113,12 @@ def crawlByPage(liquor,category):
             else:
                 postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
 
-            if postDate_datetime < datetime.today() - timedelta(days=15):
-            #if postDate_datetime < datetime.strptime("2020-09-03",'%Y-%m-%d'):
-                return
-
             if subject==subject_str:
-                print(id)
+                #공지글 수정의 경우 글 작성일이 예전 날짜일 수 있음. 같은 subject일 경우에만 날짜 비교 후 return
+                if postDate_datetime < datetime.today() - timedelta(updateIntervalDay):
+                    return
+                
+                print(postDate,id)
                 if category!="whiskey":
                     dataList.append([category,id,title,nickname,recom,reply,postDate])
                 else:
