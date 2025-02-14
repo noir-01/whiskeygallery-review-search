@@ -1,3 +1,7 @@
+package com.whiskeygallery_review.review_api.service;
+import com.whiskeygallery_review.review_api.dto.ReviewDto;
+import com.whiskeygallery_review.review_api.repository.OtherReviewRepository;
+import com.whiskeygallery_review.review_api.repository.WhiskeyReviewRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,15 +16,15 @@ public class ReviewService {
         this.otherReviewRepository = otherReviewRepository;
     }
 
-    public List<ReviewDTO> getWhiskeyReviews() {
+    public List<ReviewDto> getWhiskeyReviews() {
         return whiskeyReviewRepository.findAll().stream()
-                .map(ReviewDTO::new)
+                .map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
 
-    public List<ReviewDTO> getOtherReviews() {
+    public List<ReviewDto> getOtherReviews() {
         return otherReviewRepository.findAll().stream()
-                .map(ReviewDTO::new)
+                .map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
 }
