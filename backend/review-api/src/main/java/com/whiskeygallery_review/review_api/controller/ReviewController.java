@@ -1,3 +1,6 @@
+package com.whiskeygallery_review.review_api.controller;
+import com.whiskeygallery_review.review_api.dto.ReviewDto;
+import com.whiskeygallery_review.review_api.service.ReviewService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +15,12 @@ public class ReviewController {
     }
 
     @GetMapping("/whiskey")
-    public List<ReviewDTO> getWhiskeyReviews() {
+    public List<ReviewDto> getWhiskeyReviews() {
         return reviewService.getWhiskeyReviews();
     }
 
     @GetMapping("/other")
-    public List<ReviewDTO> getOtherReviews() {
+    public List<ReviewDto> getOtherReviews() {
         return reviewService.getOtherReviews();
     }
 }

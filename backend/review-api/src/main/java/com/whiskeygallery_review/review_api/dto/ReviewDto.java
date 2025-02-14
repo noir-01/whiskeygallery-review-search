@@ -1,8 +1,12 @@
+package com.whiskeygallery_review.review_api.dto;
+
+import com.whiskeygallery_review.review_api.entity.OtherReview;
+import com.whiskeygallery_review.review_api.entity.WhiskeyReview;
 import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class ReviewDTO {
+public class ReviewDto {
     private Integer id;
     private String title;
     private Integer recommend;
@@ -11,7 +15,7 @@ public class ReviewDTO {
     private LocalDate time;
     private String category;
 
-    public ReviewDTO(WhiskeyReview review) {
+    public ReviewDto(WhiskeyReview review) {
         this.id = review.getId();
         this.title = review.getTitle();
         this.recommend = review.getRecom();
@@ -21,7 +25,7 @@ public class ReviewDTO {
         this.category = "whiskey";
     }
 
-    public ReviewDTO(OtherReview review) {
+    public ReviewDto(OtherReview review) {
         this.id = review.getId();
         this.title = review.getTitle();
         this.recommend = review.getRecom();
