@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,39 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model otherReview {
+  id       Int
+  title    String?   @db.VarChar(255)
+  recom    Int?
+  reply    Int?
+  postDate DateTime? @db.Date
+  nickname String?   @db.VarChar(50)
+  category String    @db.VarChar(50)
+
+  @@id([id, category])
+}
+
+model searchLog {
+  id         Int      @id @default(autoincrement())
+  searchTime DateTime @db.DateTime(0)
+  aSearch1   String?  @db.VarChar(30)
+  aSearch2   String?  @db.VarChar(30)
+  aSearch3   String?  @db.VarChar(30)
+  oSearch1   String?  @db.VarChar(30)
+  oSearch2   String?  @db.VarChar(30)
+  oSearch3   String?  @db.VarChar(30)
+  age        String?  @db.VarChar(30)
+  nickname   String?  @db.VarChar(30)
+  isWhiskey  Boolean
+}
+
+model whiskeyReview {
+  id       Int       @id
+  title    String?   @db.VarChar(255)
+  recom    Int?
+  reply    Int?
+  postDate DateTime? @db.Date
+  nickname String?   @db.VarChar(50)
 }
