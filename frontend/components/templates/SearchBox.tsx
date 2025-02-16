@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent, useRef } from "react";
+import React,{ useState,useEffect, KeyboardEvent, useRef,useCallback} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
@@ -32,6 +32,9 @@ const SearchBox = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [displayedPost, setDisplayedPost] = useState(20);
+  const [displayedPage, setDisplayedPage] = useState(0);
+
+  const [data,setData] = useState<SearchType[]>([]);
   const [hasMoreData, setHasMoreData] = useState(true);
 
   const [isOpenSearchTools, setIsOpenSearchTools] = useState(true);
@@ -40,6 +43,11 @@ const SearchBox = () => {
 
   const [visitedPostList, setVisitedPostList] = useState<number[]>([]);
   const [recentlyVisitedPost, setRecentlyVisitedPost] = useState<number>(0);
+  const [totalElements,setTotalElements] = useState(0);
+  const boxRef = useRef(null);
+  const scrollPositionRef = useRef(0);
+  const prevDataLengthRef = useRef(0);
+
   const BASE_URL = "https://gall.dcinside.com/mgallery/board/view/?id="
   const checkIsEmptyInput = () =>
     searchInput === "" &&
@@ -80,34 +88,92 @@ const SearchBox = () => {
     }
   };
 
-  const getData = async (): Promise<SearchType[]> => {
+  // const getData = async (): Promise<SearchType[]> => {
+  //   const value = await fetch(
+  //     `https://whiskeygallery-review.com:444${
+  //       isOtherSearch ? "/other" : ""
+  //     }/search/?aSearch1=${encodeURIComponent(searchInput.trim())}&aSearch2=${encodeURIComponent(searchOptionA2)}&aSearch3=${encodeURIComponent(searchOptionA3)
+  //     }&oSearch1=${encodeURIComponent(searchOptionO1)}&oSearch2=${encodeURIComponent(searchOptionO2)}&oSearch3=${encodeURIComponent(searchOptionO3)
+  //     }&age=${encodeURIComponent(age)}&nickname=${encodeURIComponent(nickname)}`
+  //   );
+  //   return value.json();
+  // };
+
+  // const { data, isFetching, isInitialLoading, refetch } = useQuery(
+  //   ["search", searchQuery],
+  //   async () => await getData(),
+  //   {
+  //     enabled: searchQuery !== "",
+  //     keepPreviousData: true,
+  //     refetchOnWindowFocus: false,
+  //     staleTime: 1000 * 60 * 60,
+  //     onSuccess: (data) => {
+  //       if (data.length > 20) setHasMoreData(true);
+  //     },
+  //     onError: (err) =>
+  //       snackbar(`에러가 발생했습니다. 다시 시도해주세요. (error:${err})`),
+  //   }
+  // );
+
+  const getData = async (page = 0): Promise<Page<SearchType>> => {
     const value = await fetch(
-      `https://whiskeygallery-review.com:444${
-        isOtherSearch ? "/other" : ""
-      }/search/?aSearch1=${encodeURIComponent(searchInput.trim())}&aSearch2=${encodeURIComponent(searchOptionA2)}&aSearch3=${encodeURIComponent(searchOptionA3)
-      }&oSearch1=${encodeURIComponent(searchOptionO1)}&oSearch2=${encodeURIComponent(searchOptionO2)}&oSearch3=${encodeURIComponent(searchOptionO3)
-      }&age=${encodeURIComponent(age)}&nickname=${encodeURIComponent(nickname)}`
+      `http://localhost:9090/api/review/${ 
+        isOtherSearch ? "other?" : "whiskey?"
+      }${searchInput.trim() ? `andWords=${encodeURIComponent(searchInput.trim())}&` : ""}`
+      + (searchOptionA2 ? `andWords=${encodeURIComponent(searchOptionA2)}&` : "")
+      + (searchOptionA3 ? `andWords=${encodeURIComponent(searchOptionA3)}&` : "")
+      + (searchOptionO1 ? `orWords=${encodeURIComponent(searchOptionO1)}&` : "")
+      + (searchOptionO2 ? `orWords=${encodeURIComponent(searchOptionO2)}&` : "")
+      + (searchOptionO3 ? `orWords=${encodeURIComponent(searchOptionO3)}&` : "")
+      + (age ? `age=${encodeURIComponent(age)}&` : "")
+      + (nickname ? `nickname=${encodeURIComponent(nickname)}&` : "")
+      + `page=${displayedPage}&size=20&sortField=postDate&direction=DESC`
     );
     return value.json();
   };
-
-  const { data, isFetching, isInitialLoading, refetch } = useQuery(
-    ["search", searchQuery],
-    async () => await getData(),
+  
+  const { isFetching, isInitialLoading, refetch } = useQuery(
+    ["search", searchQuery, displayedPage],
+    () => getData(displayedPage),
     {
-      enabled: searchQuery !== "",
+      enabled: searchQuery !== "" && displayedPage > 0,
       keepPreviousData: true,
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 60,
       onSuccess: (data) => {
-        if (data.length > 20) setHasMoreData(true);
+        setHasMoreData(!data.last); // 마지막 페이지면 false 설정
+
+        if (data.content) {
+          if (boxRef.current) {
+            scrollPositionRef.current = boxRef.current.scrollTop;
+            prevDataLengthRef.current = data.length;
+          }
+          setData((prevData) => [...prevData, ...data.content]); // 기존 데이터에 이어붙이기
+          setTotalElements(data.totalElements);
+        }
       },
       onError: (err) =>
         snackbar(`에러가 발생했습니다. 다시 시도해주세요. (error:${err})`),
     }
   );
 
-  const isLoading = isFetching || isInitialLoading;
+  const handleLoadMore = useCallback(() => {
+    // 현재 스크롤 위치 저장
+    if (boxRef.current) {
+      scrollPositionRef.current = boxRef.current.scrollTop;
+    }
+    
+    setDisplayedPost((prev) => prev + 20);
+    setDisplayedPage((prev) => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    if (displayedPage > 0) {
+      refetch();
+    }
+  }, [displayedPage]);
+
+  const isLoading = isInitialLoading;
 
   const addVisitedList = (visitedPostId: number) => {
     if (!visitedPostList.includes(visitedPostId))
@@ -440,7 +506,7 @@ const SearchBox = () => {
             }}
           >
             <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
-              {`검색 결과 [총 ${data?.length}개]`}
+              {`검색 결과 [총 ${totalElements}개]`}
             </Typography>
             <DropDownOption
               value={sortOption}
@@ -484,7 +550,7 @@ const SearchBox = () => {
                 작성일
               </Grid>
             </Grid>
-            <Box
+            <Box ref={boxRef}
               sx={{
                 height: isOpenSearchTools
                   ? "calc(100vh - 380px)"
@@ -509,8 +575,8 @@ const SearchBox = () => {
                     let A, B;
                     switch (sortOption) {
                       case "최신순":
-                        A = a.time;
-                        B = b.time;
+                        A = a.postDate;
+                        B = b.postDate;
                         break;
                       case "댓글순":
                         A = a.reply;
@@ -586,7 +652,7 @@ const SearchBox = () => {
                             sx={{ whiteSpace: "nowrap", textAlign: "center" }}
                           >
                             <Typography variant="subtitle2">
-                              {convertMilliToDay(item.time)}
+                              {convertMilliToDay(item.postDate)}
                             </Typography>
                           </Grid>
                         </Grid>
@@ -595,7 +661,7 @@ const SearchBox = () => {
                     </Box>
                   ))}
 
-              {data && data.length !== 0 && hasMoreData && (
+              {/* {data && data.length !== 0 && hasMoreData && (
                 <Box
                   sx={{
                     display: "flex",
@@ -620,7 +686,24 @@ const SearchBox = () => {
                     displayedPost > data.length ? data.length : displayedPost
                   }/${data.length})`}
                 </Box>
-              )}
+              )} */
+              }
+                {hasMoreData && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
+                      height: "30px",
+                      ":hover": { opacity: 0.5 },
+                    }}
+                    onClick={handleLoadMore} // 다음 페이지 요청}
+                  >
+                    {`더보기 (${data.length}/${totalElements})`}
+                  </Box>
+                )
+              }
 
               {data && data.length === 0 && <Box>검색결과가 없습니다.</Box>}
             </Box>
