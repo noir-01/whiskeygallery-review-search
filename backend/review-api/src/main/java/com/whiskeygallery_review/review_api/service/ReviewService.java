@@ -1,13 +1,21 @@
 package com.whiskeygallery_review.review_api.service;
 import com.whiskeygallery_review.review_api.dto.ReviewDto;
+import com.whiskeygallery_review.review_api.entity.WhiskeyReview;
 import com.whiskeygallery_review.review_api.repository.OtherReviewRepository;
 import com.whiskeygallery_review.review_api.repository.WhiskeyReviewRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
+    @Autowired
     private final WhiskeyReviewRepository whiskeyReviewRepository;
     private final OtherReviewRepository otherReviewRepository;
 
@@ -27,4 +35,28 @@ public class ReviewService {
                 .map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
+
+    public Page<WhiskeyReview> searchReviews(
+            List<String> andWords,
+            List<String> orWords,
+            String age,
+            String nickname,
+            int page,
+            int size,
+            String sortField,
+            Sort.Direction direction) {
+
+        Sort sort = Sort.by(direction, sortField);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+
+        return whiskeyReviewRepository.searchWithPaging(
+                andWords, orWords, age, nickname, pageRequest);
+    }
+
+    public List<WhiskeyReview> searchReview_v2(String word){
+        List<WhiskeyReview> wrList = whiskeyReviewRepository.findByTitleContaining(word);
+        System.out.println(wrList.size());
+        return wrList;
+    }
 }
+

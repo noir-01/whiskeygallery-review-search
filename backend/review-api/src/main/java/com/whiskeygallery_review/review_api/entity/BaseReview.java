@@ -17,7 +17,5 @@ public abstract class BaseReview {
     private Integer recom;
     private Integer reply;
     private String nickname;
-
-    @Column(name = "postDate")
-    private LocalDate time;
+    private LocalDate postDate;
 }
