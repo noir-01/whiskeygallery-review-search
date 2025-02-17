@@ -195,8 +195,8 @@ const SearchBox = () => {
     <Box
       sx={{
         backgroundColor: "#F2EDD7",
-        mt: isLoading || data ? 0 : isOpenSearchTools ? "30vh" : "35vh",
-        mb: data ? 0 : isOpenSearchTools ? "30vh" : "50vh",
+        mt: isLoading || data.length > 0  ? 0 : isOpenSearchTools ? "30vh" : "35vh",
+        mb: data.length > 0  ? 0 : isOpenSearchTools ? "30vh" : "50vh",
         transition: ".5s",
         maxWidth: "680px",
       }}
@@ -207,7 +207,7 @@ const SearchBox = () => {
           fontWeight: 700,
           my: 2,
           color: "#755139",
-          textAlign: data || isLoading ? "left" : "center",
+          textAlign: data.length > 0  || isLoading ? "left" : "center",
         }}
       >
         {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
@@ -495,7 +495,7 @@ const SearchBox = () => {
         <CustomLoading isLoading={isLoading} />
       </Box>
 
-      {!isLoading && data ? (
+      {!isLoading && data.length > 0 ? (
         <>
           <Box
             sx={{
