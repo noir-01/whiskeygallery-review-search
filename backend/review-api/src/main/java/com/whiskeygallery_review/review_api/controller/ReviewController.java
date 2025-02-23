@@ -1,6 +1,5 @@
 package com.whiskeygallery_review.review_api.controller;
 import com.whiskeygallery_review.review_api.dto.ReviewDto;
-import com.whiskeygallery_review.review_api.entity.WhiskeyReview;
 import com.whiskeygallery_review.review_api.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,8 +19,34 @@ public class ReviewController {
     }
 
     @GetMapping("/other")
-    public List<ReviewDto> getOtherReviews() {
-        return reviewService.getOtherReviews();
+    public Page<ReviewDto> getOtherReviews(
+            @RequestParam(required = false) List<String> andWords,
+            @RequestParam(required = false) List<String> orWords,
+            @RequestParam(required = false) String age,
+            @RequestParam(required = false) String nickname,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "postDate") String sortField,
+            @RequestParam(defaultValue = "DESC") String direction) {
+
+        Sort.Direction sortDirection = Sort.Direction.valueOf(direction.toUpperCase());
+        if(andWords!=null){
+            System.out.println(String.join(", ", andWords));
+        }
+
+        return reviewService.searchOtherReviews(
+                andWords, orWords, age, nickname,
+                page, size, sortField, sortDirection).map(
+                review->new ReviewDto(
+                        review.getId(),
+                        review.getTitle().trim(),
+                        review.getRecom(),
+                        review.getReply(),
+                        review.getNickname(),
+                        review.getPostDate(),
+                        review.getCategory()
+                )
+        );
     }
     @GetMapping("/whiskey")
     public Page<ReviewDto> searchReviews(
@@ -39,7 +64,7 @@ public class ReviewController {
             System.out.println(String.join(", ", andWords));
         }
 
-        return reviewService.searchReviews(
+        return reviewService.searchWhiskeyReviews(
                 andWords, orWords, age, nickname,
                 page, size, sortField, sortDirection).map(
                         review->new ReviewDto(

@@ -1,5 +1,6 @@
 package com.whiskeygallery_review.review_api.service;
 import com.whiskeygallery_review.review_api.dto.ReviewDto;
+import com.whiskeygallery_review.review_api.entity.OtherReview;
 import com.whiskeygallery_review.review_api.entity.WhiskeyReview;
 import com.whiskeygallery_review.review_api.repository.OtherReviewRepository;
 import com.whiskeygallery_review.review_api.repository.WhiskeyReviewRepository;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +36,7 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
-    public Page<WhiskeyReview> searchReviews(
+    public Page<WhiskeyReview> searchWhiskeyReviews(
             List<String> andWords,
             List<String> orWords,
             String age,
@@ -53,10 +53,21 @@ public class ReviewService {
                 andWords, orWords, age, nickname, pageRequest);
     }
 
-    public List<WhiskeyReview> searchReview_v2(String word){
-        List<WhiskeyReview> wrList = whiskeyReviewRepository.findByTitleContaining(word);
-        System.out.println(wrList.size());
-        return wrList;
+    public Page<OtherReview> searchOtherReviews(
+            List<String> andWords,
+            List<String> orWords,
+            String age,
+            String nickname,
+            int page,
+            int size,
+            String sortField,
+            Sort.Direction direction) {
+
+        Sort sort = Sort.by(direction, sortField);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+
+        return otherReviewRepository.searchWithPaging(
+                andWords, orWords, age, nickname, pageRequest);
     }
 }
 
