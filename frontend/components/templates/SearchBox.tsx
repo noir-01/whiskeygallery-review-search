@@ -8,7 +8,7 @@ import InputBase from "@mui/material/InputBase";
 import ListItemButton from "@mui/material/ListItemButton";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery,useQueryClient } from "@tanstack/react-query";
 
 import CustomLoading from "@/components/atoms/CustomLoading";
 import DropDownOption from "@/components/atoms/DropDownOption";
@@ -45,19 +45,20 @@ const SearchBox = () => {
   const [recentlyVisitedPost, setRecentlyVisitedPost] = useState<number>(0);
   const [totalElements,setTotalElements] = useState(0);
   const boxRef = useRef(null);
-  const scrollPositionRef = useRef(0);
-  const prevDataLengthRef = useRef(0);
+
+  const [isSearchButtonClicked,setIsSearchButtonClicked] = useState(false);
 
   const BASE_URL = "https://gall.dcinside.com/mgallery/board/view/?id="
   const checkIsEmptyInput = () =>
-    searchInput === "" &&
-    searchOptionA2 === "" &&
-    searchOptionA3 === "" &&
-    searchOptionO1 === "" &&
-    searchOptionO2 === "" &&
-    searchOptionO3 === "" &&
-    age === ""&&
-    nickname==="";
+    searchInput.trim() === "" &&
+    searchOptionA2.trim() === "" &&
+    searchOptionA3.trim() === "" &&
+    searchOptionO1.trim() === "" &&
+    searchOptionO2.trim() === "" &&
+    searchOptionO3.trim() === "" &&
+    age.trim() === ""&&
+    nickname.trim()==="";
+  
 
   const onSearch = () => {
     if (isOpenSearchTools) {
@@ -73,9 +74,16 @@ const SearchBox = () => {
       setSearchInput(searchInput.trim());
       setSearchQuery(searchInput.trim());
     }
+    setIsSearchButtonClicked(true);
     setDisplayedPost(20);
+    setData([]);
     setHasMoreData(false);
-    refetch();
+    if(displayedPage===0){
+      refetch();
+    }else{
+      setDisplayedPage(0);
+      refetch()
+    }
   };
 
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -117,7 +125,7 @@ const SearchBox = () => {
 
   const getData = async (page = 0): Promise<Page<SearchType>> => {
     const value = await fetch(
-      `http://localhost:9090/api/review/${ 
+      `https://whiskeygallery-review.com:12445/api/review/${ 
         isOtherSearch ? "other?" : "whiskey?"
       }${searchInput.trim() ? `andWords=${encodeURIComponent(searchInput.trim())}&` : ""}`
       + (searchOptionA2 ? `andWords=${encodeURIComponent(searchOptionA2)}&` : "")
@@ -127,51 +135,69 @@ const SearchBox = () => {
       + (searchOptionO3 ? `orWords=${encodeURIComponent(searchOptionO3)}&` : "")
       + (age ? `age=${encodeURIComponent(age)}&` : "")
       + (nickname ? `nickname=${encodeURIComponent(nickname)}&` : "")
-      + `page=${displayedPage}&size=20&sortField=postDate&direction=DESC`
+      + `page=${page}&size=20&sortField=postDate&direction=DESC`
     );
     return value.json();
   };
-  
+  const queryClient = useQueryClient();
+
+  //로딩 적용하지 않기 위해 별도 함수 작성
+  const searchWithPage = async (page) => {
+    const result = await queryClient.fetchQuery(
+      ["search",page],
+      () => getData(page)
+    );
+    // 수동으로 onSuccess 로직 처리
+    setHasMoreData(!result.last);
+    setTotalElements(result.totalElements);
+    setIsSearchButtonClicked(true);
+    if (result.content){
+      if (page === 0) {
+        setData(result.content);
+      }
+      else{
+        setData((prevData) => [...prevData, ...result.content]); // 기존 데이터에 이어붙이기
+      }
+    }else{
+      setData([]);
+    }
+  };
+
   const { isFetching, isInitialLoading, refetch } = useQuery(
-    ["search", searchQuery, displayedPage],
+    ["search"],
     () => getData(displayedPage),
     {
-      enabled: searchQuery !== "" && displayedPage > 0,
+      enabled: searchInput.trim()!=="",
       keepPreviousData: true,
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 60,
       onSuccess: (data) => {
         setHasMoreData(!data.last); // 마지막 페이지면 false 설정
+        setTotalElements(data.totalElements);
 
-        if (data.content) {
-          if (boxRef.current) {
-            scrollPositionRef.current = boxRef.current.scrollTop;
-            prevDataLengthRef.current = data.length;
+        if (data.content){  //검색 결과 존재
+          if (displayedPage === 0) {  //첫 페이지면 데이터 교체
+            setData(data.content);
           }
-          setData((prevData) => [...prevData, ...data.content]); // 기존 데이터에 이어붙이기
-          setTotalElements(data.totalElements);
+          else{ //페이지 1 이상이면 '다음', 데이터 이어붙이기
+            setData((prevData) => [...prevData, ...data.content]);
+          }
+        }else{  //검색결과 없음
+          setData([]);
         }
       },
       onError: (err) =>
         snackbar(`에러가 발생했습니다. 다시 시도해주세요. (error:${err})`),
+      //onSettled: ()=>{console.log("refetch!")} //테스트용
     }
   );
 
-  const handleLoadMore = useCallback(() => {
-    // 현재 스크롤 위치 저장
-    if (boxRef.current) {
-      scrollPositionRef.current = boxRef.current.scrollTop;
-    }
-    
+  const handleLoadMore = () => {
+    searchWithPage(displayedPage+1);
     setDisplayedPost((prev) => prev + 20);
     setDisplayedPage((prev) => prev + 1);
-  }, []);
-
-  useEffect(() => {
-    if (displayedPage > 0) {
-      refetch();
-    }
-  }, [displayedPage]);
+    //refetch()
+  };
 
   const isLoading = isInitialLoading;
 
@@ -195,8 +221,8 @@ const SearchBox = () => {
     <Box
       sx={{
         backgroundColor: "#F2EDD7",
-        mt: isLoading || data.length > 0  ? 0 : isOpenSearchTools ? "30vh" : "35vh",
-        mb: data.length > 0  ? 0 : isOpenSearchTools ? "30vh" : "50vh",
+        mt: isLoading || isSearchButtonClicked  ? 0 : isOpenSearchTools ? "30vh" : "35vh",
+        mb: isSearchButtonClicked  ? 0 : isOpenSearchTools ? "30vh" : "50vh",
         transition: ".5s",
         maxWidth: "680px",
       }}
@@ -207,7 +233,7 @@ const SearchBox = () => {
           fontWeight: 700,
           my: 2,
           color: "#755139",
-          textAlign: data.length > 0  || isLoading ? "left" : "center",
+          textAlign: isSearchButtonClicked || isLoading ? "left" : "center",
         }}
       >
         {isOtherSearch ? "기타 리뷰 검색하기" : "리뷰 검색하기"}
@@ -490,12 +516,15 @@ const SearchBox = () => {
           </Box>
         </Paper>
       </Box>
+      
+      {displayedPage===0 && isFetching && (
+      <Box sx={{ display: isFetching ? "block" : "none", mt: "5vh" }}>
+          <CustomLoading isLoading={isFetching} />
+        </Box>)  }
+        
 
-      <Box sx={{ display: isLoading ? "block" : "none", mt: "5vh" }}>
-        <CustomLoading isLoading={isLoading} />
-      </Box>
+      {!isInitialLoading && isSearchButtonClicked?  (
 
-      {!isLoading && data.length > 0 ? (
         <>
           <Box
             sx={{
@@ -660,34 +689,6 @@ const SearchBox = () => {
                       <Divider />
                     </Box>
                   ))}
-
-              {/* {data && data.length !== 0 && hasMoreData && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    height: "30px",
-
-                    ":hover": {
-                      opacity: 0.5,
-                    },
-                  }}
-                  onClick={() => {
-                    if (data.length > displayedPost) {
-                      setDisplayedPost(displayedPost + 20);
-                      if (data.length <= displayedPost + 20)
-                        setHasMoreData(false);
-                    } else setHasMoreData(false);
-                  }}
-                >
-                  {`더보기 (${
-                    displayedPost > data.length ? data.length : displayedPost
-                  }/${data.length})`}
-                </Box>
-              )} */
-              }
                 {hasMoreData && (
                   <Box
                     sx={{
@@ -705,7 +706,7 @@ const SearchBox = () => {
                 )
               }
 
-              {data && data.length === 0 && <Box>검색결과가 없습니다.</Box>}
+            {!isFetching && data.length === 0 && (<Box>검색결과가 없습니다.</Box>)}
             </Box>
           </Box>
         </>
