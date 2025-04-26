@@ -75,15 +75,11 @@ const SearchBox = () => {
       setSearchQuery(searchInput.trim());
     }
     setIsSearchButtonClicked(true);
+    setDisplayedPage(0);
     setDisplayedPost(20);
     setData([]);
     setHasMoreData(false);
-    if(displayedPage===0){
-      refetch();
-    }else{
-      setDisplayedPage(0);
-      refetch()
-    }
+    refetch();
   };
 
   const enterKeyEventOnSearch = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -165,9 +161,9 @@ const SearchBox = () => {
 
   const { isFetching, isInitialLoading, refetch } = useQuery(
     ["search"],
-    () => getData(displayedPage),
+    () => getData(0),
     {
-      enabled: searchInput.trim()!=="",
+      enabled: searchInput.trim()!=="" && isSearchButtonClicked,
       keepPreviousData: true,
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 60,
