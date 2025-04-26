@@ -9,9 +9,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "whiskeyReview")
-//public class WhiskeyReview extends BaseReview {
-//}
-public class WhiskeyReview{
+public class WhiskeyReview extends BaseReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,3 +20,5 @@ public class WhiskeyReview{
     private LocalDate postDate;
     private String nickname;
 }
+//public class WhiskeyReview{
+

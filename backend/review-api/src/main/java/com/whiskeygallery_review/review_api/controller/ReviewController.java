@@ -1,8 +1,11 @@
 package com.whiskeygallery_review.review_api.controller;
 import com.whiskeygallery_review.review_api.dto.ReviewDto;
+import com.whiskeygallery_review.review_api.service.OtherReviewService;
 import com.whiskeygallery_review.review_api.service.ReviewService;
+import com.whiskeygallery_review.review_api.service.WhiskeyReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +16,13 @@ import java.util.List;
 public class ReviewController {
     @Autowired
     private final ReviewService reviewService;
+    private final WhiskeyReviewService whiskeyReviewService;
+    private final OtherReviewService otherReviewService;
 
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService,WhiskeyReviewService whiskeyReviewService, OtherReviewService otherReviewService) {
         this.reviewService = reviewService;
+        this.whiskeyReviewService = whiskeyReviewService;
+        this.otherReviewService = otherReviewService;
     }
 
     @GetMapping("/other")
@@ -30,13 +37,12 @@ public class ReviewController {
             @RequestParam(defaultValue = "DESC") String direction) {
 
         Sort.Direction sortDirection = Sort.Direction.valueOf(direction.toUpperCase());
-        if(andWords!=null){
-            System.out.println(String.join(", ", andWords));
-        }
+        Sort sort = Sort.by(sortDirection, sortField);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
 
-        return reviewService.searchOtherReviews(
-                andWords, orWords, age, nickname,
-                page, size, sortField, sortDirection).map(
+        return otherReviewService.searchWithPaging(
+                andWords, orWords, age, nickname, pageRequest
+        ).map(
                 review->new ReviewDto(
                         review.getId(),
                         review.getTitle().trim(),
@@ -59,14 +65,17 @@ public class ReviewController {
             @RequestParam(defaultValue = "postDate") String sortField,
             @RequestParam(defaultValue = "DESC") String direction) {
 
-        Sort.Direction sortDirection = Sort.Direction.valueOf(direction.toUpperCase());
         if(andWords!=null){
             System.out.println(String.join(", ", andWords));
         }
 
-        return reviewService.searchWhiskeyReviews(
-                andWords, orWords, age, nickname,
-                page, size, sortField, sortDirection).map(
+        Sort.Direction sortDirection = Sort.Direction.valueOf(direction.toUpperCase());
+        Sort sort = Sort.by(sortDirection, sortField);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+
+        return whiskeyReviewService.searchWithPaging(
+                andWords, orWords, age, nickname, pageRequest
+                ).map(
                         review->new ReviewDto(
                                 review.getId(),
                                 review.getTitle().trim(),
