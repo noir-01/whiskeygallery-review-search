@@ -4,12 +4,12 @@ import pandas as pd
 from datetime import datetime
 import os
 import pathlib
-from auth import mysql_auth
-login = mysql_auth.Info
+from auth import auty
+login = auth.mysql
 
 filePath = os.path.abspath(__file__)
 parent_path = pathlib.Path(filePath).parent
-path = str(parent_path) + "/dccrolling/database"
+path = str(parent_path) + "/dc_crawling/database"
 
 #paramList: [andWords,orWords,age,nickname,isWhiskey, ip]
 def searchBySql(paramList):
