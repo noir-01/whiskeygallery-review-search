@@ -1,4 +1,4 @@
-package com.whiskeygallery_review.review_api.repository;
+package com.whiskeygallery_review.review_api.repository.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.EntityPath;
@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.whiskeygallery_review.review_api.entity.BaseReview;
+import com.whiskeygallery_review.review_api.repository.BaseReviewCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
