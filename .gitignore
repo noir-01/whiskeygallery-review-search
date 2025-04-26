@@ -1,20 +1,14 @@
 __pycache__
-dccrolling/__pycache__
+dc_crawling/__pycache__
 main/__pycache__
 
 db.sqlite3
 
-dccrolling/cronlog.log
-
-dccrolling/database/review_beer.json
-dccrolling/database/review_brandy.json
-dccrolling/database/review_other.json
-dccrolling/database/review_other_total.json
-dccrolling/database/review_whiskey.json
+dc_crawling/cronlog.log
 
 auth/
-dccrolling/reviewUpload.sh
-dccrolling/reviewUpload.log
+dc_crawling/reviewUpload.sh
+dc_crawling/reviewUpload.log
 
 main/migrations/
 main/module/makeTrie.sh
