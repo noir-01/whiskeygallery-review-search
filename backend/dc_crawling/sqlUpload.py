@@ -34,11 +34,11 @@ def sqlUpload(dataList,category):
     sql = "REPLACE INTO "
 
     if(category=="whiskey"):    
-        sql = sql + "whiskeyReview" + """(id,title,nickname,recom,reply,postDate) 
+        sql = sql + "whiskey_review" + """(id,title,nickname,recom,reply,post_date) 
                 VALUES(%s,%s,%s,%s,%s,%s)"""
         cursor.executemany(sql,dataList)
     else:
-        sql = sql + "otherReview" + """(category,id,title,nickname,recom,reply,postDate) 
+        sql = sql + "other_review" + """(category,id,title,nickname,recom,reply,post_date) 
                 VALUES(%s,%s,%s,%s,%s,%s,%s)"""
         cursor.executemany(sql,dataList)
     
