@@ -112,8 +112,8 @@ const SearchResultListBox = ({
               let A, B;
               switch (sortOption) {
                 case "최신순":
-                  A = a.time;
-                  B = b.time;
+                  A = a.postDate;
+                  B = b.postDate;
                   break;
                 case "댓글순":
                   A = a.reply;

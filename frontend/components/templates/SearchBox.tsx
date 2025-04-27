@@ -12,7 +12,7 @@ import { useQuery,useQueryClient } from "@tanstack/react-query";
 
 import CustomLoading from "@/components/atoms/CustomLoading";
 import DropDownOption from "@/components/atoms/DropDownOption";
-import type { SearchType, SortOptionType } from "@/types/search";
+import type { SearchType, SortOptionType,Page } from "@/types/search";
 import convertMilliToDay from "@/utils/convertMilliToDay";
 import snackbar from "@/utils/snackbar";
 
@@ -121,7 +121,7 @@ const SearchBox = () => {
 
   const getData = async (page = 0): Promise<Page<SearchType>> => {
     const value = await fetch(
-      `https://whiskeygallery-review.com:12445/api/review/${ 
+      `https://whiskeygallery-review.com:444/api/review/${ 
         isOtherSearch ? "other?" : "whiskey?"
       }${searchInput.trim() ? `andWords=${encodeURIComponent(searchInput.trim())}&` : ""}`
       + (searchOptionA2 ? `andWords=${encodeURIComponent(searchOptionA2)}&` : "")
@@ -138,14 +138,14 @@ const SearchBox = () => {
   const queryClient = useQueryClient();
 
   //로딩 적용하지 않기 위해 별도 함수 작성
-  const searchWithPage = async (page) => {
+  const searchWithPage = async (page: number) => {
     const result = await queryClient.fetchQuery(
       ["search",page],
       () => getData(page)
     );
     // 수동으로 onSuccess 로직 처리
-    setHasMoreData(!result.last);
-    setTotalElements(result.totalElements);
+    setHasMoreData(result.page.totalPages != result.page.number+1);
+    setTotalElements(result.page.totalElements);
     setIsSearchButtonClicked(true);
     if (result.content){
       if (page === 0) {
@@ -168,8 +168,8 @@ const SearchBox = () => {
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 60,
       onSuccess: (data) => {
-        setHasMoreData(!data.last); // 마지막 페이지면 false 설정
-        setTotalElements(data.totalElements);
+        setHasMoreData(data.page.totalPages != data.page.number+1);
+        setTotalElements(data.page.totalElements);
 
         if (data.content){  //검색 결과 존재
           if (displayedPage === 0) {  //첫 페이지면 데이터 교체
@@ -685,7 +685,7 @@ const SearchBox = () => {
                       <Divider />
                     </Box>
                   ))}
-                {hasMoreData && (
+                {totalElements>0 && hasMoreData && (
                   <Box
                     sx={{
                       display: "flex",
