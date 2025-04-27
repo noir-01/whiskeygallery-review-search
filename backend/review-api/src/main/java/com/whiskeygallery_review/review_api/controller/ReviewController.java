@@ -50,7 +50,7 @@ public class ReviewController {
                         review.getReply(),
                         review.getNickname(),
                         review.getPostDate(),
-                        review.getCategory()
+                        review.getCategory().equals("other") ? "whiskey" : review.getCategory()
                 )
         );
     }
