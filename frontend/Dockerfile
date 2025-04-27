@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -16,4 +16,4 @@ RUN yarn build
 CMD ["yarn", "start"]
 
 # Expose port 3000
-EXPOSE 3000
+EXPOSE 3001
