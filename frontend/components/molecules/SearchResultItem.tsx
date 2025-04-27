@@ -71,7 +71,7 @@ const SearchResultItem = ({
         </Grid>
         <Grid item xs={2} sx={{ whiteSpace: "nowrap", textAlign: "center" }}>
           <Typography variant="subtitle2">
-            {convertMilliToDay(searchResultData.time)}
+            {convertMilliToDay(searchResultData.postDate)}
           </Typography>
         </Grid>
       </Grid>
