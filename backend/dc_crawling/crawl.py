@@ -31,7 +31,9 @@ login = auth.mysql
 
 def getTotalPage(url):
     options = Options()
-    options.headless = True  # 브라우저 창을 띄우지 않음
+    options.add_argument('--headless=new')  # new headless mode
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
     service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=options)
     try:
