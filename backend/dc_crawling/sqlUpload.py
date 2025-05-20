@@ -13,7 +13,7 @@ login = mysql_auth.Info
 
 filePath = os.path.abspath(__file__)
 parent_path = pathlib.Path(filePath).parent
-path = str(parent_path) + "/dccrolling/database"
+path = str(parent_path) + "/dc_crawling/database"
 
 #mysql에 전달받은 데이터를 업로드.
 #def sqlUpload(category, id,title,nickname,url,recom,reply,postDate):
@@ -23,20 +23,22 @@ def sqlUpload(dataList,category):
         user=login['user'],
         password=login['password'],
         db=login['db'],
-        charset=login['charset']
+        charset=login['charset'],
+        use_unicode=True
     )
 
     cursor = conn.cursor()
+    cursor.execute("SET NAMES utf8mb4")
 
     #카테고리에 따라 다른 table을 사용함
     sql = "REPLACE INTO "
 
     if(category=="whiskey"):    
-        sql = sql + "whiskeyReview" + """(id,title,nickname,recom,reply,postDate) 
+        sql = sql + "whiskey_review" + """(id,title,nickname,recom,reply,post_date) 
                 VALUES(%s,%s,%s,%s,%s,%s)"""
         cursor.executemany(sql,dataList)
     else:
-        sql = sql + "otherReview" + """(category,id,title,nickname,recom,reply,postDate) 
+        sql = sql + "other_review" + """(category,id,title,nickname,recom,reply,post_date) 
                 VALUES(%s,%s,%s,%s,%s,%s,%s)"""
         cursor.executemany(sql,dataList)
     

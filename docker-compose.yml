@@ -1,19 +1,34 @@
 services:
-
-  backend:
+  backend_lts:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ./backend/review-api
     network_mode: host
-    image: whiskey-backend:v1.1
-    
+    image: whiskey-backend:v2.0
+    restart: always
+    container_name: whiskey-backend-lts
 
-  frontend:
+    
+  frontend_lts:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     network_mode: host
-    image: whiskey-frontend:v1.1
+    image: whiskey-frontend:v2.0
+    restart: always
+    container_name: whiskey-frontend-lts
+  
+  # backend:
+  #   build:
+  #     context: ./backend
+  #   network_mode: host
+  #   image: whiskey-backend:v1.1
+    
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   network_mode: host
+  #   image: whiskey-frontend:v1.1
 
 volumes:
   mysql_data:
