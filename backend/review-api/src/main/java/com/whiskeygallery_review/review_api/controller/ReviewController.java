@@ -62,7 +62,7 @@ public class ReviewController {
             @RequestParam(required = false) String nickname,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "postDate") String sortField,
+            @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "DESC") String direction) {
 
         if(andWords!=null){
