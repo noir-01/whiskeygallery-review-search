@@ -61,24 +61,24 @@ const ReviewBox = () => {
     snackbar("리셋되었습니다.", "success");
   };
 
-  const getNameList = async (input: string): Promise<{ result: string[] }> => {
-    const value = await fetch(
-      `https://whiskeygallery-review.com:444/autocomplete?word=${input}`
-    );
-    return value.json();
-  };
+  // const getNameList = async (input: string): Promise<{ result: string[] }> => {
+  //   const value = await fetch(
+  //     `https://whiskeygallery-review.com:444/autocomplete?word=${input}`
+  //   );
+  //   return value.json();
+  // };
 
-  const { data: nameList } = useQuery(
-    ["review", whiskey.name],
-    async () => await getNameList(whiskey.name).then((res) => res.result),
-    {
-      keepPreviousData: true,
-      refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 60,
-      onError: (err) =>
-        snackbar(`에러가 발생했습니다. 다시 시도해주세요. (error:${err})`),
-    }
-  );
+  // const { data: nameList } = useQuery(
+  //   ["review", whiskey.name],
+  //   async () => await getNameList(whiskey.name).then((res) => res.result),
+  //   {
+  //     keepPreviousData: true,
+  //     refetchOnWindowFocus: false,
+  //     staleTime: 1000 * 60 * 60,
+  //     onError: (err) =>
+  //       snackbar(`에러가 발생했습니다. 다시 시도해주세요. (error:${err})`),
+  //   }
+  // );
 
   return (
     <Box sx={{ width: "100%", pt: 2, maxWidth: "680px" }}>
@@ -103,7 +103,7 @@ const ReviewBox = () => {
               height: "36px",
             }}
           >
-            <Autocomplete
+            {/* <Autocomplete
               freeSolo
               value={whiskey.name}
               onChange={(e) => {
@@ -138,6 +138,24 @@ const ReviewBox = () => {
                 },
               }}
               options={nameList || []}
+            /> */}
+            <TextField
+              placeholder="Whiskey name"
+              value={whiskey.name}
+              onChange={(e) => updateWhiskey("name", e.target.value)}
+              autoFocus
+              fullWidth
+              inputProps={{ style: { padding: "0px" } }}
+              sx={{
+                flex: 2,
+                ".MuiOutlinedInput-notchedOutline": { border: "none" },
+                ".MuiInputBase-root": {
+                  py: 0,
+                  px: 3,
+                  height: "44px",
+                  borderRadius: "21px 0 0 21px",
+                },
+              }}
             />
             <Divider sx={{ height: 28, mr: 0.5 }} orientation="vertical" />
             <InputBase

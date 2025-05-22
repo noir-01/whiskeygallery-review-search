@@ -29,9 +29,24 @@ import auth
 from sqlUpload import sqlUpload
 login = auth.mysql
 
+import tempfile
+import uuid
+
+user_data_dir = os.path.join(tempfile.gettempdir(), f'chrome-data-{uuid.uuid4()}')
+os.makedirs(user_data_dir, exist_ok=True)
+
 def getTotalPage(url):
     options = Options()
-    options.headless = True  # 브라우저 창을 띄우지 않음
+    options.add_argument('--headless=new')  # new headless mode
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument(f'--user-data-dir={user_data_dir}')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-dev-tools')
+    options.add_argument('--no-zygote')
+    options.add_argument('--single-process')
+
     service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=options)
     try:
@@ -54,6 +69,12 @@ def getTotalPage(url):
         return None
     finally:
         driver.quit()
+    
+    try:
+        import shutil
+        shutil.rmtree(user_data_dir, ignore_errors=True)
+    except:
+        pass
 
 def validateSearchHead(liquor, category):
     """
@@ -220,10 +241,10 @@ def crawlByPage(liquor,category,dataList,findLastPage=False):
             else:
                 postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
 
-            print(page,postDate,id)
+            print(page,id,category,title,nickname,recom,reply,postDate)
 
             if category!="whiskey":
-                dataList.append([category,id,title,nickname,recom,reply,postDate])
+                dataList.append([category,id,title.strip(),nickname,recom,reply,postDate])
             else:
                 dataList.append([id,title,nickname,recom,reply,postDate])
             
