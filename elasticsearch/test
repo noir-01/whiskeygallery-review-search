@@ -1,0 +1,48 @@
+curl -X GET "localhost:9200/whiskey_review?pretty"
+curl -X GET "localhost:9200/whiskey_review/_mapping?pretty"
+curl -X GET "localhost:9200/whiskey_review/_count?pretty"
+
+
+curl -X GET "localhost:9200/whiskey_review/_search" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "multi_match": {
+      "query": "글렌드로낙",
+      "fields": ["title", "title.english"]
+    }
+  }
+}'
+
+curl -X GET "localhost:9200/whiskey_review/_search" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "wildcard": {
+      "title": {
+        "value": "*glendronach*",
+        "case_insensitive": true
+      }
+    }
+  }
+}'
+
+
+curl -X GET "localhost:9200/whiskey_review/_search" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "title": "위위리"
+          }
+        },
+        {
+          "term": {
+            "nickname.keyword": "noir"
+          }
+        }
+      ]
+    }
+  },
+  "size": 0
+}'
