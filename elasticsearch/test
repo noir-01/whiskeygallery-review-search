@@ -24,3 +24,25 @@ curl -X GET "localhost:9200/whiskey_review/_search" -H 'Content-Type: applicatio
     }
   }
 }'
+
+
+curl -X GET "localhost:9200/whiskey_review/_search" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "title": "위위리"
+          }
+        },
+        {
+          "term": {
+            "nickname.keyword": "noir"
+          }
+        }
+      ]
+    }
+  },
+  "size": 0
+}'
