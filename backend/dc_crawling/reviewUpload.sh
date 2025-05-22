@@ -1,7 +1,7 @@
 #!/bin/bash
 . /home/blanc/whiskey-venv/bin/activate
 python /home/blanc/whiskey-venv/whiskey/backend/dc_crawling/crawl.py
-
+deactivate
 #crontab
 # 0 5 * * * /home/blanc/whiskey-venv/whiskey/backend/dccrolling/reviewUpload.sh > /home/blanc/whiskey-venv/whiskey/backend/dccrolling/reviewUpload.log 2>&1
 # * * * * * /home/blanc/Documents/monitoring/monitoring.sh > /home/blanc/Documents/monitoring/monitoring.log 2>&1
