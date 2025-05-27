@@ -193,7 +193,7 @@ def crawlByPage(liquor,category,dataList,findLastPage=False):
         for i in html_list:
             #말머리
             subject = i.find('td', class_='gall_subject').text
-            if subject=="공지" or subject=="설문" :
+            if subject=="공지" or subject=="설문" or subject=="이슈":   #공지글일경우 skip
                 continue
 
             # 제목
@@ -240,8 +240,8 @@ def crawlByPage(liquor,category,dataList,findLastPage=False):
                 postDate_datetime = datetime.strptime(postDate,'%y/%m/%d')
             else:
                 postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
-
-            print(page,id,category,title,nickname,recom,reply,postDate)
+            #if recom == '-': #공지글의 경우 에러 가능성
+                print(page,id,category,title,nickname,recom,reply,postDate)
 
             if category!="whiskey":
                 dataList.append([category,id,title.strip(),nickname,recom,reply,postDate])
