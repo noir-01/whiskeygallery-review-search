@@ -1,0 +1,161 @@
+
+UPLOAD SQL (category = whiskey) 
+Error email sent: Error validating search_head: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+Stacktrace:
+#0 0x0055640769dc <unknown>
+#1 0x005563b923b0 <unknown>
+#2 0x005563bc2888 <unknown>
+#3 0x005563bbef40 <unknown>
+#4 0x005563c06004 <unknown>
+#5 0x005563bc8da0 <unknown>
+#6 0x005564043e70 <unknown>
+#7 0x005564046e78 <unknown>
+#8 0x005564046a68 <unknown>
+#9 0x00556402efbc <unknown>
+#10 0x0055640474bc <unknown>
+#11 0x005564018878 <unknown>
+#12 0x0055640656e8 <unknown>
+#13 0x0055640658cc <unknown>
+#14 0x005564075b1c <unknown>
+#15 0x007f8b24ee8c <unknown>
+#16 0x007f8b2b7b18 <unknown>
+
+Validation failed. Exiting.
+
+UPLOAD SQL (category = other) 
+Error email sent: Error validating search_head: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+Stacktrace:
+#0 0x0055590769dc <unknown>
+#1 0x005558b923b0 <unknown>
+#2 0x005558bc2888 <unknown>
+#3 0x005558bbef40 <unknown>
+#4 0x005558c06004 <unknown>
+#5 0x005558bc8da0 <unknown>
+#6 0x005559043e70 <unknown>
+#7 0x005559046e78 <unknown>
+#8 0x005559046a68 <unknown>
+#9 0x00555902efbc <unknown>
+#10 0x0055590474bc <unknown>
+#11 0x005559018878 <unknown>
+#12 0x0055590656e8 <unknown>
+#13 0x0055590658cc <unknown>
+#14 0x005559075b1c <unknown>
+#15 0x007fa9d3ee8c <unknown>
+#16 0x007fa9da7b18 <unknown>
+
+Validation failed. Exiting.
+
+UPLOAD SQL (category = brandy) 
+Error email sent: Error validating search_head: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+Stacktrace:
+#0 0x005557f269dc <unknown>
+#1 0x005557a423b0 <unknown>
+#2 0x005557a72888 <unknown>
+#3 0x005557a6ef40 <unknown>
+#4 0x005557ab6004 <unknown>
+#5 0x005557a78da0 <unknown>
+#6 0x005557ef3e70 <unknown>
+#7 0x005557ef6e78 <unknown>
+#8 0x005557ef6a68 <unknown>
+#9 0x005557edefbc <unknown>
+#10 0x005557ef74bc <unknown>
+#11 0x005557ec8878 <unknown>
+#12 0x005557f156e8 <unknown>
+#13 0x005557f158cc <unknown>
+#14 0x005557f25b1c <unknown>
+#15 0x007fbd39ee8c <unknown>
+#16 0x007fbd407b18 <unknown>
+
+Validation failed. Exiting.
+
+UPLOAD SQL (category = beer) 
+Error email sent: Error validating search_head: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+Stacktrace:
+#0 0x005591ae69dc <unknown>
+#1 0x0055916023b0 <unknown>
+#2 0x005591632888 <unknown>
+#3 0x00559162ef40 <unknown>
+#4 0x005591676004 <unknown>
+#5 0x005591638da0 <unknown>
+#6 0x005591ab3e70 <unknown>
+#7 0x005591ab6e78 <unknown>
+#8 0x005591ab6a68 <unknown>
+#9 0x005591a9efbc <unknown>
+#10 0x005591ab74bc <unknown>
+#11 0x005591a88878 <unknown>
+#12 0x005591ad56e8 <unknown>
+#13 0x005591ad58cc <unknown>
+#14 0x005591ae5b1c <unknown>
+#15 0x007fbbeaee8c <unknown>
+#16 0x007fbbf17b18 <unknown>
+
+Validation failed. Exiting.
+
+UPLOAD SQL (category = cock_tail) 
+Error email sent: Error validating search_head: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+Stacktrace:
+#0 0x00557e4669dc <unknown>
+#1 0x00557df823b0 <unknown>
+#2 0x00557dfb2888 <unknown>
+#3 0x00557dfaef40 <unknown>
+#4 0x00557dff6004 <unknown>
+#5 0x00557dfb8da0 <unknown>
+#6 0x00557e433e70 <unknown>
+#7 0x00557e436e78 <unknown>
+#8 0x00557e436a68 <unknown>
+#9 0x00557e41efbc <unknown>
+#10 0x00557e4374bc <unknown>
+#11 0x00557e408878 <unknown>
+#12 0x00557e4556e8 <unknown>
+#13 0x00557e4558cc <unknown>
+#14 0x00557e465b1c <unknown>
+#15 0x007fb347ee8c <unknown>
+#16 0x007fb34e7b18 <unknown>
+
+Validation failed. Exiting.
+
+UPLOAD SQL (category = rum) 
+Error email sent: Error validating search_head: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+Stacktrace:
+#0 0x0055723269dc <unknown>
+#1 0x005571e423b0 <unknown>
+#2 0x005571e72888 <unknown>
+#3 0x005571e6ef40 <unknown>
+#4 0x005571eb6004 <unknown>
+#5 0x005571e78da0 <unknown>
+#6 0x0055722f3e70 <unknown>
+#7 0x0055722f6e78 <unknown>
+#8 0x0055722f6a68 <unknown>
+#9 0x0055722defbc <unknown>
+#10 0x0055722f74bc <unknown>
+#11 0x0055722c8878 <unknown>
+#12 0x0055723156e8 <unknown>
+#13 0x0055723158cc <unknown>
+#14 0x005572325b1c <unknown>
+#15 0x007f89e1ee8c <unknown>
+#16 0x007f89e87b18 <unknown>
+
+Validation failed. Exiting.
+
+UPLOAD SQL (category = nuncestbibendum) 
+Error email sent: Error validating search_head: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+Stacktrace:
+#0 0x00556a4969dc <unknown>
+#1 0x005569fb23b0 <unknown>
+#2 0x005569fe2888 <unknown>
+#3 0x005569fdef40 <unknown>
+#4 0x00556a026004 <unknown>
+#5 0x005569fe8da0 <unknown>
+#6 0x00556a463e70 <unknown>
+#7 0x00556a466e78 <unknown>
+#8 0x00556a466a68 <unknown>
+#9 0x00556a44efbc <unknown>
+#10 0x00556a4674bc <unknown>
+#11 0x00556a438878 <unknown>
+#12 0x00556a4856e8 <unknown>
+#13 0x00556a4858cc <unknown>
+#14 0x00556a495b1c <unknown>
+#15 0x007fadc1ee8c <unknown>
+#16 0x007fadc87b18 <unknown>
+
+Validation failed. Exiting.
