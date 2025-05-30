@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "otherReview")
+@Table(name = "other_review")
 public class OtherReview extends BaseReview {
     private String category;
 }
