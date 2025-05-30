@@ -37,15 +37,41 @@ os.makedirs(user_data_dir, exist_ok=True)
 
 def getTotalPage(url):
     options = Options()
-    options.add_argument('--headless=new')  # new headless mode
+    
+    # Chromium 브라우저 경로 지정
+    chromium_paths = [
+        '/usr/bin/chromium-browser',
+        '/usr/bin/chromium',
+        '/snap/chromium/current/usr/lib/chromium-browser/chrome'
+    ]
+    
+    chromium_binary = None
+    for path in chromium_paths:
+        if os.path.exists(path):
+            chromium_binary = path
+            break
+    
+    if chromium_binary:
+        options.binary_location = chromium_binary
+    
+    # 라즈베리파이 최적화 옵션
+    options.add_argument('--headless=new')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.add_argument(f'--user-data-dir={user_data_dir}')
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-dev-tools')
     options.add_argument('--no-zygote')
     options.add_argument('--single-process')
+    options.add_argument('--remote-debugging-port=0')
+    options.add_argument('--disable-background-timer-throttling')
+    options.add_argument('--disable-backgrounding-occluded-windows')
+    options.add_argument('--disable-renderer-backgrounding')
+    options.add_argument('--memory-pressure-off')  # 라즈베리파이 메모리 최적화
+    
+    # 고유한 사용자 데이터 디렉토리 생성
+    user_data_dir = os.path.join(tempfile.gettempdir(), f'chrome-data-{uuid.uuid4()}-{os.getpid()}')
+    options.add_argument(f'--user-data-dir={user_data_dir}')
 
     service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=options)
