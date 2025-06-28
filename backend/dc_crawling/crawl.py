@@ -145,7 +145,6 @@ def validateSearchHead(liquor, category):
                 label = a.text.strip()
                 if label ==expected_text:
                     driver.quit()
-                    print(int(head_id))
                     return int(head_id)
 
         sendErrorEmail(f"{liquor}갤 '{expected_text}' 없음")
@@ -219,14 +218,18 @@ def crawlByPage(liquor,category,dataList,findLastPage=False):
         for i in html_list:
             #말머리
             subject = i.find('td', class_='gall_subject').text
-            if subject=="공지" or subject=="설문" or subject=="이슈":   #공지글일경우 skip
+            if subject=="공지" or subject=="설문" or subject=="이슈" or subject=="AD":   #공지글일경우 skip
                 continue
 
             # 제목
             title = i.find('a', href=True).text           
 
             #글번호
-            id = int(i.find('td', class_='gall_num').text)
+            try:
+                id = int(i.find('td', class_='gall_num').text)
+            except:
+                print("ERROR TITLE: ",title,"\n==================")
+                continue
         
             #닉네임
             nickname = i.find('td',class_="gall_writer ub-writer").text.strip()
@@ -266,8 +269,6 @@ def crawlByPage(liquor,category,dataList,findLastPage=False):
                 postDate_datetime = datetime.strptime(postDate,'%y/%m/%d')
             else:
                 postDate_datetime = datetime.strptime(postDate,'%Y-%m-%d')
-            #if recom == '-': #공지글의 경우 에러 가능성
-                print(page,id,category,title,nickname,recom,reply,postDate)
 
             if category!="whiskey":
                 dataList.append([category,id,title.strip(),nickname,recom,reply,postDate])
@@ -276,6 +277,7 @@ def crawlByPage(liquor,category,dataList,findLastPage=False):
             
             if len(dataList)>=batch_size:
                 sqlUpload(dataList,category)
+                print(category,len(dataList),"upload completed")
                 dataList.clear()
 
         page+=1
